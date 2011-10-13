@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%" creationComplete="onInit(event)" xmlns:edit="org.syncon.RosettaStone.view.edit.*" xmlns:search="org.syncon.RosettaStone.view.edit.search.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon2.utils.view.SearchOnEnter;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			static public var ENABLED_SEARCH : String = 'ENABLED_SEARCH' ; 
+			static public var SEARCH_TEXT_CHANGED : String = 'SEARCH_TEXT_CHANGED' ; 			
+			static public var SELECT_IT : String = 'SELECT_IT' ; 
+			static public var CHANGE_ITEM : String = 'CHANGE_ITEM' ; 
+			static public var NEXT_PAGE : String = 'NEXT_PAGE' ; 
+			
+			static public var SWITCH_PROVIDER : String = 'SWITCH_PROVIDER'; 
+			
+			public var creationComplete : Boolean = false; 
+			public var  s : SearchOnEnter;// = new SearchOnEnter()
+			[Bindable] public var selectedItem:Object = new Object();
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				this.s = new SearchOnEnter(this.txtSearch, this.txtSearch_changeHandler, this.txtSearch )
+			}			 
+			
+			protected function chkEnabled_changeHandler(event:Event):void
+			{
+				this.searchAfterEveryChanged = event.target.selected; 
+				this.dispatchEvent( new CustomEvent( ENABLED_SEARCH,null, false ) ) 
+			}
+			
+			protected function txtSearch_changeHandler(event:TextOperationEvent=null):void
+			{
+				this.dispatchEvent( new CustomEvent( SEARCH_TEXT_CHANGED,null, false ) ) 
+			}
+			
+			protected function btnSelect_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( SELECT_IT,null, false ) ) 
+			}
+			
+			
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				if  ( event.newIndex == -1 ) 
+					return; 
+				this.selectedItem = this.list.dataProvider.getItemAt(event.newIndex) 
+				this.dispatchEvent( new CustomEvent( CHANGE_ITEM, 
+					this.selectedItem 	) )
+			}
+			
+			
+			
+			protected function onNext(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( NEXT_PAGE,null, false ) ) 
+			}
+			
+			[Bindable] public var searchAfterEveryChanged : Boolean = true;
+				[Bindable] public var dataProvider : ArrayCollection = new ArrayCollection(); 
+			
+			protected function onFlicker(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function onMSN(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.dispatchEvent( new CustomEvent(SWITCH_PROVIDER, 'msn' ) ) 
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	
+	<s:HGroup id="barHeader" >
+		<s:Label text="Pic Search" />
+		<s:Label id="lblPrompt" visible="false" />
+		
+	</s:HGroup>
+	
+	<s:HGroup id="holderProviders">
+		<s:CheckBox id="chkEnabled" selected="{searchAfterEveryChanged}" change="chkEnabled_changeHandler(event)"/>
+	</s:HGroup>
+	
+	
+	<s:HGroup>
+		<s:TextInput id="txtSearch"  />
+		<s:Button label="Next" id="btnNext" click="onNext(event)" />
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:List id="list" width="100%" height="600" borderVisible="false"
+				 dataProvider="{this.dataProvider}"
+				change="list_changeHandler(event)" contentBackgroundAlpha="0"
+				itemRenderer="org.syncon.RosettaStone.view.edit.search.SearchPicItemRenderer">
+			<s:layout>
+				<s:VerticalLayout gap="0" paddingBottom="0" paddingLeft="0" paddingRight="0"/>
+			</s:layout>
+		</s:List>
+		<s:VGroup>
+			<s:Button label="Select" id="btnSelect" click="btnSelect_clickHandler(event)" />
+			<search:SearchPicsViewer id="viewer1" data="{this.selectedItem}" />
+		</s:VGroup>
+		
+		
+		
+	</s:HGroup>
+	
+	
+</s:Group>

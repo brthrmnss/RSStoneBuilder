@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 width="100%"
+		 height="100%"
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 creationComplete="onInit()">
+	<fx:Script>
+		<![CDATA[
+			
+			protected function onInit():void
+			{
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+ 
+	
+	
+	<fx:DesignLayer d:userLabel="F_Bottom">
+		<s:Rect d:userLabel="bottomRectangle" bottom="0" width="100%" height="50%"
+				  alpha="0.07"
+				  bottomLeftRadiusX="10" bottomLeftRadiusY="10" bottomRightRadiusX="10" bottomRightRadiusY="10"
+				  topLeftRadiusX="0" topLeftRadiusY="0" topRightRadiusX="0" topRightRadiusY="0"
+				  >
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry alpha="1.0" color="#FFFFFF" ratio="0"/>
+					<s:GradientEntry alpha="0" color="#CCCCCC" ratio="1"/>
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+	</fx:DesignLayer>
+	<fx:DesignLayer d:userLabel="F_Top">
+		<s:Rect d:userLabel="rectangleTop2" top="0" width="100%" height="50%"
+				alpha="0.4" 
+				bottomLeftRadiusX="0" bottomLeftRadiusY="0" bottomRightRadiusX="0" bottomRightRadiusY="0"
+				topLeftRadiusX="10" topLeftRadiusY="10" topRightRadiusX="10" topRightRadiusY="10" >
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry alpha="0.7" color="#272727" ratio="0" />
+					<s:GradientEntry alpha="1.0" color="#030202" ratio="0.05"/>
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		<!--<s:Rect d:userLabel="topStroke"  y="0.5" top="0" width="100%" height="50%"
+				alpha="1"  transformX="93.5" transformY="40"
+				bottomLeftRadiusX="0" bottomLeftRadiusY="0" bottomRightRadiusX="0" bottomRightRadiusY="0"
+				topLeftRadiusX="10" topLeftRadiusY="10" topRightRadiusX="10" topRightRadiusY="10"
+				>
+			<s:stroke>
+				<s:LinearGradientStroke caps="none" joints="miter" miterLimit="4" rotation="90"
+										weight="1">
+					<s:GradientEntry alpha="1.0" color="#151515" ratio="0"/>
+					<s:GradientEntry alpha="1.0" color="#252525" ratio="0.49019607843137253"/>
+					<s:GradientEntry alpha="1.0" color="#151515" ratio="1"/>
+				</s:LinearGradientStroke>
+			</s:stroke>
+		</s:Rect>-->
+	</fx:DesignLayer>
+	
+	<fx:DesignLayer d:userLabel="F_lines">
+<!--		<s:Line d:userLabel="line2"   verticalCenter="0" alpha="0.2"  width="100%">
+			<s:stroke>
+				<s:SolidColorStroke caps="none" color="#5C5C5C" joints="miter" miterLimit="4"
+									weight="1"/>
+			</s:stroke>
+		</s:Line>
+		<s:Line d:userLabel="line1"  verticalCenter="1" alpha="0.2" width="100%">
+			<s:stroke>
+				<s:SolidColorStroke caps="none" color="#CCCCCC" joints="miter" miterLimit="4"
+									weight="1"/>
+			</s:stroke>
+		</s:Line>-->
+		<s:Line  horizontalCenter="0" y="0.0" width="70%">
+			<s:stroke>
+				<s:LinearGradientStroke caps="none" joints="miter" miterLimit="4" rotation="90"
+										weight="1">
+					<s:GradientEntry alpha="1.0" color="#181818" ratio="0"/>
+					<s:GradientEntry alpha="1.0" color="#1F1F1F" ratio="0.43137254901960786"/>
+					<s:GradientEntry alpha="1.0" color="#181818" ratio="1"/>
+				</s:LinearGradientStroke>
+			</s:stroke>
+		</s:Line>
+	</fx:DesignLayer>
+	<s:Line d:userLabel="line2"   verticalCenter="0" alpha="0.2"  width="100%">
+		<s:stroke>
+			<s:SolidColorStroke caps="none" color="#5C5C5C" joints="miter" miterLimit="4"
+								weight="1"/>
+		</s:stroke>
+	</s:Line>
+	<s:Line d:userLabel="line1"  verticalCenter="1" alpha="0.2" width="100%">
+		<s:stroke>
+			<s:SolidColorStroke caps="none" color="#CCCCCC" joints="miter" miterLimit="4"
+								weight="1"/>
+		</s:stroke> 
+	</s:Line>
+	<s:Line d:userLabel="line1"  verticalCenter="1" alpha="0.8" right="0" left="0">
+		<s:stroke>
+			<s:SolidColorStroke caps="none" color="#0" joints="miter" miterLimit="4"
+								weight="1"/>
+		</s:stroke> 
+	</s:Line>
+	<s:Line d:userLabel="line1"  verticalCenter="0" alpha="1" width="100%">
+		<s:stroke>
+			<s:SolidColorStroke caps="none" color="#0" joints="miter" miterLimit="4"
+								weight="1"/>
+		</s:stroke> 
+	</s:Line>
+</s:Group>

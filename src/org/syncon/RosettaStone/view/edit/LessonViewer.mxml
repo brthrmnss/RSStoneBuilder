@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="false">
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import mx.collections.ArrayCollection;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.LessonItemVO;
+			import org.syncon.RosettaStone.vo.LessonVO;
+			import org.syncon.RosettaStone.vo.SearchVO;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			static public const MOVE_UP : String = 'MOVE_UP.f'; 
+			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
+			static public const PLAY_ALL : String = 'PLAY_ALL';
+			static public const PRONOUNCE : String = 'PRONOUNCE';
+			static public const SAVE : String = 'SAVE';
+			
+			[Bindable] public var lesson : LessonVO = new LessonVO()
+			override public function set data(value:Object):void { 
+				super.data = value; 
+				if ( value == null ) 
+				{
+					value = new LessonVO()
+					this.enabled = false; 
+				}
+				else
+				{
+					this.enabled = true
+				}
+				lesson = value as LessonVO
+				
+				this.updateItemRenderer()
+			} 
+			
+			
+			public function updateItemRenderer(e:Event=null) : void
+			{
+				txtName.text = this.lesson.name.toString()
+				
+				this.txtName.text =this.lesson.name 
+				this.txtPic.text= this.lesson.pic 
+				this.txtDesc.text =this.lesson.desc
+				
+				this.src.source = this.txtPic.text; 	
+				
+				chk_Test.selected = this.lesson.test
+				chk_IntroduceItems.selected = this.lesson.option_introduceItems
+				chk_PlayWrong.selected = this.lesson.option_PlaySoundWhenWrongOneClicked
+				chk_option_oneShotAnswerAttemps.selected = this.lesson.option_oneShotAnswerAttemps
+				chk_option_MasteryMode.selected = this.lesson.option_MasteryMode	
+				
+				chk_showPromptOnItemRenderer.selected = this.lesson.option_showPromptOnItemRender; 
+				chk_showTextPrompt.selected = this.lesson.option_showPromptText; 
+				
+				this.chk_Test_changeHandler()
+			}
+			
+			
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.lesson ) ) ; 
+			}			
+			
+			
+			
+			protected function onSave(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( SAVE, this.lesson ) ) ; 
+			}
+			
+			protected function onChange(event: Event=null):void
+			{
+				this.lesson.name = this.txtName.text; 
+				this.lesson.pic = this.txtPic.text; 
+				this.lesson.desc = this.txtDesc.text; 
+				
+				this.src.source = this.txtPic.text; 
+				
+				// this.lesson.option_introduceItems = chk_Test.selected 
+				this.lesson.option_introduceItems = 	chk_IntroduceItems.selected 
+				this.lesson.option_PlaySoundWhenWrongOneClicked = chk_PlayWrong.selected 
+				this.lesson.option_oneShotAnswerAttemps = chk_option_oneShotAnswerAttemps.selected 
+				this.lesson.option_MasteryMode	 = chk_option_MasteryMode.selected 
+				
+				this.lesson.option_showPromptOnItemRender = chk_showPromptOnItemRenderer.selected
+				this.lesson.option_showPromptText = chk_showTextPrompt.selected
+				
+				
+				this.lesson.updated();
+			}
+			
+			protected function chk_Test_changeHandler(event:Event=null):void
+			{
+				bgu.enabled = ! this.chk_Test.selected;
+				this.lesson.test = this.chk_Test.selected; 
+				if ( event != null ) 
+				{
+					//this.onChange()
+					updateItemRenderer()//implied?
+				}
+			}
+			
+		]]> 
+	</fx:Script> 
+	
+	<fx:Declarations>
+		<s:Sine id="sineIn" easeInFraction="0.3" />
+	</fx:Declarations>	
+	<!--	<s:layout>
+	<s:HorizontalLayout gap="3"/>
+	</s:layout>-->
+	<s:states> 
+		<s:State name="normal"/> 
+		<s:State name="hovered"/> 
+		<s:State name="disabled"/> 
+		<s:State name="selected"/> 
+	</s:states> 
+	<!-- 
+	<s:Rect id="bgRect" width="100%" height="100%" alpha.normal="0" >
+	<s:fill>
+	<s:SolidColor color="0x598E52" color.hovered="0x598E52" color.selected="0x36722E"/>
+	</s:fill>
+	</s:Rect>
+	-->
+	<s:VGroup >
+		
+		<s:Label text="Name:" />
+		<s:TextInput id="txtName" change="onChange(event)" />
+		
+		<s:Label text="Pic:" />
+		<s:Image id="src" height="100" width="100" />
+		<s:TextInput id="txtPic" change="onChange(event)" />
+		<!--
+		<s:Label text="Sound:" />
+		<s:TextInput id="txtSound" change="onChange(event)" />
+		-->
+		<s:Label text="Description:" />
+		<s:TextInput id="txtDesc" change="onChange(event)" />
+		
+		<!-- <s:Button label="Save" click="onSave(event)" />-->
+		<s:CheckBox id="chk_Test" change="chk_Test_changeHandler(event)" label="Test"/>
+		<mx:VBox id="bgu" >
+			<s:CheckBox id="chk_IntroduceItems" change="onChange(event)" label="Introduce"/>
+			<s:CheckBox id="chk_PlayWrong" change="onChange(event)" label="Incorrect Play"/>
+			<s:CheckBox id="chk_option_oneShotAnswerAttemps" change="onChange(event)" label="One Shot"/>
+			<s:CheckBox id="chk_showPromptOnItemRenderer" change="onChange(event)" label="Prompt on Item Renderer" 
+						toolTip="Will always show the name on the item Renderer"/>
+			<s:CheckBox id="chk_showTextPrompt" change="onChange(event)" label="Show Text Prompt" 
+						toolTip="Text will appear near play button"/>			
+			<s:CheckBox id="chk_option_MasteryMode" change="onChange(event)" label="Mastery Mode" 
+						toolTip="Any missed sets will be repeat until there are no answers"/>
+		</mx:VBox>
+	</s:VGroup>
+</s:ItemRenderer>

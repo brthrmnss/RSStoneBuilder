@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:edit="org.syncon.RosettaStone.view.edit.*"
+		 xmlns:view1="org.syncon2.utils.mobile.view.*"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var EDIT_DATE : String = 'editDate'  ; 
+			static public var REFRESH_DATES : String = 'refreshDates'  ; 			
+			static public var DELETE_DATE : String = 'deleteDate'  ; 
+			static public var ADD_DATE : String = 'addDate'  ; 
+			static public var SAVE_FILE : String = 'SaveFile'  ; 
+			static public var ADD_NEW_LESSON_SET : String = 'ADD_NEW_LESSON_SET'; 
+			
+			static public var ALL : String = 'ALL'  ; 
+			static public var NONE : String = 'NONE'  ; 
+			static public var RANGE : String = 'RANGE'  ; 
+			
+			static public var BULK_UPDATE : String = 'BULK_UPDATE'  ; 
+			static public var BULK_UPDATE_MANUAL : String = 'BULK_UPDATE_MANUAL'  ; 
+			
+			public var preview : Object; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				//this.list.scroller.measuredSizeIncludesScrollBars = false
+			}
+			
+			protected function changeDistrict(event:MouseEvent, dir : int):void
+			{
+				//this.dispatchEvent( new CustomEvent( DistrictSelector.CHANGE_DISTRICT, dir, false ) ) 
+			}
+			
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				if ( event.newIndex == -1 ) 
+					return; 
+				this.dispatchEvent( new CustomEvent( EDIT_DATE,  
+					this.list.dataProvider.getItemAt(event.newIndex)  ) )
+			}
+			
+			protected function btnSave_clickHandler(event:MouseEvent):void
+			{
+				
+				this.dispatchEvent( new CustomEvent( SAVE_FILE, null, false ) )			
+			}
+			
+			
+			protected function btnAdd_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( ADD_DATE, null, false ) )				
+			}
+			
+			protected function btnRefresh_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( REFRESH_DATES, null, false ) )				
+			}			
+			
+			protected function onMore(event:MouseEvent):void
+			{
+				this.holderMore.visible = !this.holderMore.visible; 
+				this.holderMore.includeInLayout = !this.holderMore.includeInLayout; 
+			}
+			
+			protected function onUpdateUtils(event:MouseEvent):void
+			{
+				this.holderUpdateUtils.visible = !this.holderUpdateUtils.visible; 
+				this.holderUpdateUtils.includeInLayout = !this.holderUpdateUtils.includeInLayout; 
+			}
+			
+			protected function btnImport(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			protected function addLessonSet():void
+			{
+				this.dispatchEvent( new CustomEvent( ADD_NEW_LESSON_SET  ) )	
+			}
+			
+			
+			protected function onAll(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( ALL  ) )	
+			}
+			
+			protected function onNone(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( NONE  ) )	
+			}
+			
+			protected function onRange(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( RANGE  ) )	
+			}
+			
+			protected function onBulkUpdate(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( BULK_UPDATE  ) )	
+			}
+			
+			
+			protected function onBulkUpdateManual(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( BULK_UPDATE_MANUAL  ) )	
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<!--<s:Label styleName="txtSectionHeader" text="Lesson"/>-->
+	<s:HGroup verticalAlign="bottom">
+		
+		<s:Button label="Create Set" buttonMode="true" click="btnAdd_clickHandler(event)"
+				  toolTip="Add a new set" useHandCursor="true"/>
+		<s:Button label="Refresh" buttonMode="true" click="btnRefresh_clickHandler(event)"
+				  toolTip="Refresh JSONL File" useHandCursor="true"/>
+		<s:Button label="More" buttonMode="true" click="onMore(event)" toolTip="Refresh JSONL File"
+				  useHandCursor="true"/>
+		<s:HGroup id="holderMore" visible="false" includeInLayout="false">
+			<!--<s:Label text="Import:" />
+			<s:TextInput id="txtImport" />
+			<s:Button label="Import" buttonMode="true" click="btnImport(event)"
+					  toolTip="Import" useHandCursor="true"/>-->
+			<edit:QuickInput fxBeforeImport="{this.addLessonSet}" horizontalMode="true"/>
+			
+		</s:HGroup>
+	
+		<s:Button label="Update Utils" buttonMode="true" click="onUpdateUtils(event)"
+				  toolTip="Refresh JSONL File" useHandCursor="true"/>
+		<s:HGroup id="holderUpdateUtils" visible="false" includeInLayout="false">
+			<s:Button label="All" buttonMode="true" click="onAll(event)" toolTip="Select All"
+					  useHandCursor="true"/>
+			<s:Button label="None" buttonMode="true" click="onNone(event)" toolTip="Select All"
+					  useHandCursor="true"/>
+			<s:Button label="Range" buttonMode="true" click="onRange(event)" toolTip="Select All"
+					  useHandCursor="true"/>
+			<s:Line width="1" height="100%">
+				<s:stroke>
+					<s:SolidColorStroke color="0x0" />
+				</s:stroke>
+			</s:Line>
+			<s:Button label="Bulk Update" buttonMode="true" click="onBulkUpdate(event)"
+					  toolTip="Update All" useHandCursor="true"/>
+			<s:Button label="Bulk Update M." buttonMode="true" click="onBulkUpdateManual(event)"
+					  toolTip="Update All" useHandCursor="true"/>
+		</s:HGroup>
+	</s:HGroup>
+	<!--<view:HDividerLine/>-->
+	
+	
+	<s:List id="list" x="10" width="100%" height="550" borderVisible="false"
+			change="list_changeHandler(event)"
+			itemRenderer="org.syncon.RosettaStone.view.edit.lesson.LessonSetBulkRenderer">
+		<s:layout>
+			<s:VerticalLayout gap="0" paddingBottom="0" paddingLeft="0" paddingRight="0"/>
+		</s:layout>
+	</s:List>
+	
+	
+	<s:Button id="btnSave" label="Save" buttonMode="true" click="btnSave_clickHandler(event)"
+			  useHandCursor="true"/>
+</s:Group>

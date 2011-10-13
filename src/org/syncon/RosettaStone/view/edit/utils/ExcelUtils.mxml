@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:edit="org.syncon.RosettaStone.view.edit.*" creationComplete="onInit(event)"
+		 xmlns:lesson="org.syncon.RosettaStone.view.edit.lesson.*"
+		 xmlns:popup="org.syncon.RosettaStone.view.popup.*">
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import mx.events.FlexEvent;
+			
+			import org.syncon2.utils.view.SearchOnEnter;
+			
+			import spark.events.TextOperationEvent;
+			static public var INPUT_CHANGED : String = 'INPUT_CHANGED' ;
+			public var  s : SearchOnEnter;// = new SearchOnEnter()
+			public var rawInputString:String;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.txtInput.text = "boat\r tree\n girl\n boy"
+				this.s = new SearchOnEnter(this.txtInput, this.txtInput_changeHandler2, this.txtInput )
+			}			 
+			protected function txtInput_changeHandler2(event:TextOperationEvent=null):void
+			{
+				var txt :  String = this.txtInput.text; 
+				this.dispatchEvent( new Event( INPUT_CHANGED ) ) ; 
+			}
+			protected function txtInput_changeHandler(event:TextOperationEvent=null):void
+			{
+				//var txt :  String = this.txtInput.text; 
+				//	this.dispatchEvent( new Event( INPUT_CHANGED ) ) ; 
+			}
+			
+			/* 		public function onChanged(e: TextEvent) : void
+			{
+			//var dbg : Object = System.
+			//trace(e.text)
+			this.rawInputString = e.text; 
+			} 		
+			*/
+			
+			public function onCopy(e:Event): void{
+				trace(); 
+			}
+			
+		]]> 
+	</fx:Script> 
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>	
+	
+	<s:Label text="Excel List"/>
+	<s:HGroup>
+		<s:TextArea id="txtInput" copy="{this.onCopy(event)}" text=""/>
+		<s:TextInput id="txtRows" text="4" />
+		<s:CheckBox id="chkSaveAfter" label="Save After" selected="true"/>
+	</s:HGroup>
+	
+	<s:Label text="Output"/>
+	<s:HGroup>
+		<s:TextArea id="txtOutput"   text="boat tree girl boy"/>
+	</s:HGroup>
+	
+</s:Group>

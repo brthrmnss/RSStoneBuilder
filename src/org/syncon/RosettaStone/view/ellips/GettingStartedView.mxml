@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<controls:ScreenView xmlns:mx="http://www.adobe.com/2006/mxml"
+					 xmlns:controls="openplug.elips.controls.*"
+					 xmlns:alarm="org.syncon.TalkingClock.view.mobile.alarm.*"
+					 xmlns:screenClasses="openplug.elips.controls.screenClasses.*"
+					 xmlns:view="org.syncon.TalkingClock.view.mobile.view.*"
+					 creationComplete="onInit(event)" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.ThemeVO;
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			
+			import outside.PlatformGlobals;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const SETTINGS : String = 'settings'
+			static public const GO_BACK : String = 'goBack'; 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const RESUME : String = 'RESUME'; 
+			static public const INFO : String = 'INFO'; 
+			static public const SELECT_LESSON : String = 'SELECT_LESSON'; 
+			static public const OK : String = 'OK'; 
+			
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
+				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnResume, this.onResume ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnSelectLesson, this.onSelectLesson ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnOk, this.onOk ) ; 	
+				
+				//this.txtContent.text = ''; 
+			}
+			override public function set visible( b : Boolean ) : void{
+				super.visible = b; 
+			}
+			protected function list1_itemClickHandler(event: Event):void
+			{
+				var data : Object = NightStandConstants.PlatformGlobals.getItemClickEventData( event ) 
+				this.dispatchEvent( new CustomEvent(LIST_CHANGED, data  )  ) 
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			protected function view1_activateHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+			protected function onSettings():void
+			{
+				this.dispatchEvent( new Event( SETTINGS ) ) ; 
+			}
+			
+			protected function onInfo():void
+			{
+				this.dispatchEvent( new Event( INFO ) ) ; 
+			}
+			protected function onResume(event:Event):void
+			{
+				this.dispatchEvent( new Event( RESUME ) ) ; 
+			}
+			protected function onSelectLesson(event:Event):void
+			{
+				this.dispatchEvent( new Event( SELECT_LESSON ) ) ; 
+			}
+			protected function onOk(event:Event):void
+			{
+				this.dispatchEvent( new Event( OK ) ) ; 
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="100%" height="100%" backgroundColor="0xE8E9EA">
+		<!--<mx:Canvas width="100%" backgroundColor="0xEB5018" height="42">
+			<mx:Canvas backgroundColor="0x0" height="42">
+				<controls:Label color="0xE8E9EA" fontSize="36" text="MLL"/>
+			</mx:Canvas>
+			<mx:HBox>
+				
+			</mx:HBox>
+		</mx:Canvas>-->
+		<mx:VBox paddingLeft="10" horizontalAlign="center">
+			
+			<!--<mx:Spacer height="50" />-->
+			<!--
+			<controls:Text text="...The easiest way to master a language" fontStyle="italic" />
+			-->
+			<controls:Text  id="txtLogoTagLine" width="100%" text="Getting Started" fontWeight="bold" />
+			
+			<ellips:OpenPlugButton id="btnSelectLesson" bottom="20" horizontalCenter="0"
+								 iconS="" labelS="Select Lesson"/>
+			<controls:Text  id="txtContent" width="100%" text="this is easy"  >
+			<!--	<controls:text>
+					<![CDATA[
+					Mobile Language Learner is the eastest way to master a lnaguage. Begin by selecting the 
+					language you want to use. 
+					
+					X button shows you the current state
+					X allows you to quickly leave lessons 
+					X takes you to the home scream 
+					
+					Use the menu button to send us feedback. 
+					
+					Enjoy. 
+					]]>
+				</controls:text>-->
+			</controls:Text>
+			
+			<ellips:OpenPlugButton id="btnOk"   horizontalCenter="0"
+								 labelS="OK"/>
+		</mx:VBox>
+	</mx:VBox>
+	
+	
+	
+	<controls:Label id="debug"  right="0" bottom="100"  text="Debug"/>
+	
+</controls:ScreenView>

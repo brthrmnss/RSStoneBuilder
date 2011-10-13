@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:view="org.syncon.RosettaStone.view.*"
+		 xmlns:NightStand="org.syncon.NightStand.*"
+		 xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"
+		 xmlns:subview="org.syncon.RosettaStone.view.subview.*"
+		 xmlns:lite="views.lite.*"
+		 xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+		 xmlns:RosettaStone="org.syncon.RosettaStone.*"
+		 xmlns:edit="org.syncon.RosettaStone.view.edit.*"
+		 xmlns:view1="org.syncon2.utils.mobile.view.*"
+		 xmlns:search="org.syncon.RosettaStone.view.edit.search.*"
+		 width="100%" height="100%" creationComplete="onInit(event)" xmlns:lesson="org.syncon.RosettaStone.view.edit.lesson.*" xmlns:utils="org.syncon.RosettaStone.view.edit.utils.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.ContextNightStand_PopupContext;
+			import org.syncon.RosettaStone.ContextNightStand_ViewsSubContext;
+			import org.syncon.RosettaStone.model.RSModel;
+			import org.syncon2.utils.sound.PlaySound_Flex;
+			protected function onInit(event:FlexEvent):void
+			{
+				var xx : ContextNightStand_ViewsSubContext = new ContextNightStand_ViewsSubContext()
+				this.context.addSubContext( xx ) ;
+				
+				var xxx : ContextNightStand_PopupContext = new ContextNightStand_PopupContext()
+				this.context.addSubContext( xxx ) ;
+				
+				var items : Array = [ this.holderPackages, this.holderUnits, 
+					this.holderLessonGroups, this.holderLesson, this.holderSets,
+					this.holderItems, this.quickInput, this.holderTester, this.holderSearch, 
+					this.holderLessonBulk, holderUtils
+				/* this.searchPic, this.searchDictionary, this.searchSounds */] 
+				this.viewSelector.items = items
+				
+				this.viewSelector.hideUI( [ this.holderPackages, this.holderUnits])
+				this.viewSelector.hideUI( [ 	this.holderLessonGroups ])
+				this.viewSelector.hideUI( [ this.holderSearch ] )
+				///this.viewSelector.hideUI( [ this.holderTester ] )
+					//hide old lesson stuff
+				this.viewSelector.hideUI( [ this.holderLesson, this.holderSets,this.holderItems, ] )
+				//this.viewSelector.hideUI( [ 	this.holderLessonGroups, this.holderLesson, this.itemSetHolder ])
+				//this.viewSelector.hideUI( [this.lessonsHolder, this.lessonHolder] ) ; 
+				//	this.viewSelector.hideUI( [this.holderTester ] ) ; 
+				/* this.viewSelector.hideUI( [this.holderTester , this.quickInput] ) ; */
+				//this.viewSelector.hideUI( [this.lessonsHolder] ) ; 
+					
+					
+				this.viewSelector.hideUI( [ this.holderTester ] )
+				//this.viewSelector.hideUI( [ this.holderSearch ] )
+				
+				this.setupStatic() 
+			}
+			
+			private function setupStatic():void
+			{
+				
+				RSModel.BASE_FOLDER= 'assets/'
+				RSModel.PlaySound = new PlaySound_Flex()
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<RosettaStone:ContextNightStand id="context" contextView="{this}"/> 
+	</fx:Declarations>
+	
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"/>
+	</s:layout>	
+	
+	<edit:ViewSelector id="viewSelector"/>
+	
+	
+	<s:HGroup>
+		<s:VGroup id="holderPackages" width="360" name="Packages">
+			<edit:Packages id="packages" height="300" name="Packages"/>
+			<view1:MobileHrLite/>
+			<!--
+			<s:Label text="Preview Lesson Group JSON" />
+			<edit:PreviewJSON id="previewJSON" name="Preview JSON"/>-->
+		</s:VGroup>
+		<s:VGroup id="holderUnits" width="360" name="Units">
+			<s:Label text="Unit:"/>
+			<edit:UnitViewer id="unitViewer" height="300" name="Unit Viewer"/>
+			<view1:MobileHrLite/>
+			<edit:Units id="lessonGroups" height="300" name="Units" preview="{this.previewUnitJSON}"/>
+			<view1:MobileHrLite/>
+			<s:Label text="Preview Unit JSON"/>
+			<edit:PreviewJSON id="previewUnitJSON" name="Preview JSON"/> 
+		</s:VGroup>
+		<s:VGroup id="holderLessonGroups" width="360" name="Lessons">
+			<s:Label text="Group:"/>
+			<edit:GroupViewer id="lessonGroupViewer" height="300" name="Group Viewer"/>
+			<view1:MobileHrLite/>
+			<edit:Lessons id="lessons" height="300" name="Lessons" preview="{this.previewJSON}"/>
+			<view1:MobileHrLite/>
+			<s:Label text="Preview Lesson Group JSON"/>
+			<edit:PreviewJSON id="previewJSON" name="Preview JSON"/>
+		</s:VGroup>
+		<s:VGroup id="holderLesson" width="360" name="Lesson">
+			<s:Label text="Lesson:"/>
+			<edit:LessonViewer id="lessonViewer" name="Lesson Viewer"/>
+			<view1:MobileHrLite/>
+			<edit:LessonItemSets id="lesson" height="300" name="Lesson"
+								 preview="{this.previewLessonJSON}"/>
+			<view1:MobileHrLite/>
+			<edit:LessonPrompts id="lessonPrompts" height="300" name="Prompts"
+								preview="{this.previewLessonJSON}"/>
+			<view1:MobileHrLite/>
+			<s:Label text="Preview Lesson JSON"/>
+			<edit:PreviewJSON id="previewLessonJSON" name="Preview Lesson JSON"/>
+			<view1:MobileHrLite/>
+			<edit:QuickInputLesson id="quickInput2" name="Quick Input Lessons"/>
+		</s:VGroup>
+		<s:VGroup id="holderSets" width="360" name="Sets">
+			<s:Label text="Item Set"/>
+			<edit:ItemSetViewer id="itemSetViewer" height="300" name="Item Set View"/>
+			<view1:MobileHrLite/>
+			<edit:ItemSets id="itemSets" height="300" name="Item Sets"/>
+			<view1:MobileHrLite/>
+			<edit:QuickInput id="quickInput" name="Quick Input"/>
+		</s:VGroup>
+		<s:VGroup id="holderItems" width="360" name="Items">
+			<s:Label text="Item"/>
+			<edit:ItemViewer id="item" name="Item"/>
+			<view1:MobileHrLite/>
+			<edit:ItemPromptViewer/>
+			<!--	<s:Scroller height="610" width="100%">
+			<edit:ItemViewer id="item" name="Item" />
+			
+			</s:Scroller>
+			-->
+			<view1:MobileHrLite/>
+		</s:VGroup>
+		
+		
+		<s:HGroup id="holderTester" name="Tester">
+			
+			<s:VGroup width="480">
+				<s:Label color="0xd2d2d2" fontSize="50" fontStyle="italic" rotation="0" text="tester"/>
+				<edit:Player id="tester" width="100%" name="Tester"/>
+				<edit:PlayerAutomate/>
+			</s:VGroup>
+		</s:HGroup>
+		
+		<s:VGroup id="holderSearch" name="Search">
+			<s:Label color="0xd2d2d2" fontSize="50" fontStyle="italic" rotation="0" text="search"/>
+			
+			<s:HGroup visible="{holderSearch.visible}">
+				<search:SearchPics id="searchPic" height="200"  visible="{holderSearch.visible}" name="Search Pics"/>
+				<search:SearchDictionary id="searchDictionary"  visible="{holderSearch.visible}" name="Search Dictionary"/>
+				<search:SearchSounds id="searchSounds"  visible="{holderSearch.visible}"  name="Search Sounds"/>
+				<search:SearchYoutube id="searchYoutube" visible="{holderSearch.visible}"  name="Search Youtube"/>
+			</s:HGroup>
+			
+		</s:VGroup>
+		
+		
+		<s:VGroup id="holderLessonBulk" name="Bulk">
+			<s:Label color="0xd2d2d2" fontSize="50" fontStyle="italic" rotation="0" text="Lesson Bulk"/>
+			<lesson:LessonViewerBulk height="620" />
+		</s:VGroup>
+		
+		<s:VGroup id="holderUtils" name="Utils">
+			<s:Label color="0xd2d2d2" fontSize="50" fontStyle="italic" rotation="0" text="Utils"/>
+			<utils:ExcelUtils />
+		</s:VGroup>
+		
+	</s:HGroup>
+	
+</s:Group>

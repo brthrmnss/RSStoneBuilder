@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			  fontFamily="myFontFamily2"
+			xmlns:view="org.syncon2.utils.mobile.view.*" actionBarVisible="false" 
+			creationComplete="onInit(event)" destructionPolicy="auto" xmlns:clocks="clocks.*" xmlns:components="clocks.components.*"  >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const SEND : String = 'SEND' 
+			protected function onInit(event:FlexEvent):void
+			{
+		
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onSend() : void
+			{
+				this.dispatchEvent( new Event( SEND ) ) 
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0">
+		<s:fill>
+			<s:SolidColor color="0"/>
+		</s:fill>
+	</s:Rect>
+	 
+	<s:VGroup gap="0">
+		<s:Image source="darkwood.jpg"  />
+		<s:Image source="darkwood.jpg"  />
+	</s:VGroup>
+	
+	<!--
+	<components:Clock id="clock2" top="100" left="100" skinClass="skins.ClockSkin2" />
+	
+	-->
+	
+	
+	<s:HGroup y="160" gap="80" x="30"  >
+		<s:VGroup>
+			<components:Clock id="clock3" top="200"
+							  label="San Franscisco" offsetHours="-3"
+							  left="100" skinClass="clocks.skins.ClockSkin3" />
+			<s:Button label="{(clock3.isRunning ? 'STOP' : 'START')}" right="5" bottom="5" height="40"  
+					  click="(clock3.isRunning ? clock3.stopClock() : clock3.startClock())" />
+		</s:VGroup>
+		
+		<s:VGroup>
+			<components:Clock id="clock4" top="200" left="100" skinClass="clocks.skins.ClockSkin3"
+							  label="Baltimore" offsetHours="-0"
+							  />
+			<s:Button label="{(clock4.isRunning ? 'STOP' : 'START')}" right="5" bottom="5" height="40"  
+					  click="(clock4.isRunning ? clock4.stopClock() : clock4.startClock())" />
+		</s:VGroup>
+		
+	</s:HGroup>
+	
+	
+	
+	<!--		<s:Rect left="0" right="0" top="0" bottom="0" >
+	<s:fill>
+	<s:SolidColor color="0"/>
+	</s:fill>	
+	</s:Rect>	
+	
+	<local:FlipClock id="flipp" y="50" />
+	-->
+	<clocks:FlipClock2 id="flipp" y="10" x="30" fontFamily="myFontFamily2"   color="0xFFFFFF"/>
+<!--<s:Label text="TfffffffffffffffffffffffTT" fontSize="55"  color="0xFFFFFF" fontFamily="myFontFamily2"  />-->
+</views:View>

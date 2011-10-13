@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"   
+		 creationComplete="onInit(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			static public const ADD_DROP_SHADOW : String = 'ADD_DROP_SHADOW' ; 
+			static public const ADD_BLUR : String = 'ADD_BLUR'; 
+			static public const ADD_GLOW : String = 'ADD_GLOW' ; 			
+			
+			protected function onInit(event:FlexEvent):void
+			{
+			}
+			
+			protected function onBlur(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent(ADD_BLUR) ) ; 				
+			}
+			
+			protected function onDropShadow(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent(ADD_DROP_SHADOW) ) ; 				
+			}
+			
+			
+			protected function onGlowFilter(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent(ADD_GLOW) ) ; 
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup  id="holder" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+		<s:Button id="btnBlur" label="Blur" click="onBlur(event)" />
+		<s:Button id="btnShadow" label="Shadow" click="onDropShadow(event)" />
+		<s:Button id="btnFilter" label="Glow" click="onGlowFilter(event)" />		
+	</s:VGroup>
+	
+</s:Group>

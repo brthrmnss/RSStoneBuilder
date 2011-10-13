@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*" title="Edit Alarm" actionBarVisible="false"
+			xmlns:view="org.syncon2.utils.mobile.view.*" 
+			creationComplete="onInit(event)" destructionPolicy="auto" xmlns:parts="org.syncon.RosettaStone.view.parts.*"  >
+	<fx:Script>
+		<![CDATA[
+			import spark.events.IndexChangeEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const SEND : String = 'SEND' 
+			static public const EDIT_NAME : String = 'EDIT_NAME' ;
+			static public const EDIT_SOUND : String = 'EDIT_SOUND' ;
+			static public const EDIT_REPEAT : String = 'EDIT_REPEAT' ;			
+			static public const CHANGED_ENABLED : String = 'CHANGED_ENABLED' ;		
+			static public const SELECT_VOICE : String = 'SELECT_VOICE' ;	
+			
+			static public const EDIT_TIME : String = 'EDIT_TIME' ;						
+			static public const DONE : String = 'DONE' ;			
+			static public const DELETE : String = 'DELETE' ;		
+			private var ignoreNextClick:Boolean;
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			protected function onInit(event:FlexEvent):void
+			{
+				var arr : Array = [
+					['Done', this.onDone], 
+					['Delete', this.onDelete], 
+					/* 		['Help', this.onHelp],
+					['Info', this.onInfo] */
+				]
+				this.bottomMenu.load('', arr )
+			}
+			
+			public function onDone() : void
+			{
+				this.dispatchEvent( new Event( DONE  ) ) ; 
+			}
+			
+			public function onDelete() : void
+			{
+				this.dispatchEvent( new Event( DELETE ) ) ; 
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onSend() : void
+			{
+				this.dispatchEvent( new Event( SEND ) ) 
+			}
+			
+			protected function onEditName(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_NAME ) ) ;
+			}
+			
+			protected function checkbox1_changeHandler(event:Event):void
+			{
+				this.dispatchEvent( new  CustomEvent( CHANGED_ENABLED, this.cbEnabled.selected, false  ) ) ;
+			}
+			
+			protected function onEditTime(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_TIME ) ) ;
+			}
+			
+			protected function onEditRepeat(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_REPEAT ) ) ;
+				
+			}
+			
+			protected function onEditSound(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_SOUND ) ) ;
+				
+			}
+			
+			/* 	protected function onEditName(event:MouseEvent):void
+			{
+			// TODO Auto-generated method stub
+			
+			}			 */
+			
+			protected function onEditDescription(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function onEditImage(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+			protected function listChangeHandler(event:IndexChangeEvent, wait : Boolean = true ):void
+			{
+				if ( wait ) 
+				{
+					//this.callLater( this.listChangeHandler, [event, false ] ) ;
+					setTimeout( this.listChangeHandler, 500, event, false ) ; 
+					return; 
+				}
+				if ( this.ignoreNextClick ) 
+				{
+					this.ignoreNextClick = false; 
+					return
+				}
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :     Object = this.list.dataProvider.getItemAt( index )  as Object; 
+				//trace('change sent'); 
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}			
+			
+			protected function onUseVoice(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( SELECT_VOICE ) ) ;
+			}
+			
+		]]>
+	</fx:Script>
+	<!--
+	<s:Rect left="0" right="0" top="0" bottom="0">
+	<s:fill>
+	<s:SolidColor color="0"/>
+	</s:fill>
+	</s:Rect>
+	-->
+	
+	<s:Scroller id="scroller" top="100" bottom="80" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1">
+		<s:VGroup width="100%" height="100%" gap="20" horizontalAlign="center" paddingBottom="20"
+				  paddingLeft="10" paddingRight="10" paddingTop="20">
+			<s:Group width="100%" >
+				<!--<mobile:TextAreaLabel2 text="Turn alarm on"  styleName="sectionTitle" />-->
+				<s:CheckBox  id="cbEnabled" change="checkbox1_changeHandler(event)" left="0" label="Enable Alarm" />
+			</s:Group>
+			<s:Group width="100%" >
+				<s:Button label="Use This Voice" id="btnUseVoice" click="onUseVoice(event)" />
+			</s:Group>
+			<view:MobileHrLite />
+			
+			
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Name"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="classic" id="txtName"  />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditName(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Description"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="classic" id="txtDesc"  />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditDescription(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Image"  styleName="sectionTitle" />
+					<s:Image id="image" />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditImage(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Time"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="not set"  id="txtTime" />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditTime(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			
+			<view:MobileHrLite />
+			
+			<s:Group width="100%" >
+				<mobile:TextAreaLabel2 text="Sounds"  styleName="sectionTitle" />
+				<parts:BtnHelp  right="10" verticalCenter="0" />
+			</s:Group>
+			
+			<mobile:TextAreaLabel2 text="Standard Sounds"  styleName="sectionTitle" />
+			<s:List id="list" width="100%" change="listChangeHandler(event)" 
+					maxHeight="200"
+					contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"  borderVisible="false"
+					itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.SoundRenderer">
+				<s:layout>
+					<s:VerticalLayout gap="0" paddingLeft="0"/>
+				</s:layout> 
+			</s:List>
+			
+			<s:Group width="100%" >
+				<mobile:TextAreaLabel2 text="Intruders"  styleName="sectionTitle" />
+				<s:Button label="Edit"  click="onEditTime(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:List id="list_Intruders" width="100%"
+					maxHeight="200"
+					change="listChangeHandler(event)" 
+					contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"  borderVisible="false"
+					itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.SoundRenderer">
+				<s:layout>
+					<s:VerticalLayout gap="0" paddingLeft="0"/>
+				</s:layout> 
+			</s:List>
+			
+			<s:Group width="100%" >
+				<mobile:TextAreaLabel2 text="Chasers"  styleName="sectionTitle" />
+				<s:Button label="Edit"  click="onEditTime(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:List id="list_Chasers" width="100%"   maxHeight="200" change="listChangeHandler(event)" 
+					contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"  borderVisible="false"
+					itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.SoundRenderer">
+				<s:layout>
+					<s:VerticalLayout gap="0" paddingLeft="0"/>
+				</s:layout> 
+			</s:List>
+			
+			
+			<s:Group width="100%" >
+				<mobile:TextAreaLabel2 text="Specific Times"  styleName="sectionTitle" />
+				<s:Button label="Edit"  click="onEditTime(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:List id="list_Specific" width="100%"  
+					maxHeight="200"
+					change="listChangeHandler(event)" 
+					contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"  borderVisible="false"
+					itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.SoundRenderer">
+				<s:layout>
+					<s:VerticalLayout gap="0" paddingLeft="0"/>
+				</s:layout> 
+			</s:List>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+	
+	<parts:BackBtn   x="17" y="27"  />
+	<parts:ViewTitle label="edit voice" x="180" y="25" height="90"  />
+	
+	
+	
+	<view:BottomBar  id="bottomMenu" />
+</views:View>

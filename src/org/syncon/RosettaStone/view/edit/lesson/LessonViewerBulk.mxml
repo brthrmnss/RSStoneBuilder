@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:edit="org.syncon.RosettaStone.view.edit.*" xmlns:lesson="org.syncon.RosettaStone.view.edit.lesson.*" xmlns:popup="org.syncon.RosettaStone.view.popup.*" xmlns:view="org.syncon2.utils.mobile.view.*" xmlns:utils="org.syncon.RosettaStone.view.edit.utils.*">
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.LessonVO;
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
+			static public const PLAY_ALL : String = 'PLAY_ALL';
+			static public const PRONOUNCE : String = 'PRONOUNCE';
+			static public const SAVE : String = 'SAVE';
+			static public const SEARCH_CHANGED : String = 'SEARCH_CHANGED';
+			
+			[Bindable] public var lesson : LessonVO = new LessonVO()
+			public function set data(value:Object):void { 
+				if ( value == null ) 
+				{
+					value = new LessonVO()
+					this.enabled = false; 
+				}
+				else
+				{
+					this.enabled = true
+				}
+				lesson = value as LessonVO
+				
+				this.updateItemRenderer()
+			} 
+			
+			
+			public function updateItemRenderer(e:Event=null) : void
+			{
+				this.lblName.text = this.lesson.name.toString()
+			}
+			
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.lesson ) ) ; 
+			}			
+			
+			protected function onSave(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( SAVE, this.lesson ) ) ; 
+			}
+			
+			protected function btnEdit_clickHandler(event:MouseEvent):void
+			{
+				this.holderEdit.includeInLayout = ! this.holderEdit.includeInLayout; 
+				this.holderEdit.visible = ! this.holderEdit.visible; 
+			}
+			
+			protected function btnPrompt_clickHandler(event:MouseEvent):void
+			{
+				this.holderPrompt.includeInLayout = ! this.holderPrompt.includeInLayout; 
+				this.holderPrompt.visible = ! this.holderPrompt.visible; 
+			}
+			
+			protected function chkSearch_changeHandler(event:Event):void
+			{
+				this.dispatchEvent( new Event(SEARCH_CHANGED) ) ; 
+			}
+			
+			protected function onExport(event:MouseEvent):void
+			{
+				this.lesson.previewExport(); 
+				this.txtExport.text = this.lesson.lastExport
+			}			
+			
+			
+			protected function btnUtils_clickHandler(event:MouseEvent):void
+			{
+				this.holderUtils.includeInLayout = ! this.holderUtils.includeInLayout; 
+				this.holderUtils.visible = ! this.holderUtils.visible; 
+			}
+			
+		]]> 
+	</fx:Script> 
+	
+	<fx:Declarations>
+		<s:Sine id="sineIn" easeInFraction="0.3" />
+	</fx:Declarations>	
+	<!--	<s:layout>
+	<s:HorizontalLayout gap="3"/>
+	</s:layout>-->
+	<s:states> 
+		<s:State name="normal"/> 
+		<s:State name="hovered"/> 
+		<s:State name="disabled"/> 
+		<s:State name="selected"/> 
+	</s:states> 
+	
+	<s:VGroup>
+		<s:HGroup verticalAlign="middle">
+			<s:Label text="Name" id="lblName" />
+			<s:Button label="Save" id="btnSave" click="onSave(event)" />
+			<s:Button label="Edit" id="btnEdit" click="btnEdit_clickHandler(event)" />
+			<s:Button label="Prompt" id="btnPrompt" click="btnPrompt_clickHandler(event)" />
+			<s:Button label="Utils" id="btnUtils" click="btnUtils_clickHandler(event)" />
+			<s:CheckBox id="chkSearch" label="Search" change="chkSearch_changeHandler(event)" />
+			<s:Button label="Export" id="btnExport" click="onExport(event)" />
+			<s:TextInput id="txtExport" width="80" />
+		</s:HGroup>
+		
+		<lesson:LessonItemSetsBulk id="sets" />
+	</s:VGroup>
+	<s:Group x="10" y="25"  id="holderEdit"  visible="false" includeInLayout="false" >
+		<popup:PopupBgWhite />
+		<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<edit:LessonViewer id="viewer" />
+		</s:VGroup>
+	</s:Group>
+	
+	<s:Group x="10" y="25"  id="holderPrompt"  visible="false" includeInLayout="false">
+		<popup:PopupBgWhite />
+		<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<edit:LessonPrompts id="lessonPrompts" height="300" name="Prompts"  />
+		</s:VGroup>
+		
+	</s:Group>
+	
+	
+	<s:Group x="10" y="25"  id="holderUtils"  visible="false" includeInLayout="false">
+		<popup:PopupBgWhite />
+		<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<s:HGroup>
+				<s:Button label="Clear Unused Resources" />
+			</s:HGroup>
+			<edit:QuickInputLesson    />
+			<view:MobileHrLite />
+			<utils:LessonUtils />
+		</s:VGroup>
+	</s:Group>
+	
+</s:Group>

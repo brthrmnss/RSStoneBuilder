@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 width="100%"
+		 height="100%"
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 creationComplete="onInit()">
+	<fx:Script>
+		<![CDATA[
+			
+			protected function onInit():void
+			{
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+		
+		<fx:DesignLayer d:userLabel="BgBottom">
+			<s:Rect id="bottomRectangle" 
+				  width="100%"   alpha="0.9"
+					height="100%"  bottom="0"
+				   radiusX="15" radiusY="15"
+					>
+				<s:fill>
+					<s:LinearGradient rotation="0" >
+						<s:GradientEntry alpha="1" color="#0"  ratio="0"  />
+						<s:GradientEntry alpha="1" color="#191818"  ratio="0.05"/>
+<!--						<s:GradientEntry alpha="1.0" color="#BDBFBE" ratio=".3" />
+						<s:GradientEntry alpha="1.0" color="#BDBFBE" ratio=".7" />-->
+						<s:GradientEntry alpha="1.0" color="#BDBFBE" ratio=".3" />
+						<s:GradientEntry alpha="1.0" color="#BDBFBE" ratio=".5" />
+						<s:GradientEntry alpha="1" color="#191818"  ratio="0.95"  />
+						<s:GradientEntry alpha="1" color="#0"  ratio="1"  />
+					</s:LinearGradient>
+				</s:fill>
+			</s:Rect>
+			
+			
+			
+			<s:Rect id="topRectangle" 
+					width="100%"
+					height="100%"  alpha="0.9"
+					radiusX="15" radiusY="15"
+					>
+				<s:fill>
+					<s:LinearGradient rotation="0" >
+						<s:GradientEntry alpha="1" color="#0"  ratio="0"  />
+						<!--<s:GradientEntry alpha="1" color="#0"  ratio="0.05"/>-->
+						<!--						<s:GradientEntry alpha="1.0" color="#BDBFBE" ratio=".3" />
+						<s:GradientEntry alpha="1.0" color="#080808" ratio=".7" />-->
+						<s:GradientEntry alpha="1.0" color="#080808" ratio=".3" />
+						<s:GradientEntry alpha="1.0" color="#080808" ratio=".5" />
+						<!--<s:GradientEntry alpha="1" color="#0"  ratio="0.95"  />-->
+						<s:GradientEntry alpha="1" color="#0"  ratio="1"  />
+					</s:LinearGradient>
+				</s:fill>
+			</s:Rect>
+			
+		</fx:DesignLayer>
+	<s:Rect id="bottomRectangle2" 
+			 verticalCenter="0" horizontalCenter="0"
+			radiusX="15" radiusY="15" visible="true"
+			>
+		<s:fill>
+			<s:SolidColor color="0" />
+		</s:fill>
+	</s:Rect>
+</s:Group>

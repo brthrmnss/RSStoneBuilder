@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  height="100%" 
+					  xmlns:comps="org.syncon.comps.*" 
+					  backgroundColor="0xFFFFFF" 
+					  creationComplete="onInit()" 
+					  implements="org.syncon.popups.view.IPopup" xmlns:popup="org.syncon.evernote.basic.view.popup.*"					  
+					  >
+	
+	<fx:Metadata> 
+		[Event(name="cancel", type="flash.events.Event")] 		
+		[Event(name="save", type="flash.events.Event")] 
+	</fx:Metadata> 	
+	
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="new" />
+		<s:State name="edit" />	
+		<s:State name="properties" />				
+	</s:states>
+		
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.evernote.model.Notebook2;
+			import org.syncon.evernote.model.Tag2;
+			
+			import sss.Shelpers.Shelpers.Shelpers;
+			import sss.Shelpers.Shelpers.ShelpersUI;
+			import sss.Shelpers.Shelpers.other.TweenerHelpers;
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			
+			public var creationComplete : Boolean = false; 
+			public var nb :   Notebook2
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+			}
+			
+			public  function create(app:Object)  : IPopup
+			{
+				var popup : PopupNotebookForm = new PopupNotebookForm()
+				popup._popupCode =  PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			private var _popupCode :   PopupCode; 
+			public function get  popupCode () : PopupCode { return _popupCode  } 
+			public function set  popupCode ( _popupCode_ : PopupCode) : void {   _popupCode = _popupCode_  } 
+			
+			public function show()  : void
+			{
+				this.popupCode.open( false, false ) 
+
+				this.txtNotebookName.text = ''; 
+				this.txtNotebookName.setFocus();				
+			}
+			public function hide( ) : void
+			{
+				this.popupCode.close() 
+			}
+						
+			public function open(existingNb: Notebook2=null, goToProperties : Boolean = false ):void
+			{
+				this.show();
+				this.nb = existingNb; 
+				if ( this.nb == null ) 
+				{
+					this.currentState = 'new'
+				}
+				else
+				{
+					this.txtNotebookName.text = this.nb.name; 
+					if ( goToProperties ) 
+					{
+						this.currentState = 'properties'
+						this.adjustCheckBox()
+					}
+					else
+					{
+						this.currentState = 'edit'
+					}
+				}
+				this.txtNotebookName.selectAll()
+			}
+			
+			protected function btnSave_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( 'save') ) 
+			}
+
+			protected function btnCancel_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( 'cancel') ) 
+			}
+
+
+			protected function chkBox_changeHandler(event:Event):void
+			{
+				this.nb.defaultNotebook = this.chkBox.selected; 
+				// TODO Auto-generated method stub
+			}
+			
+			private function adjustCheckBox() : void
+			{
+				if ( this.chkBox != null && this.nb != null ) 
+					this.chkBox.selected = this.nb.defaultNotebook; 
+			}
+
+		]]>
+	</fx:Script>
+
+	
+	<s:Rect width="100%" height="100%" >
+		<s:stroke>
+			<s:SolidColorStroke color="0" />
+		</s:stroke>
+	</s:Rect>
+	
+	<s:Rect top="2" right="2" bottom="2" left="2" >
+		<s:fill>
+			<s:SolidColor color="0xEDF6F7" />
+		</s:fill>
+	</s:Rect>
+		
+ 
+ <s:VGroup paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10">
+	
+	 <popup:PopupHeader  label.edit="Edit Notebook"  label.properties="Notebook Properties"
+						 label="New Notebook" padding="0"  width="100%"/>
+	 
+	<s:HGroup>
+		<s:Label fontWeight="bold" text="Notebook name:" />
+	 
+			<s:TextInput  id="txtNotebookName" minWidth="{this.hgroup.width}" />
+
+	</s:HGroup> 
+	 
+	 <s:HGroup   includeIn="properties">
+		 <s:CheckBox id="chkBox"  label="Make this my default notebook"  
+					  creationComplete="adjustCheckBox()"
+					 change="chkBox_changeHandler(event)"/>	 
+	 </s:HGroup>		
+	 
+	 
+	 <s:HGroup width="100%"  horizontalAlign="right">
+		 
+	 
+	 <s:HGroup id="hgroup">
+		 <s:Button label="Cancel" id="btnCancel"  click="btnCancel_clickHandler(event)" />
+		 <s:Button label="Save" id="btnSave" click="btnSave_clickHandler(event)" />		 
+	 </s:HGroup>		
+	 
+	 </s:HGroup>
+ </s:VGroup>
+	
+	
+</s:SkinnableContainer>

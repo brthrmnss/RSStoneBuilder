@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:view="org.syncon.TalkingClock.view.mobile.view.*"
+		   xmlns:rs="org.syncon.RosettaStone.view.ellips.rs.*"
+		   creationComplete="onInit(event)" horizontalScrollPolicy="off" resize="onResize(event)"
+		   verticalScrollPolicy="off" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var CLICK_ITEM : String = 'CLICK_ITEM'  ; 
+			static public var PLAY_PROMPT : String = 'PLAY_PROMPT'  ; 
+			/* 
+			override public function set width(n:Number):void
+			{
+			super.width = n;
+			} */
+			private var _setWidth:Number;
+			private var dp:ArrayCollection;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				var arr : Array  = [this.rend1, this.rend2, this.rend3, this.rend4]
+				var rendWidth : Number = this.width - 30 
+				for ( var i : int = 0 ; i < arr.length; i++ )
+				{
+					var o : PlayerItemRenderer2  = arr[i] as PlayerItemRenderer2 ; 
+					NightStandConstants.PlatformGlobals.addPlatformClickEvent( o , this.onClickFx ) ; 
+				}
+				
+				
+			}			 
+			
+			public function set selectedIndex ( n : int) : void
+			{
+				var renderer : PlayerItemRenderer2 = this.getItem( n ) ; 
+				if (renderer != null ) 
+					renderer.selected = true; 
+				for ( var i : int = 0 ; i < getRends().length; i++ )
+				{
+					var o : PlayerItemRenderer2  = getRends()[i] as PlayerItemRenderer2 ; 
+					o.selected = false; 
+					if ( o ==  renderer  ) 
+						o.selected = true; 
+				}				
+			}
+			
+			
+			public function set selectedItem ( n :  Object) : void
+			{
+				for ( var i : int = 0 ; i < getRends().length; i++ )
+				{
+					var o : PlayerItemRenderer2  = getRends()[i] as PlayerItemRenderer2 ; 
+					o.selected = false; 
+					if ( o.data == n ) 
+						o.selected = true; 
+				}				
+			}			
+			
+			
+			
+			
+			protected function onResize(event:ResizeEvent):void
+			{
+				this.parent.width;
+				//this.parentDocument.width
+				var ww : Number = this.width; 
+				// TODO Auto-generated method stub
+				var newWidth : Number =  (this.width-5)*1/2
+				if ( PlayerItemRenderer2.width != newWidth ) 
+				{
+					PlayerItemRenderer2.width = newWidth
+					PlayerItemRenderer2.height = newWidth
+				}	
+				
+			}
+			protected function setWidth( ):void
+			{
+				var w : Number =  this.width*.8/2
+				var ww : Number = this.width; 
+				return
+			}
+			
+			public function setWidth2( n : Number ) : void
+			{
+				if ( n == 0 ) 
+					return; 
+				this._setWidth = n 
+				var arr : Array  =getRends()
+				var rendWidth : Number = (n - 30) /2 
+				/* if ( this.width > this.height )
+				{
+					rendWidth = (this.height - 30) /2 
+				} */
+				for ( var i : int = 0 ; i < arr.length; i++ )
+				{
+					var o : PlayerItemRenderer2  = arr[i] as PlayerItemRenderer2 ; 
+					o.width = rendWidth; 
+					o.height = rendWidth; 
+					o.setup(); 
+				}
+				
+				this.rend1.x = 10 ; 
+				this.rend2.x = 10  + 10  + rendWidth; 
+				this.rend3.x = 10 ; 
+				this.rend4.x = 10 + 10  + rendWidth; 			
+				this.rend1.y = 10 ; 
+				this.rend2.y = 10  
+				this.rend3.y = 10+ 10  + rendWidth; 
+				this.rend4.y = 10 + 10  + rendWidth; 		
+				
+				this.width = n; 
+				this.height =40+ rendWidth *2 
+			}
+			
+			
+			public function set dataProvider( a : ArrayCollection ) : void
+			{
+				this.dp = a; 
+				if ( a.length == 0 ) 
+					return; 
+				var arr : Array  = getRends()
+					var maxIndex : int = Math.min( arr.length, a.length )
+				for ( var i : int = 0 ; i < maxIndex ; i++ )
+				{
+					var o : PlayerItemRenderer2  = arr[i] as PlayerItemRenderer2 ; 
+					o.data = a.getItemAt( i ); 
+				}
+			}
+			public function get dataProvider()  : ArrayCollection
+			{
+				return this.dp; 
+			}
+			private function onClickFx(e:Event):void
+			{
+				var t : PlayerItemRenderer2 = e.currentTarget as PlayerItemRenderer2; 
+				this.dispatchEvent( new CustomEvent(CLICK_ITEM, t.data) ) ; 
+			}
+			
+			private function getItem(i:int):PlayerItemRenderer2
+			{
+				var arr : Array  = getRends()
+				return arr[i] as PlayerItemRenderer2;
+			}
+			
+			private function getRends() : Array
+			{
+				var arr : Array  = [this.rend1, this.rend2, this.rend3, this.rend4]
+				return arr 
+			}
+		]]>
+	</mx:Script>
+	<mx:Canvas id="bgRect" width="100%" height="100%" alpha="1" backgroundColor="#FAFAFA"/>
+
+	<mx:Canvas width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off"> 
+		<ellips:PlayerItemRenderer2 id="rend1"/>
+		<ellips:PlayerItemRenderer2 id="rend2"/>
+		<ellips:PlayerItemRenderer2 id="rend3"/>
+		<ellips:PlayerItemRenderer2 id="rend4"/>
+	</mx:Canvas>
+	
+	
+	<rs:PopupSelectionResult id="popup"/>
+</mx:Canvas>

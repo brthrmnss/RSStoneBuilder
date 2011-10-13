@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					 xmlns:s="library://ns.adobe.com/flex/spark"
+					 xmlns:popup="org.syncon.evernote.basic.view.popup.*"
+					 xmlns:popup1="org.syncon.NightStand.view.popup.*"
+					 xmlns:view="org.syncon2.utils.mobile.view.*"
+					 creationComplete="onInit()" backgroundAlpha="0.0"
+					 implements="org.syncon.popups.view.IPopup" xmlns:popup2="org.syncon.RosettaStone.view.popup.*">
+ 
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.vo.AlarmVO;
+			import org.syncon.RosettaStone.vo.SampleVO;
+			
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			
+			
+			static public const PLAY : String = 'playS'; 	
+			static public const DISMISS : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 		
+			
+			public var creationComplete : Boolean = false; 
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+				
+				var arr : Array = [
+					['Play', this.onPlay], 
+					['Dimiss', this.onDismiss], 
+					/* 		['Help', this.onHelp],
+					['Info', this.onInfo] */
+				]
+				this.bottomMenu.load('', arr )
+				this.bottomMenu.holder.gap = 80
+			}
+			
+			public function create(app:Object) : IPopup
+			{
+				var popup : PopupTextArea = new PopupTextArea()
+				popup.popupCode = PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			private var _popupCode : PopupCode; 
+			public function get popupCode () : PopupCode { return _popupCode } 
+			public function set popupCode ( _popupCode_ : PopupCode) : void { _popupCode = _popupCode_ } 
+			
+			public function show() : void
+			{
+				this.popupCode.open( false, false ) 
+			}
+			public function hide( ) : void
+			{
+				this.popupCode.close() 
+			}
+			
+			
+			public function resize(wait:Boolean=true):void
+			{
+				if ( wait ) 
+				{
+					this.callLater( this.resize, [false] )
+					return
+				}
+				this.parentApplication.width; 
+				this.parentApplication.height; 
+				
+				//this.txtTagName.width = this.width  - 30-30
+				//this.height = this.parentApplication.height-40-40
+				//this.list.height = this.height - this.header.height - 30 + 30 - 60 + +20 - this.bottomMenu.height; 
+				this.width = this.parentApplication.width-40//-40
+				this.popupCode.center(); 
+				
+			}
+			
+			
+			protected function onPlay(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( PLAY ) ) 
+			}
+			
+			protected function onDismiss(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( DISMISS ) ) 
+			}
+			
+			public var args : Array = [] ; 
+			public function open3( item : SampleVO, fxDone : Function =null) : void
+			{
+				this.resize(); 
+				this.args = [item ]
+				this.dispatchEvent( new Event (SETUP )) 
+				this.show()
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<!--	
+	<s:Rect width="100%" height="100%" >
+	<s:stroke>
+	<s:SolidColorStroke color="0" />
+	</s:stroke>
+	</s:Rect>-->
+	
+	
+	<popup2:PopupBg/>
+	
+	<s:VGroup paddingBottom="15" paddingLeft="15" paddingRight="15" paddingTop="15"  width="100%">
+		<popup2:PopupHeader id="header" label="Alarm" width="100%" />
+		<s:Label  fontSize="60" id="txtTime" width="100%" textAlign="center" color="0xFFFFFF" />
+		<!--	<s:HGroup id="hgroup" width="100%" horizontalAlign="center">
+		<s:Button label="OK" id="btnSave" click="onSave(event)" />		
+		<s:Button label="Cancel" id="btnCancel" click="onCancel(event)" />
+		
+		</s:HGroup>			
+		-->
+		<!--<view:BottomBar id="bottomMenu"/>-->
+		<popup2:PopupBottomBarBg id="bottomMenu"   />
+	</s:VGroup>
+	
+	
+</s:SkinnableContainer>

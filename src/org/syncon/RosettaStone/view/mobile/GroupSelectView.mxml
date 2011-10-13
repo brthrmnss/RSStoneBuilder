@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			activate="view1_activateHandler(event)" creationComplete="onInit(event)"
+			destructionPolicy="auto" title="Select Group"
+			viewActivate="view1_viewActivateHandler(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.ThemeVO;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.ViewNavigatorEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const SETTINGS : String = 'settings'
+			static public const GO_BACK : String = 'goBack'; 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const RESUME : String = 'RESUME'; 
+			
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				this.dispatchEvent( new CustomEvent('mediate', this) ) ; 
+			}
+			protected function listChangeHandler(event:IndexChangeEvent):void
+			{
+				var index:int = event.newIndex;
+				if ( index == -1 ) 
+					return; 
+				var item : Object = this.list.dataProvider.getItemAt( index ) as Object; 
+				//trace('change sent'); 
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+				
+			}
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			protected function view1_activateHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function view1_viewActivateHandler(event:ViewNavigatorEvent):void
+			{
+				
+			}
+			
+			protected function onSettings():void
+			{
+				this.dispatchEvent( new Event( SETTINGS  ) ) ; 
+			}
+			
+			protected function onResume(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( RESUME  ) ) ; 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button label="Back" click="this.onBack()"/>
+	</views:navigationContent> 
+	<!--<s:Image source="assets/1366x768.jpg" />-->
+	<!-- <views:actionContent>
+	<s:Button label="S"  click="onSettings()" />
+	</views:actionContent>-->
+	
+	<s:List id="list" top="0" bottom="0"   change="listChangeHandler(event)"
+			borderVisible="false"  horizontalCenter="0" width="100%"
+			itemRenderer="org.syncon.RosettaStone.view.mobile.itemrenderers.LessonGroupItemRenderer"
+			contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF">
+		<s:layout>
+			<s:VerticalLayout gap="0" paddingLeft="0"/> 
+		</s:layout> 
+	</s:List>
+	
+	
+</views:View>

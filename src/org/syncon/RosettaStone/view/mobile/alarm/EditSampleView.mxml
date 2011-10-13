@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*" title="Edit Alarm" actionBarVisible="false"
+			xmlns:view="org.syncon2.utils.mobile.view.*" 
+			creationComplete="onInit(event)" destructionPolicy="auto" xmlns:parts="org.syncon.RosettaStone.view.parts.*"  >
+	<fx:Script>
+		<![CDATA[
+			import spark.events.IndexChangeEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const SEND : String = 'SEND' 
+			static public const EDIT_NAME : String = 'EDIT_NAME' ;
+			static public const EDIT_SOUND : String = 'EDIT_SOUND' ;
+			static public const EDIT_REPEAT : String = 'EDIT_REPEAT' ;			
+			static public const CHANGED_ENABLED : String = 'CHANGED_ENABLED' ;			
+			static public const EDIT_TIME : String = 'EDIT_TIME' ;						
+			static public const DONE : String = 'DONE' ;			
+			static public const DELETE : String = 'DELETE' ;		
+			
+			static public const PLAY_SOUND : String = 'EDIT_SOUND' ;
+			
+			private var ignoreNextClick:Boolean;
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			protected function onInit(event:FlexEvent):void
+			{
+				var arr : Array = [
+					['Done', this.onDone], 
+					['Delete', this.onDelete], 
+					/* 		['Help', this.onHelp],
+					['Info', this.onInfo] */
+				]
+				this.bottomMenu.load('', arr )
+			}
+			
+			public function onDone() : void
+			{
+				this.dispatchEvent( new Event( DONE  ) ) ; 
+			}
+			
+			public function onDelete() : void
+			{
+				this.dispatchEvent( new Event( DELETE ) ) ; 
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onSend() : void
+			{
+				this.dispatchEvent( new Event( SEND ) ) 
+			}
+			
+			protected function onEditName(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_NAME ) ) ;
+			}
+ 
+			
+			protected function onEditTime(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_TIME ) ) ;
+			}
+			
+			protected function onEditRepeat(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_REPEAT ) ) ;
+				
+			}
+			
+			protected function onEditSound(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT_SOUND ) ) ;
+				
+			}
+			
+			/* 	protected function onEditName(event:MouseEvent):void
+			{
+			// TODO Auto-generated method stub
+			
+			}			 */
+			
+			protected function onEditDescription(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function onEditImage(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+			protected function listChangeHandler(event:IndexChangeEvent, wait : Boolean = true ):void
+			{
+/* 				if ( wait ) 
+				{
+					//this.callLater( this.listChangeHandler, [event, false ] ) ;
+					setTimeout( this.listChangeHandler, 500, event, false ) ; 
+					return; 
+				}
+				if ( this.ignoreNextClick ) 
+				{
+					this.ignoreNextClick = false; 
+					return
+				}
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :     Object = this.list.dataProvider.getItemAt( index )  as Object; 
+				//trace('change sent'); 
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ;  */
+			}			
+			
+			protected function onPlay(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( PLAY_SOUND ) ) ;
+			}
+			
+		]]>
+	</fx:Script>
+	<!--
+	<s:Rect left="0" right="0" top="0" bottom="0">
+	<s:fill>
+	<s:SolidColor color="0"/>
+	</s:fill>
+	</s:Rect>
+	-->
+	
+	<s:Scroller id="scroller" top="0" bottom="80" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1">
+		<s:VGroup width="100%" height="100%" gap="20" horizontalAlign="center" paddingBottom="20"
+				  paddingLeft="10" paddingRight="10" paddingTop="20">
+			<s:Spacer  height="100" />
+  
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Name"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="" id="txtName"  />
+				</s:VGroup>
+				<s:Button label="Edit"  id="btnTime" click="onEditName(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:Group width="100%"  id="holderSpecificTime">
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Time"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="not set"  id="txtTime" />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditTime(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Duration"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="" id="txtDuration"  />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditDescription(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+			
+			
+			<s:Group width="100%" >
+				<s:VGroup>
+					<mobile:TextAreaLabel2 text="Description"  styleName="sectionTitle" />
+					<mobile:TextAreaLabel2 text="" id="txtDesc"  />
+				</s:VGroup>
+				<s:Button label="Edit"  click="onEditDescription(event)"  right="0" verticalCenter="0"/>
+			</s:Group>
+
+
+			
+			
+			<s:HGroup>
+				<s:Image  source="assets/buttons/Recorder-green-64.png" />
+				<s:Image source="assets/buttons/Play-Disabled-icon.png"  click="onPlay(event)"/>
+			</s:HGroup>
+			
+			<view:MobileHrLite />
+			
+			<s:Group width="100%" >
+				<mobile:TextAreaLabel2 text="Sounds"  styleName="sectionTitle" />
+				<parts:BtnHelp  right="10" verticalCenter="0" />
+			</s:Group>
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+	
+	<parts:BackBtn   x="17" y="27"  />
+	<parts:ViewTitle label="record" x="180" y="25" height="90"  />
+	
+	
+	
+	<view:BottomBar  id="bottomMenu" />
+</views:View>

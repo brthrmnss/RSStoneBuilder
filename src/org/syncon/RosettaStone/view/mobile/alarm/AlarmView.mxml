@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"  title="Alarms"
+			xmlns:view="org.syncon2.utils.mobile.view.*" actionBarVisible="true" 
+			creationComplete="onInit(event)" destructionPolicy="auto"  >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.AlarmVO;
+			
+			import spark.events.IndexChangeEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const ADD_ALARM : String = 'SEND' 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			private var ignoreNextClick:Boolean;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.addEventListener( 'changeAlarm', this.onChange, false, 0, true ) ; 
+				//this.list.addEventListener(Event.CHANGE, this.onChange, false, 0, true ) ; 
+				//this.list.dataGroup.addEventListener(Event.CHANGE, this.onChange, false, 0, true ) ;
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onAdd() : void
+			{
+				this.dispatchEvent( new Event( ADD_ALARM ) ) 
+			}
+			
+			protected function listChangeHandler(event:IndexChangeEvent, wait : Boolean = true ):void
+			{
+				if ( this.ignoreNextClick ) 
+				{
+					this.ignoreNextClick = false; 
+					return
+				}
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :     AlarmVO = this.list.dataProvider.getItemAt( index )  as AlarmVO; 
+				trace('change sent'); 
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}
+			
+			protected function onChange(event:Event):void
+			{
+				trace('changed'); 
+				this.ignoreNextClick = true; 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button id="btnGoBack" label="Back" click="this.onBack()"/>
+	</views:navigationContent>
+	
+	<s:Scroller id="scroller" top="0" bottom="80" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1">
+		<s:VGroup width="100%" height="100%" gap="20" horizontalAlign="center" paddingBottom="20"
+				  paddingLeft="10" paddingRight="10" paddingTop="20">
+			<mobile:TextAreaLabel text="Please Note: Alarms will only work when app is running. We are working on an update."  styleName="sectionTitle" />
+			<view:MobileHr />
+			
+			<s:Button label="Add Alarm" click="onAdd()" />
+			<s:List id="list" width="100%" height="100%" change="listChangeHandler(event)"
+					contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"
+					itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.AlarmRenderer">
+				<s:layout>
+					<s:VerticalLayout gap="0" paddingLeft="0"/>
+				</s:layout> 
+			</s:List>
+		</s:VGroup>
+	</s:Scroller>
+	
+	
+	
+	
+</views:View>

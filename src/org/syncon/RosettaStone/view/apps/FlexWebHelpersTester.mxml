@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:view="org.syncon.RosettaStone.view.*"
+		 xmlns:NightStand="org.syncon.NightStand.*"
+		 xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"
+		 xmlns:subview="org.syncon.RosettaStone.view.subview.*"
+		 xmlns:lite="views.lite.*"
+		 xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+		 xmlns:RosettaStone="org.syncon.RosettaStone.*"
+		 width="100%" height="100%" creationComplete="onInit(event)" xmlns:edit="org.syncon.RosettaStone.view.edit.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.utils.PlaySound;
+			import org.syncon2.utils.services.utils.SendRequest;
+			import org.syncon2.utils.services.utils.RequestURL;
+			protected function onInit(event:FlexEvent):void
+			{
+				 
+			}
+			//public
+			protected function onGetFile(event:MouseEvent):void
+			{
+				var pss :   SendRequest = new SendRequest(); 
+				var params : Object = {}; 
+				params.file = this.txtFileName.text
+				params.folder = this.txtFolder.text
+				pss.request(serverBase+'gf', params, gotFile , getFileFault ); 
+			}
+			
+			
+			private function gotFile(data:String):void
+			{
+				return;
+				//this.fxResult( data ) ; 
+			}
+			
+			private function getFileFault(e:Object):void
+			{
+				return; 
+				//this.model.alert('Could not load the scripture, please try again later'); 
+			}
+			
+			public var ps : PlaySound = new PlaySound(); 
+			protected function onPlayFile(event:MouseEvent):void
+			{
+				var req:URLRequest = new URLRequest(serverBase+"play_sound");
+				//req.method = URLRequestMethod.POST;
+				
+				var postData:URLVariables = new URLVariables();
+				postData.file_name //=event.url; //encoder.flush();
+				postData.path //= this.
+				postData.url = this.txtSoundUrl.text; 
+				//postData.readAs
+				req.data = postData;
+				
+				ps.playSound2( null, 1, req ) ; 
+			}
+			
+			protected function onSaveFile(event:MouseEvent):void
+			{
+					var pss :   SendRequest = new SendRequest(); 
+					var params : Object = {}; 
+					params.file = this.txtFileName2.text
+					params.folder = this.txtFolder2.text
+					params.contents = this.txtContent.text; 
+					pss.request( serverBase+'sf', params, onSaveFileResult , onSaveFileFault ); 
+				}
+				
+				private function onSaveFileResult(data:String):void
+				{
+					return;
+					//this.fxResult( data ) ; 
+				}
+				
+				private function onSaveFileFault(e:Object):void
+				{
+					return; 
+					//this.model.alert('Could not load the scripture, please try again later'); 
+				}
+			
+			public var  serverBase : String = 'http://localhost:7126/'
+		]]>
+	</fx:Script>
+ 
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"  />
+	</s:layout>	
+	 
+	
+	
+	<s:Label text="Play File" />
+	<s:Form>
+		<s:FormItem label="Url" >
+			<s:TextInput id="txtSoundUrl"  text="http://sp.dictionary.com/dictstatic/dictionary/audio/luna/F02/F0270000.mp3" />
+		</s:FormItem>
+		<s:Button label="Play" click="onPlayFile(event)" />
+	</s:Form>
+	
+	 
+	<s:Label text="Get File" />
+	<s:Form>
+		<s:FormItem label="Folder" >
+			<s:TextInput id="txtFolder" text="G:/My Documents" />
+		</s:FormItem>
+		<s:FormItem label="Name" >
+			<s:TextInput id="txtFileName"  text="Gears2b.rb"/>
+		</s:FormItem>	
+		<s:Button label="Get File" click="onGetFile(event)" />
+	</s:Form>
+	
+	
+	<s:Label text="Save File" />
+	<s:Form>
+		<s:FormItem label="Folder" >
+			<s:TextInput id="txtFolder2" text="G:/My Documents" />
+		</s:FormItem>
+		<s:FormItem label="Name" >
+			<s:TextInput id="txtFileName2"  text="Gears2b.rb"/>
+		</s:FormItem>	
+		<s:FormItem label="Content" >
+			<s:TextInput id="txtContent"  text="Gears2.rb"/>
+		</s:FormItem>	
+		<s:Button label="Save File" click="onSaveFile(event)" />
+	</s:Form>
+	
+<!--
+	
+	<s:Label text="Get File From HD" />
+	
+	-->
+</s:Group>

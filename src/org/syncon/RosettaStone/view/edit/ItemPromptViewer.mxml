@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 >
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import mx.collections.ArrayCollection;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.ItemRendererHelpers;
+			import org.syncon.RosettaStone.vo.LessonItemVO;
+			import org.syncon.RosettaStone.vo.PromptVO;
+			import org.syncon.RosettaStone.vo.SearchVO;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			static public const MOVE_UP : String = 'MOVE_UP.f'; 
+			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const SELECT_PROMPT : String = 'SELECT_PROMPT';
+			static public const PLAY : String = 'PLAY';
+			static public const PRONOUNCE : String = 'PRONOUNCE';
+			static public const SAVE : String = 'SAVE';
+			
+			
+			
+			public var s : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
+			[Bindable] public var item : LessonItemVO = new LessonItemVO()
+			public var prompt : PromptVO = null; //new PromptVO(); 
+			public function set data(value:Object):void { 
+				
+				this.s.listenForObj(value,LessonItemVO.UPDATED, this.updateItemRenderer )
+				item = value as LessonItemVO
+				this.s.disableIfNull( value, new LessonItemVO, 'item' )  
+				this.updateItemRenderer()
+			} 
+			
+			
+			public function updateItemRenderer(e:Event=null) : void
+			{
+				this.form.enabled = true 
+				if ( prompt == null ) 
+				{
+					this.txtPrompt.text = ''
+					this.txtPic.text= ''
+					this.txtSound.text =''
+					this.txtPronunciation.text ='' 
+					this.txtDesc.text =''
+					if ( this.src.source == this.item.sourceImg ) 
+						this.src.source = null 
+					this.src.source = ''
+					
+					this.form.enabled = false; 
+					return; 
+				}
+				
+				this.txtPrompt.text =this.item.getPromptText(this.prompt.name);  
+				this.txtPic.text =this.item.getPromptImage(this.prompt.name);  
+				 this.txtSound.text =this.item.getPromptSound(this.prompt.name);  
+				this.txtDesc.text= this.prompt.def.desc;
+				this.txtPromptName.text = this.prompt.def.name; 
+				
+			/* 	this.txtPronunciation.text =this.item.pronunciation 
+				this.txtDesc.text =this.item.desc */
+				if ( this.src.source == this.item.getPromptImage(this.prompt.name)    ) 
+					this.src.source = null 
+				this.src.source = this.item.getPromptImage(this.prompt.name);  
+				trace('folder', this.item.sourceImg, 'me', this.item  ); 
+			}
+			
+			
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.item ) ) ; 
+			}			
+			
+			
+			
+			protected function onSave(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( SAVE, this.item ) ) ; 
+			}
+			
+			protected function onChange(event:TextOperationEvent):void
+			{
+				this.prompt.prompt = this.txtPrompt.text; 
+				this.prompt.image = this.txtPic.text; 
+				this.prompt.sound = this.txtSound.text; 
+			}
+			
+			public function refresh() : void
+			{
+				this.updateItemRenderer()
+			}
+			
+			protected function onPlay(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( PLAY, this.item ) ) ; 
+			}
+			
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				if ( event.newIndex == -1 ) 
+					return; 
+				this.dispatchEvent( new CustomEvent( SELECT_PROMPT,  
+					this.list.dataProvider.getItemAt(event.newIndex)  ) )
+			}
+			
+			
+		]]> 
+	</fx:Script> 
+	
+	<fx:Declarations>
+		<s:Sine id="sineIn" easeInFraction="0.3" />
+	</fx:Declarations>	
+	<!--	<s:layout>
+	<s:HorizontalLayout gap="3"/>
+	</s:layout>-->
+	<s:states> 
+		<s:State name="normal"/> 
+		<s:State name="hovered"/> 
+		<s:State name="disabled"/> 
+		<s:State name="selected"/> 
+	</s:states> 
+	<!-- 
+	<s:Rect id="bgRect" width="100%" height="100%" alpha.normal="0" >
+	<s:fill>
+	<s:SolidColor color="0x598E52" color.hovered="0x598E52" color.selected="0x36722E"/>
+	</s:fill>
+	</s:Rect>
+	-->
+	
+	
+	
+	
+	
+	
+	
+	<s:VGroup  id="dd">
+		<s:Label text="Prompts" />
+		
+		<s:List id="list" width="100%" height="250" borderVisible="false"
+				change="list_changeHandler(event)" 
+				itemRenderer="org.syncon.RosettaStone.view.edit.LessonPromptsItemRenderer">
+			<s:layout>
+				<s:VerticalLayout gap="0" paddingBottom="0" paddingLeft="0" paddingRight="0"/>
+			</s:layout>
+		</s:List>
+		
+		<s:VGroup  id="form">
+			
+			<s:Label text="Name:" />
+			<s:Label id="txtPromptName" />
+			<s:Label text="Description:" />
+			<s:Label id="txtDesc" />
+			
+			<s:Label text="Prompt:" />
+			<s:TextInput id="txtPrompt" change="onChange(event)" />
+			<s:Label text="Pic:" />
+			<s:HGroup>
+				<s:Image id="src" height="100" width="100" />
+				<s:TextInput id="txtPic" change="onChange(event)" />
+			</s:HGroup>
+			<s:Label text="Sound:" />
+			<s:HGroup>
+				<s:TextInput id="txtSound" change="onChange(event)" />
+				<s:Button label="Play" click="onPlay(event)" />
+			</s:HGroup>
+			<s:Label text="Pronunciation:" />
+			<s:TextInput id="txtPronunciation" change="onChange(event)" />
+			
+			
+			
+			<!--		<s:Form>
+			<s:FormItem label="Name" >
+			<s:TextInput id="txtName" change="onChange(event)" />
+			</s:FormItem>
+			<s:FormItem label="Pic" >
+			<s:HGroup>
+			<s:TextInput id="txtPic" change="onChange(event)" />
+			<s:Image id="src" height="100" width="100" />
+			</s:HGroup>
+			</s:FormItem>
+			<s:FormItem label="Sound" >
+			<s:TextInput id="txtSound" change="onChange(event)" />
+			</s:FormItem>
+			<s:FormItem label="Description" >
+			<s:TextInput id="txtDesc" change="onChange(event)" />
+			</s:FormItem>			
+			</s:Form>-->
+			<s:Button label="Save" click="onSave(event)" />
+		</s:VGroup>
+	</s:VGroup>
+</s:Group>

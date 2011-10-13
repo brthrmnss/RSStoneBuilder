@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:edit="org.syncon.RosettaStone.view.edit.*"
+		 creationComplete="onInit(event)" resize="onResize(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.layouts.supportClasses.LayoutBase;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var CLICK_ITEM : String = 'CLICK_ITEM'  ; 
+			static public var PLAY_PROMPT : String = 'PLAY_PROMPT'  ; 
+			/* 
+			override public function set width(n:Number):void
+			{
+			super.width = n;
+			} */
+			private var lastIndex:int= -2;
+			private var oldIndexInvalid:int=-2;
+			private var timerDelayReclick:Timer;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				this.timerDelayReclick = new  Timer(100, 1)
+					this.timerDelayReclick.addEventListener(TimerEvent.TIMER, this.onTimeDone ); 
+			}			 
+			
+			protected function onTimeDone(e:Event):void
+			{
+				this.oldIndexInvalid = -2; 
+			}
+			
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				var selectedIndex : int = event.newIndex; 
+				
+				/* if ( event.newIndex == -1 ) 
+				{
+					if ( this.lastIndex == -2 )  { return }
+					else
+					{
+						selectedIndex = lastIndex
+					}
+				}
+				this.list1.selectedIndex;
+				this.list1.selectedItem
+				if ( oldIndexInvalid == selectedIndex )
+					return; 
+				oldIndexInvalid =  selectedIndex
+					this.timerDelayReclick.start()
+				trace('Player', 'list_changeHandler', 'selected index', selectedIndex ) */
+				if ( event.newIndex == -1 )
+				{
+					return; 
+				}
+				trace('Player', 'list_changeHandler', 'selected index', selectedIndex )
+				 var item : Object =this.list1.dataProvider.getItemAt(selectedIndex) 
+				this.lastIndex = selectedIndex
+				this.dispatchEvent( new CustomEvent( CLICK_ITEM,  item
+					 ) )
+			}
+			
+			protected function onPlay(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( PLAY_PROMPT) ) ; 
+			}
+			
+			protected function onResize(event:ResizeEvent):void
+			{
+				this.parent.width;
+				this.parentDocument.width
+				var ww : Number = this.width; 
+				// TODO Auto-generated method stub
+				var newWidth : Number =  (this.width-5)*1/2
+				if ( PlayerItemRenderer.width != newWidth ) 
+				{
+					PlayerItemRenderer.width = newWidth
+					PlayerItemRenderer.height = newWidth
+					
+					this.layoutT.rowHeight = newWidth; 
+					this.layoutT.columnWidth = newWidth; 
+					
+					var l :  LayoutBase = this.list1.layout
+					
+					this.list1.layout = null; 
+					this.list1.layout = l 
+					
+				}	
+				
+			}
+			protected function setWidth( ):void
+			{
+				var w : Number =  this.width*.8/2
+				var ww : Number = this.width; 
+				return
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	<s:Rect id="bgRect" width="100%" height="100%" alpha="1">
+		<s:fill>
+			<s:SolidColor color="#FAFAFA"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:VGroup width="100%" height="100%" horizontalCenter="0">
+		<!--	<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"  >
+		<s:Label text="Tester" />
+		<s:Label id="txtLessonName" />
+		<edit:PlayerItemViewer id="prompt" />
+		</s:VGroup>-->
+		<s:Group>
+			<edit:PlayerItemViewer id="prompt" x="10" y="10"/>
+		</s:Group>
+		
+		<s:List id="list1" width="100%" height="100%" borderVisible="false"
+				change="list_changeHandler(event)" contentBackgroundAlpha="0"
+				itemRenderer="org.syncon.RosettaStone.view.edit.PlayerItemRenderer">
+			<s:layout>
+				<s:TileLayout id="layoutT" horizontalAlign="center" horizontalGap="0"
+							  paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"
+							  verticalGap="0"/>
+				<!--
+				columnWidth="{this.width*.9/2}" rowHeight="{this.width*.9/2}"
+				-->
+			</s:layout>
+		</s:List>
+	</s:VGroup>
+	
+</s:Group>

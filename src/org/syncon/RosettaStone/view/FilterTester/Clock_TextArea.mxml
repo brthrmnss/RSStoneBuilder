@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"   
+		 creationComplete="onInit(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			static public const NEW_FILTER_STIRNG : String = 'NEW_FILTER_STIRNG' ; 		
+			static public const NEW_FILTER_JSON : String = 'NEW_FILTER_JSON' ; 	
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+				this.timer.start() ;
+				//this.df.dateTimePattern="LL:NN:SS"
+				// this.format.timeStyle =    "LL:NN:SS"
+				if ( _fontFamilyS  != null  ) 
+				{
+					this.txtQuery.setStyle('fontFamily', _fontFamilyS ) ; 
+				}
+				if ( _fontFamilyG != null  ) 
+				{
+					this.txtQuery2.visible = true; 
+					this.txtQuery2.setStyle('fontFamily', _fontFamilyG ) ; 
+				}			
+				else
+				{
+					if ( this._fontFamilyG8 != null ) 
+					{
+						this.txtQuery2.visible = true; 
+						this.txtQuery2.text = '88:88:88'
+						this.txtQuery2.setStyle('fontFamily', _fontFamilyG8 ) ; 
+					}
+					else
+					{
+						this.txtQuery2.visible = false; 
+					}
+					
+				}
+			}
+			
+			
+			protected function onTime(event:TimerEvent):void
+			{
+				//if ( this.txtQuery.text == '' || this.txtQuery.text == null ) 
+				this.txtQuery.text = this.formattedTime()
+				/* 					if ( this.txtQuery2.visible )
+				{
+				this.txtQuery2.text = this.txtQuery.text; 
+				} */
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			public function set fontFamilyS(event:String):void
+			{
+				this._fontFamilyS = event; 
+				//this._fontFamilyG = 
+			}
+			
+			public function set  fontFamilyG(event:String):void
+			{
+				this._fontFamilyG = event; 
+			}		
+			public function set  fontFamilyG8(event:String):void
+			{
+				this._fontFamilyG8 = event; 
+			}		
+			
+			private var _filterString : String = null; 
+			private var _fontFamilyG8:String;
+			public function set filterString( s : String ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_STIRNG, s ) ) ; 
+				this._filterString = s; 
+			}
+			public var _filterJSON : Array = null; 
+			public function set filterJSON( s :  Array ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_JSON, s ) ) ; 
+				this._filterJSON = s; 
+			}			
+			public function get initFilterString() : String
+			{
+				return this._filterString; 
+			}
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format"  dateStyle="none"   dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" 
+							 dateTimePattern="hh:mm a"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" 
+							 dateTimePattern="hh:mm:ss a"/>
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+	</fx:Declarations>
+	
+	<s:Group id="bgH"  width="100%"   height="100">
+		
+		
+		
+		<s:TextArea id="txtQuery2" width="100%"   height="100" borderVisible="false"
+					fontFamily="Crysta"   fontSize="60"  alpha="0.1"
+					verticalCenter="0" horizontalCenter="0"
+					contentBackgroundAlpha="0.0" editable="false" selectable="false"
+					text=""/>
+		<s:TextArea id="txtQuery" width="100%"   height="100" borderVisible="false"
+					fontFamily="Crysta"   fontSize="60"  visible="true"
+					verticalCenter="0" horizontalCenter="0"
+					contentBackgroundAlpha="0.0" editable="false" selectable="false"
+					text=""/>
+	</s:Group>
+	
+	<s:Group id="bgHd"   right="0" left="20"  y="200" height="100">
+		
+	<!--	<s:Rect  top="0" right="0" left="0" bottom="0">
+			<s:fill>
+				<s:SolidColor color="0" />
+			</s:fill>
+			<s:stroke>
+				<s:SolidColorStroke color="0xFFFFF" />
+			</s:stroke>
+		</s:Rect>-->
+		
+		<s:Label id="txtQuery2b"   
+					fontFamily="Digital2"   fontSize="100"  alpha="0.1"
+					text="{this.txtQuery2.text}"/>
+		<s:Label id="txtQueryb2"   
+					fontFamily="Digital2"   fontSize="100"  visible="true"
+					text="{this.txtQuery.text}" />
+		<!--<s:Label text="SDF"  color="0xFF0000"   fontSize="60"  width="200"/>-->
+	</s:Group>
+	
+	<s:Button   id="btnEdit" label="e" width="20" top="10" left="10" click="onEdit(event)" />
+</s:Group>

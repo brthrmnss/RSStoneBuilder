@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					  xmlns:s="library://ns.adobe.com/flex/spark"
+					  xmlns:popup1="org.syncon.NightStand.view.popup.*"
+					  xmlns:popup="org.syncon.TalkingClock.view.popup.*"
+					  width="100%" height="100%" backgroundAlpha="0.0" creationComplete="onInit()"
+					  implements="org.syncon.popups.view.IPopup" xmlns:popup2="org.syncon.RosettaStone.view.popup.*">
+	
+	<fx:Metadata> 
+		[Event(name="cancel", type="flash.events.Event")] 		
+		[Event(name="setup", type="flash.events.Event")] 
+	</fx:Metadata> 	
+	
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const OK : String = 'save'; 	
+			static public const CANCEL : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 				
+			public var creationComplete : Boolean = false; 
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+				
+				var arr : Array = [
+					['OK', this.onSave], 
+					['Cancel', this.onCancel], 
+					/* 		['Help', this.onHelp],
+					['Info', this.onInfo] */
+				]
+				//this.bottomMenu.load('', arr )
+				
+			}
+			
+			public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupTextArea = new PopupTextArea()
+				popup.popupCode =  PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			private var _popupCode :   PopupCode; 
+			public function get  popupCode () : PopupCode { return _popupCode  } 
+			public function set  popupCode ( _popupCode_ : PopupCode) : void {   _popupCode = _popupCode_  } 
+			
+			public function show()  : void
+			{
+				this.popupCode.open( false, true ) 
+			}
+			public function hide( ) : void
+			{
+				this.popupCode.close() 
+			}
+			
+			
+			protected function onSave(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( OK) ) 
+			}
+			
+			protected function onCancel(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( CANCEL ) ) 
+			}
+			
+			public function updateLocation( currentLister_doNotReset : Object = null )  : void
+			{
+				/*
+				//dont' move to me if i'm not the current one? 
+				if ( currentLister_doNotReset != null && this.onenote_list != currentLister_doNotReset ) 
+				return 
+				this.popupCode.moveToComponent(  this.partial.leftEdgeUI, 'tl',  this.tween, false, true, -this.width-5 ) 
+				*/
+			}
+			
+			public var args : Array = [] ; 
+			public function selectFromList( title : String , options : Array,   fxDone : Function  ) : void
+			{
+				/* 	this.stage.height
+				this.stage.width; 
+				this.height = this.stage.height *.8
+				*/
+				this.resize(true, options.length); 
+				this.header.label  = title; 
+				this.args = [options, fxDone ]
+				this.dispatchEvent( new Event (SETUP   )) 
+				this.show()
+			}
+			
+			protected function listChangeHandler(event:IndexChangeEvent):void
+			{
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :      Object = this.list.dataProvider.getItemAt( index )   
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}
+			
+			public function resize(wait:Boolean=true, size : int = 0 ):void
+			{
+				if ( wait ) 
+				{
+					this.callLater( this.resize, [false, size] )
+					return
+				}
+				this.parentApplication.width; 
+				this.parentApplication.height; 
+				this.height = this.parentApplication.height-40-40
+				this.list.height = this.height - this.header.height - 30 + 30 - 60// - this.bottomMenu.height; 
+				var listHeight : Number = size * (30+40)// SelectOptionListRenderer.Height ;//60
+				if ( listHeight < this.list.height ) 
+				{
+					this.list.height = listHeight;
+					this.height = listHeight + this.header.height+60-30 - 10
+				}
+				this.width = this.parentApplication.width-40//-40
+				this.popupCode.center(); 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<!--	
+	<s:Rect width="100%" height="100%" >
+	<s:stroke>
+	<s:SolidColorStroke color="0" />
+	</s:stroke>
+	</s:Rect>-->
+	
+	
+	<popup2:PopupBg/>
+	<s:Rect left="0" right="0" top="65" bottom="0" radiusX="10" radiusY="10" topLeftRadiusX="0"
+			topLeftRadiusY="0" topRightRadiusX="0" topRightRadiusY="0">
+		<s:fill>
+			<s:SolidColor color="#ffffff"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:VGroup width="100%" paddingBottom="5" paddingLeft="0" paddingRight="0" paddingTop="0">
+		<!--
+		<popup:PopupHeader  label.edit="Edit Tag" label="New Tag" padding="0"  width="100%"/>
+		-->
+		<popup2:PopupHeader id="header" width="100%" label="Repeat" showLine="false"
+						    paddingBottom="-5"
+						   />
+		
+		<s:List id="list" width="100%" height="100%" change="listChangeHandler(event)"
+				contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"  
+				itemRenderer="org.syncon.RosettaStone.view.popup.SelectOptionListRenderer">
+			<s:layout>
+				<!-- offset the gap of the vgroup -->
+				<s:VerticalLayout gap="0" paddingLeft="0" paddingTop="0"/>
+			</s:layout> 
+		</s:List>
+		
+		<!--<popup:PopupBottomBarBg id="bottomMenu"/>-->
+	</s:VGroup>
+
+	
+	<s:Rect left="0" right="0" bottom="0" height="10" radiusX="10" radiusY="10" 
+			topLeftRadiusX="0"
+			topLeftRadiusY="0" topRightRadiusX="0" topRightRadiusY="0">
+		<s:fill>
+			<s:SolidColor color="#eaeaea"/>
+		</s:fill>
+		<s:stroke>
+			<s:SolidColorStroke color="0xFFFFFF" weight="3"/>
+		</s:stroke> 
+	</s:Rect>
+	
+	
+</s:SkinnableContainer>

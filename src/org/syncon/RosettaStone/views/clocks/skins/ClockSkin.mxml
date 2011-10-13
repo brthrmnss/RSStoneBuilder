@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		creationComplete="complete()">
+
+	<fx:Metadata>
+		[HostComponent("org.syncon.TalkingClock.views.Clock")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			private function complete():void {
+				var gray:SolidColor = new SolidColor();
+				gray.color = 0x444444;
+				
+				var brown:SolidColor = new SolidColor();
+				brown.color = 0xbca981;
+				
+				//big dot above 12
+				var e1:Ellipse = new Ellipse();
+				e1.width = 8;
+				e1.height = 8;
+				e1.fill = gray;
+				e1.x = 195 * Math.cos(270 * Math.PI / 180) + 246;
+				e1.y = 195 * Math.sin(270 * Math.PI / 180) + 246;
+				this.addElementAt(e1,1);
+				
+				for each (var i:int in [0,30,60,90,120,150,180,210,240,270,300,330]) {
+					
+					//outer tick ring - squares
+					var p1:Path = new Path();
+					p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+					p1.x = 250;
+					p1.y = 250;
+					p1.rotation = i;
+					p1.fill = gray;
+					this.addElementAt(p1,1);
+					
+					//outer tick ring - bars
+					var r1:Path = new Path();
+					r1.data = "M 156,-2 L 180,-2 180,2 156,2 Z";
+					r1.x = 250;
+					r1.y = 250;
+					r1.rotation = i;
+					r1.fill = brown;
+					if (i != 0 && i != 90 && i != 180 && i != 270) {
+						this.addElementAt(r1,1);
+					}
+					
+					//inner tick ring - squares
+					var q1:Path = new Path();
+					q1.data = "M 110,-3 L 120,-3 120,3 110,3 Z";
+					q1.x = 250;
+					q1.y = 250;
+					q1.rotation = i;
+					q1.fill = gray;
+					q1.alpha = 0.9;
+					this.addElementAt(q1,1);
+					
+					//far outer min labels
+					var lbl:Label = new Label();
+					lbl.text = Math.round(i/6 + 15).toString();
+					if (lbl.text == '60') lbl.text = '';
+					if (lbl.text == '65') lbl.text = '5';
+					if (lbl.text == '70') lbl.text = '10';
+					lbl.styleName = 'tiny';
+					lbl.x = -50;
+					lbl.y = -50;
+					lbl.width = 100;
+					lbl.height = 100;
+					lbl.setStyle('textAlign', 'center');
+					lbl.setStyle('verticalAlign', 'middle');
+					
+					var g:Group = new Group();
+					g.addElement(lbl);
+					g.alpha = 0.75;
+					g.rotation = i + 90 - (i > 0 && i < 180 ? 180 : 0);
+					g.x = 195 * Math.cos(i * Math.PI / 180) + 250;
+					g.y = 195 * Math.sin(i * Math.PI / 180) + 250;
+					this.addElementAt(g,1);
+					
+					//far outer dots between labels
+					var e2:Ellipse = new Ellipse();
+					e2.width = 3;
+					e2.height = 3;
+					e2.fill = gray;
+					e2.x = 195 * Math.cos((i+15) * Math.PI / 180) + 248.5;
+					e2.y = 195 * Math.sin((i+15) * Math.PI / 180) + 248.5;
+					this.addElementAt(e2,1);
+					
+					for each (var j:int in [0,6,12,18,24]) {
+						//outer tick ring - long ticks
+						var p2:Path = new Path();
+						p2.data = "M 174,-0.5 L 184,-0.5 184,0.5 174,0.5 Z";
+						p2.x = 250;
+						p2.y = 250;
+						p2.rotation = i + j;
+						p2.fill = gray;
+						if (j != 0) this.addElementAt(p2,1);
+						
+						//inner tick ring - short ticks
+						var q2:Path = new Path();
+						q2.data = "M 114,-0.5 L 120,-0.5 120,0.5 114,0.5 Z";
+						q2.x = 250;
+						q2.y = 250;
+						q2.rotation = i + j;
+						q2.fill = gray;
+						q2.alpha = 0.8;
+						if (j != 0) this.addElementAt(q2,1);
+						
+						for each (var k:Number in [1.5,3.0,4.5]) {
+							//outer tick ring - short ticks
+							var p3:Path = new Path();
+							p3.data = "M 180,-0.3 L 184,-0.3 184,0.3 180,0.3 Z";
+							p3.x = 250;
+							p3.y = 250;
+							p3.rotation = i + j + k;
+							p3.fill = gray;
+							p3.alpha = 0.5;
+							this.addElementAt(p3,1);
+						}
+					}
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		
+		.big { color:#444444; fontWeight:normal; fontSize:34; fontFamily:Georgia; }
+		.tiny { color:#444444; fontWeight:normal; fontSize:11; fontFamily:Georgia; fontWeight:bold; }
+	</fx:Style>
+	
+	<s:Group>
+		<s:Ellipse width="500" height="500">
+			<s:fill>
+				<s:SolidColor color="#111111" />
+			</s:fill>
+		</s:Ellipse>
+		
+		<s:Ellipse x="2" y="2" width="496" height="496">
+			<s:fill>
+				<s:SolidColor color="#bbbbbb" />
+			</s:fill>
+		</s:Ellipse>
+		
+		<s:Ellipse x="4" y="4" width="492" height="492">
+			<s:fill>
+				<s:LinearGradient rotation="60">
+					<s:GradientEntry color="#f4f4f4" ratio="0" />
+					<s:GradientEntry color="#000000" ratio="1" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Ellipse>
+		
+		<s:Ellipse x="26" y="26" width="448" height="448">
+			<s:fill>
+				<s:LinearGradient rotation="60">
+					<s:GradientEntry color="#000000" ratio="0" />
+					<s:GradientEntry color="#777777" ratio="1" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Ellipse>
+		
+		<s:Ellipse x="38" y="38" width="424" height="424">
+			<s:fill>
+				<s:SolidColor color="#d5c595" />
+			</s:fill>
+		</s:Ellipse>
+	</s:Group>
+	
+	
+	<!-- arrow ticks -->
+	<s:Path x="250" y="250">
+		<s:data>M 154,0 L 178,-6 178,6 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#111111" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="90">
+		<s:data>M 154,0 L 178,-6 178,6 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#111111" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="180">
+		<s:data>M 154,0 L 178,-6 178,6 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#111111" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="-90">
+		<s:data>M 154,0 L 178,-6 178,6 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#111111" />
+		</s:fill>
+	</s:Path>
+	
+	<!-- long brown ticks -->
+	<s:Path x="250" y="250" rotation="30">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="60">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="120">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="150">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="-30">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="-60">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="-120">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+	<s:Path x="250" y="250" rotation="-150">
+		<s:data>M 156,-2 L 180,-2 180,2 156,2 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#baa77c" />
+		</s:fill>
+	</s:Path>
+
+
+	<s:Label text="3" styleName="big"
+			x="340" y="200" width="100" height="100"
+			textAlign="center" verticalAlign="middle" />
+	<s:Label text="6" styleName="big"
+			x="200" y="340" width="100" height="100"
+			textAlign="center" verticalAlign="middle" />
+	<s:Label text="9" styleName="big"
+			x="60" y="200" width="100" height="100"
+			textAlign="center" verticalAlign="middle" />
+	<s:Label text="12" styleName="big"
+			x="200" y="60" width="100" height="100"
+			textAlign="center" verticalAlign="middle" />
+	
+	<s:Group x="250" y="250">
+		<s:Rect x="-108" y="-1" width="216" height="2">
+			<s:fill>
+				<s:SolidColor color="#111111" alpha="0.2" />
+			</s:fill>
+		</s:Rect>
+		<s:Rect x="-1" y="-108" width="2" height="216">
+			<s:fill>
+				<s:SolidColor color="#111111" alpha="0.2" />
+			</s:fill>
+		</s:Rect>
+		<s:Group rotation="30">
+			<s:Rect x="-108" y="-1" width="216" height="2">
+				<s:fill>
+					<s:SolidColor color="#111111" alpha="0.2" />
+				</s:fill>
+			</s:Rect>
+			<s:Rect x="-1" y="-108" width="2" height="216">
+				<s:fill>
+					<s:SolidColor color="#111111" alpha="0.2" />
+				</s:fill>
+			</s:Rect>
+		</s:Group>
+		<s:Group rotation="60">
+			<s:Rect x="-108" y="-1" width="216" height="2">
+				<s:fill>
+					<s:SolidColor color="#111111" alpha="0.2" />
+				</s:fill>
+			</s:Rect>
+			<s:Rect x="-1" y="-108" width="2" height="216">
+				<s:fill>
+					<s:SolidColor color="#111111" alpha="0.2" />
+				</s:fill>
+			</s:Rect>
+		</s:Group>
+	</s:Group>
+	
+	<!-- arrows -->
+	<s:Path x="250" y="250" rotation="{hostComponent.minAngle}">
+		<s:data>M 0,0 L 1,-2 20,-2 22,-5 122,-5 124,-2 146,-2 168,0 146,2 124,2 122,5 22,5 20,2 1,2 0,0 24,0 24,2 120,2 122,0 120,-2 24,-2 24,0 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#000000" />
+		</s:fill>
+		<s:filters>
+			<s:DropShadowFilter blurX="4" blurY="4" alpha="0.6" distance="2" />
+		</s:filters>
+	</s:Path>
+
+	<s:Path x="250" y="250" rotation="{hostComponent.hourAngle}">
+		<s:data>M 0,0 L 1,-3 14,-3 17,-7 97,-7 100,-3 112,-2 134,0 112,2 100,3 97,7 17,7 14,3 1,3 0,0 18,0 21,3 94,3 96,0 94,-3 21,-3 18,0 Z</s:data>
+		<s:fill>
+			<s:SolidColor color="#000000" />
+		</s:fill>
+		<s:filters>
+			<s:DropShadowFilter blurX="4" blurY="4" alpha="0.6" distance="2" />
+		</s:filters>
+	</s:Path>
+	
+	<s:Group>
+		<s:Path x="250" y="250" rotation="{hostComponent.secAngle}">
+			<s:data>M -50,0 L -45,-5 -25,-5 -22,-2 22,-2 25,-5 180,0 25,5 22,2 -22,2 -25,5 -45,5 Z</s:data>
+			<s:fill>
+				<s:SolidColor color="#cc2211" />
+			</s:fill>
+		</s:Path>
+		<s:Ellipse x="242" y="242" width="16" height="16">
+			<s:fill>
+				<s:SolidColor color="#cc2211" />
+			</s:fill>
+		</s:Ellipse>
+		<s:filters>
+			<s:DropShadowFilter blurX="4" blurY="4" alpha="0.6" distance="2" />
+		</s:filters>
+	</s:Group>
+	
+	
+	<!-- center button -->
+	<s:Ellipse x="245" y="245" width="10" height="10">
+		<s:fill>
+			<s:LinearGradient rotation="60">
+				<s:GradientEntry color="#999999" ratio="0" />
+				<s:GradientEntry color="#333333" ratio="1" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Ellipse>
+	<s:Ellipse x="247" y="247" width="6" height="6">
+		<s:fill>
+			<s:LinearGradient rotation="60">
+				<s:GradientEntry color="#cccccc" ratio="0" />
+				<s:GradientEntry color="#aaaaaa" ratio="1" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Ellipse>
+
+
+	<!-- highlight -->
+	<s:Ellipse x="38" y="38" width="424" height="424">
+		<s:fill>
+			<s:LinearGradient rotation="60">
+				<s:GradientEntry color="#ffffff" alpha="0.7" ratio="0" />
+				<s:GradientEntry color="#ffffff" alpha="0" ratio="1" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Ellipse>
+</s:Skin>

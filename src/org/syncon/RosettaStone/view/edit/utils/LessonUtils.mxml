@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:edit="org.syncon.RosettaStone.view.edit.*" creationComplete="onInit(event)"
+		 xmlns:lesson="org.syncon.RosettaStone.view.edit.lesson.*"
+		 xmlns:popup="org.syncon.RosettaStone.view.popup.*">
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import mx.events.FlexEvent;
+			
+			import org.syncon2.utils.view.SearchOnEnter;
+			
+			import spark.events.TextOperationEvent;
+			static public var REMOVE_UNUSED : String = 'REMOVE_UNUSED' ;
+			static public var GO4X4 : String = '4X4' ;			
+			protected function onInit(event:FlexEvent):void
+			{
+			}			 
+			public function onRemoveUnused(e:Event): void{
+				this.dispatchEvent( new Event( REMOVE_UNUSED ) ) ; 
+			}
+			
+			protected function onFour(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( GO4X4 ) ) ; 
+			}
+			
+		]]> 
+	</fx:Script> 
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>	
+	
+ 
+	<s:HGroup>
+		<s:Button label="4 to Station" click="onFour(event)" />
+		<s:Button label="Remove Unused Resources" click="onRemoveUnused(event)" />
+		
+	</s:HGroup>
+	
+ 
+	
+</s:Group>

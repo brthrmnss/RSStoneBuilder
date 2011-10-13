@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			static public const NEW_FILTER_STIRNG : String = 'NEW_FILTER_STIRNG' ; 		
+			static public const NEW_FILTER_JSON : String = 'NEW_FILTER_JSON' ; 	
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+				this.timer.start() ;
+				//this.df.dateTimePattern="LL:NN:SS"
+				// this.format.timeStyle =    "LL:NN:SS"
+				/* 				if ( _fontFamilyS  != null  ) 
+				{
+				this.txtQuery.setStyle('fontFamily', _fontFamilyS ) ; 
+				}
+				if ( _fontFamilyG != null  ) 
+				{
+				this.txtQuery2.visible = true; 
+				this.txtQuery2.setStyle('fontFamily', _fontFamilyG ) ; 
+				}			
+				else
+				{
+				if ( this._fontFamilyG8 != null ) 
+				{
+				this.txtQuery2.visible = true; 
+				this.txtQuery2.text = '88:88:88'
+				this.txtQuery2.setStyle('fontFamily', _fontFamilyG ) ; 
+				}
+				else
+				{
+				
+				}
+				this.txtQuery2.visible = false; 
+				} */
+			}
+			
+			
+			protected function onTime(event:TimerEvent):void
+			{
+				var hours : String =this.DateDisplay2.format( new Date ) 
+				var mins : String = this.DateDisplay3.format( new Date ) 
+				var secs : String = this.DateDisplay4.format( new Date ) 
+				
+				var dur : Number = 500
+				if ( hours != this.txtHour.text  ) 
+				{
+					this.txtHour.text =hours
+					this.txtHourBg.text =hours
+					this.rotateH.duration = dur
+					this.rotateH.play([this.txtHourHolder]); 
+				}
+				if ( mins != this.txtMin.text  ) 
+				{
+					this.txtMin.text =mins
+					this.txtMinBg.text =mins
+					this.rotateM.duration = dur
+					this.rotateM.play([this.txtMinHolder]); 
+				}
+				if ( secs != this.txtSec.text  ) 
+				{
+					this.txtSec.text = this.txtSecBg.text 
+					this.txtSecBottomOld.text = this.txtSecBg.text ; 
+					//this.txtSecBottom.text =  this.txtSecBg.text ; 
+					this.txtSecBg.text =secs
+					//this.txtSecBottom.text =  secs
+					
+					
+					var alpha_ : Number = 0.6
+					/* this.txtSec.alpha = alpha_
+					this.txtSecBottomOld.alpha =alpha_ 
+					this.txtSecHolder.alpha =alpha_ */
+					//this.txtSecHolder_Button.alpha  =  0
+					
+					var dbg : Array = [this.txtSecHolder_Button.rotationX] 
+					
+					this.rotateS.duration = dur
+					this.rotateS.play([this.txtSecHolder]); 
+					this.rotateS_Bottom.startDelay = dur*.95; 
+					this.rotateS_Bottom.duration = dur//*2
+					this.rotateS_Bottom.play([this.txtSecHolder_Button]); 
+					//this.txtSecHolder_Button.visible = true; 
+				}				
+				
+				/* 					if ( this.txtQuery2.visible )
+				{
+				this.txtQuery2.text = this.txtQuery.text; 
+				} */
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			public function set fontFamilyS(event:String):void
+			{
+				this._fontFamilyS = event; 
+				//this._fontFamilyG = 
+			}
+			
+			public function set  fontFamilyG(event:String):void
+			{
+				this._fontFamilyG = event; 
+			}		
+			public function set  fontFamilyG8(event:String):void
+			{
+				this._fontFamilyG8 = event; 
+			}		
+			
+			private var _filterString : String = null; 
+			private var _fontFamilyG8:String;
+			public function set filterString( s : String ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_STIRNG, s ) ) ; 
+				this._filterString = s; 
+			}
+			public var _filterJSON : Array = null; 
+			public function set filterJSON( s :  Array ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_JSON, s ) ) ; 
+				this._filterJSON = s; 
+			}			
+			public function get initFilterString() : String
+			{
+				return this._filterString; 
+			}
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			protected function rotateS_Bottom_effectEndHandler(event:EffectEvent):void
+			{
+				//this.txtSecHolder_Button.visible = false; 
+				
+			}
+			
+			protected function rotateS_Bottom_effectStartHandler(event:EffectEvent):void
+			{
+				this.txtSecBottom.text =  this.txtSecBg.text
+				//this.txtSecHolder_Button.visible = true; 
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format" dateStyle="none" dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" dateTimePattern="hh"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" dateTimePattern="hh"/>
+		<s:DateTimeFormatter id="DateDisplay4" dateTimePattern="ss"/>		
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+		<s:Rotate3D id="rotateH" angleXFrom="0" angleXTo="360" autoCenterTransform="true"
+					duration="2000" target="{txtHour}"/>
+		<s:Rotate3D id="rotateM" angleXFrom="0" angleXTo="360" autoCenterTransform="true"
+					duration="2000" target="{txtMin}"/>
+		<s:Rotate3D id="rotateS" angleXFrom="0" angleXTo="90" autoCenterTransform="true"
+					duration="2000" target="{txtSec}"/>
+		<s:Rotate3D id="rotateS_Bottom" angleXFrom="-90" angleXTo="0" autoCenterTransform="true"
+					 effectEnd="rotateS_Bottom_effectEndHandler(event)" effectStart="rotateS_Bottom_effectStartHandler(event)"
+					duration="2000" target="{txtSec}"/>		
+		
+		
+		<s:Group id="txtSecHolderMask" height="{this.txtSecHolder.height}"  width="{this.txtSecHolder.width}">
+			<s:Rect left="0" right="0" height="50%" bottom="0" radiusX="8" radiusY="8">
+				<s:fill>
+					<s:SolidColor color="0xdddddd"/>
+				</s:fill>	
+			</s:Rect>	
+		</s:Group>
+	</fx:Declarations>
+	
+	<s:Group id="bgH" height="61" color="0" fontSize="60">
+		
+		<s:HGroup>
+			<s:Group>
+				<s:TextInput id="txtHourBg" width="81" height="61" alpha="0.3" borderVisible="false"
+							 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"
+							 horizontalCenter="0" selectable="false" text="" verticalCenter="0"/>			
+				
+				<s:Group id="txtHourHolder">
+					<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+						<s:fill>
+							<s:SolidColor color="0xdddddd"/>
+						</s:fill>	
+					</s:Rect>	
+					
+					<s:TextInput id="txtHour" width="81" height="61" alpha="0.3"
+								 borderVisible="false" contentBackgroundAlpha="0.0" editable="false"
+								 fontFamily="Crysta" horizontalCenter="0" selectable="false" text=""
+								 verticalCenter="0"/>
+				</s:Group>
+			</s:Group>
+			
+			<s:TextInput id="Sep" width="30" height="61" alpha="0.3" borderVisible="false"
+						 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"
+						 horizontalCenter="0" selectable="false" text=":" verticalCenter="0"/>
+			<s:Group>
+				
+				<s:TextInput id="txtMinBg" width="81" height="61" alpha="0.3" borderVisible="false"
+							 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"
+							 horizontalCenter="0" selectable="false" text="" verticalCenter="0"/>	
+				<s:Group id="txtMinHolder">
+					<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+						<s:fill>
+							<s:SolidColor color="0xdddddd"/>
+						</s:fill>	
+					</s:Rect>	
+					<s:TextInput id="txtMin" width="81" height="61" alpha="0.3" borderVisible="false"
+								 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"
+								 horizontalCenter="0" selectable="false" text="" verticalCenter="0"/>		
+				</s:Group>
+			</s:Group>		
+			<s:TextInput id="Sep2" width="30" height="61" alpha="0.3" borderVisible="false"
+						 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"
+						 horizontalCenter="0" selectable="false" text=":" verticalCenter="0"/>
+			<s:Group>
+				
+				<s:Group id="txtSecHolderBg">
+					<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+						<s:fill>
+							<s:SolidColor color="0xdddddd"/>
+						</s:fill>	
+					</s:Rect>	
+					<s:TextInput id="txtSecBg" width="81" height="61" alpha="0.3"
+								 borderVisible="false" contentBackgroundAlpha="0.0" editable="false"
+								 fontFamily="Crysta" horizontalCenter="0" selectable="false" text=""
+								 verticalCenter="0"/>	
+				</s:Group>
+				
+				
+				
+				
+				<s:Group id="txtSecHolder"  >
+					<s:mask>
+						<s:Group  width="81" height="61">
+							<s:Rect width="100" height="50%" top="0">
+								<s:fill>
+									<s:SolidColor alpha="0.1"/>
+								</s:fill>
+							</s:Rect>
+						</s:Group>
+					</s:mask>
+					<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+						<s:fill>
+							<s:SolidColor color="0xdddddd"/>
+						</s:fill>	
+					</s:Rect>	
+					<s:TextInput id="txtSec" width="81" height="61" alpha="0.3" borderVisible="false"
+								 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"
+								 horizontalCenter="0" selectable="false" text="" verticalCenter="0"/>	
+				</s:Group>
+				
+				
+				
+				<s:Group id="txtSecHolder_ButtonOld"  >
+					<s:mask>
+						<s:Group  width="81" height="61">
+							<s:Rect width="100" height="50%" bottom="0">
+								<s:fill>
+									<s:SolidColor alpha="0.1"/>
+								</s:fill>
+							</s:Rect>
+						</s:Group>
+					</s:mask>
+					<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+						<s:fill>
+							<s:SolidColor color="0xdddddd"/>
+						</s:fill>	
+					</s:Rect>	
+					<s:TextInput id="txtSecBottomOld" width="81" height="61" alpha="0.3" borderVisible="false"
+								 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta" color="0xFF0000"
+								 horizontalCenter="0" selectable="false" text="" verticalCenter="0"/>	
+				</s:Group>
+				
+				
+				<s:Group id="txtSecHolder_Button"  >
+					<s:mask>
+						<s:Group  width="81" height="61">
+							<s:Rect width="100" height="50%" bottom="0">
+								<s:fill>
+									<s:SolidColor alpha="1"/>
+								</s:fill>
+							</s:Rect>
+						</s:Group>
+					</s:mask>
+					<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+						<s:fill>
+							<s:SolidColor color="0xdddddd"/>
+						</s:fill>	
+					</s:Rect>	
+					<s:TextInput id="txtSecBottom" width="81" height="61" alpha="0.3" borderVisible="false"
+								 contentBackgroundAlpha="0.0" editable="false" fontFamily="Crysta"  color="0x75FE00"
+								 horizontalCenter="0" selectable="false" text="" verticalCenter="0"/>	
+				</s:Group>
+				
+				
+				
+				
+			</s:Group>		
+		</s:HGroup>
+		
+		
+	</s:Group>
+	<s:Button left="10" top="10" width="20" label="e" click="onEdit(event)"/>
+</s:Group>

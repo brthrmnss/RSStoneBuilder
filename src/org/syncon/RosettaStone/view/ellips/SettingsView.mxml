@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<controls:ScreenView xmlns:mx="http://www.adobe.com/2006/mxml"
+					 xmlns:controls="openplug.elips.controls.*"
+					 xmlns:alarm="org.syncon.TalkingClock.view.mobile.alarm.*"
+					 xmlns:screenClasses="openplug.elips.controls.screenClasses.*"
+					 xmlns:view="org.syncon.TalkingClock.view.mobile.view.*"
+					 xmlns:view1="mvc.view.*"
+					 creationComplete="onInit(event)" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.ThemeVO;
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			
+			import outside.PlatformGlobals;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const SETTINGS : String = 'settings'
+			static public const GO_BACK : String = 'goBack'; 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const RESUME : String = 'RESUME'; 
+			static public const INFO : String = 'INFO'; 
+			static public const CHANGE_OS : String = 'CHANGE_OS'; 
+			static public const SOUND_DOWN : String = 'SOUND_DOWN'; 
+			static public const SOUND_UP : String = 'SOUND_UP'; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.decrVolume, this.decrSoundVolume ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.incrRemote, this.incrSoundVolume ) ; 
+				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.txtLogoTagLine, this.onDebug ) ; 		
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnChangeOs, this.onChangeOS ) 
+				
+			}
+			override public function set visible( b : Boolean ) : void{
+				super.visible = b; 
+			}
+			protected function list1_itemClickHandler(event: Event):void
+			{
+				var data : Object = NightStandConstants.PlatformGlobals.getItemClickEventData( event ) 
+				this.dispatchEvent( new CustomEvent(LIST_CHANGED, data  )  ) 
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			protected function view1_activateHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+			protected function onSettings():void
+			{
+				this.dispatchEvent( new Event( SETTINGS ) ) ; 
+			}
+			
+			protected function onInfo():void
+			{
+				this.dispatchEvent( new Event( INFO ) ) ; 
+			}
+			protected function onResume(event:Event):void
+			{
+				this.dispatchEvent( new Event( RESUME ) ) ; 
+			}
+ 
+			private function incrSoundVolume(e:Event):void
+			{
+				this.dispatchEvent( new Event( SOUND_UP ) ) ; 
+			}
+			
+			private function decrSoundVolume(e:Event):void
+			{
+				this.dispatchEvent( new Event( SOUND_DOWN ) ) ; 
+			}
+			
+			protected function onChangeOS(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				this.dispatchEvent(  new Event( CHANGE_OS ) ) ; 
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<view1:NavigationBar id="header" label="Settings" fontSizeS="26" fxLeft="{this.onBack}"
+						 leftLabel="Back"/>
+	<mx:VBox paddingLeft="10" y="80" width="100%">
+		
+		<controls:Label text="Volume"/>
+		<!-- insert crazy volume control />
+		-->
+		<mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle">
+			<controls:Image id="decrVolume" height="64" scaleContent="true"
+							source="assets/buttons/Sound_Volume_Minus.png"/>
+			<controls:Text id="volumeTextSound" width="100" height="34" text="xx%" textAlign="center"/>
+			<controls:Image id="incrRemote" height="64" scaleContent="true"
+							source="assets/buttons/Sound_Volume_Plus.png"/>
+		<!--	<controls:Image id="incrRsemote" height="64" scaleContent="true"
+							source="assets/buttons/lightbulb.png"/>-->
+			
+		</mx:HBox>		
+		
+		<controls:Text  width="100%" text="If volume is not loud enough, click 'Change OS Volume' and Go to 'Volume' and adjust 'Media'" />
+		<!--<controls:Button label="Change OS Volume"  fontSize="14"  id="btnChangeOs"/>-->
+		<ellips:OpenPlugButton labelS="Change OS Volume"   id="btnChangeOs"/>
+	</mx:VBox>
+	
+	
+	
+	<controls:Label id="debug" right="0" bottom="100" text="Debug"/>
+	
+</controls:ScreenView>

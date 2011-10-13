@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"  resize="onResize(event)"
+		 creationComplete="onInit(event)" xmlns:edit="org.syncon.RosettaStone.view.edit.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.layouts.supportClasses.LayoutBase;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var CLICK_ITEM : String = 'CLICK_ITEM'  ; 
+			static public var PLAY_PROMPT : String = 'PLAY_PROMPT'  ; 
+			/* 
+			override public function set width(n:Number):void
+			{
+			super.width = n;
+			} */
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				
+			}			 
+			
+			protected function onPlay(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( PLAY_PROMPT) ) ; 
+			}
+ 
+			protected function setWidth( ):void
+			{
+				var w : Number =  this.width*.8/2
+				var ww : Number = this.width; 
+				return
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	<s:Rect id="bgRect" width="100%" height="100%" alpha="1" >
+		<s:fill>
+			<s:SolidColor color="#FAFAFA"  />
+		</s:fill>
+	</s:Rect>
+	
+		<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"  >
+			<s:Label text="Tester" />
+			<s:Label id="txtLessonName" />
+			<!--<s:Label text=":"/>-->
+			<edit:PlayerItemViewer id="prompt" />
+		</s:VGroup>
+ 
+	
+</s:Group>

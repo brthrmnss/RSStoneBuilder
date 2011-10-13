@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:controls="openplug.elips.controls.*"
+		   creationComplete="onInit(event)" xmlns:view="org.syncon.TalkingClock.view.mobile.view.*" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*">
+	
+	
+	<mx:Script> 
+		<![CDATA[ 
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.LessonItemVO;
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			static public const MOVE_UP : String = 'MOVE_UP.f'; 
+			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const DATA_CHANGED : String = 'DATA_CHANGED';
+			static public const PLAY_PROMPT : String = 'PLAY_PROMPT';
+			static public const PRONOUNCE : String = 'PRONOUNCE';
+			static public const SAVE : String = 'SAVE';
+			//	public var s : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
+			[Bindable] public var filter : LessonItemVO = new LessonItemVO()
+			override public function set data(value:Object):void { 
+				
+				//	this.s.listenForObj(value,LessonItemVO.UPDATED, this.updateItemRenderer )
+				filter = value as LessonItemVO
+				//this.s.disableIfNull( value, new LessonItemVO, 'filter' )  
+				this.updateItemRenderer()
+				
+				this.dispatchEvent( new Event(DATA_CHANGED)); 
+			} 
+			
+			
+			public function updateItemRenderer(e:Event=null) : void
+			{
+				if ( filter == null ) 
+					return; 
+				this.txtPrompt.text =this.filter.name 
+				/* if ( this.src.source == this.filter.sourceImg ) 
+				this.src.source = null 
+				this.src.source = this.filter.sourceImg	
+				trace('folder', this.filter.sourceImg, 'me', this.filter  );  */
+			}
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				NightStandConstants.PlatformGlobals.fxMediate( this ) ; 
+				/* if ( NightStandConstants.flex == false ) 
+				{ */
+				// TODO Auto-generated method stub
+				//this.width = this.parentApplication.width -20
+				txtPrompt.setStyle('fontSize', this.txtPrompt.getStyle('fontSize')*2 ) ;
+				/* 	} */
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnPlay, this.onPlayPrompt ) ; 
+			}
+			
+			
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.filter ) ) ; 
+			}			
+			
+			
+			
+			protected function onSave(event:Event):void
+			{
+				this.dispatchEvent( new CustomEvent( SAVE, this.filter ) ) ; 
+			}
+			
+			
+			public function refresh() : void
+			{
+				this.updateItemRenderer()
+			}
+			
+			protected function onPlayPrompt(event:Event):void
+			{
+				this.dispatchEvent( new CustomEvent( PLAY_PROMPT, this.filter ) ) ; 
+			}
+			
+			
+		]]> 
+	</mx:Script> 
+	
+	<mx:HBox minHeight="80" verticalAlign="top" paddingLeft="10">
+		<!--<controls:Image source="assets/buttons/play.png"/>
+		<controls:Button id="btnPlay" width="64" height="64" label="Play"/>-->
+		<ellips:OpenPlugButton   iconS="assets/buttons/play.png" labelS="Play"   id="btnPlay"/>
+		<controls:Text id="txtPrompt" width="300" color="0" fontSize="14"/>
+		<!--<s:Image  source="assets/buttons/Metro-Listen-Blue-64.png"   />-->
+	</mx:HBox>
+</mx:Canvas>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+		 xmlns:views="views.*"
+		 xmlns:view="org.syncon2.utils.mobile.view.*"
+		 bottom="0" height="80" width="100%"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const INFO : String = 'info'; 
+			static public const HELP : String = 'help'; 			
+			static public const THEME : String = 'settingsChanged';
+			static public const SETTINGS : String = 'restart' 
+			static public const ALARMS : String = 'ALARMS' 				
+			protected function onInit(event:FlexEvent):void
+			{
+				var arr : Array = [
+				/* 	['Settings', this.onSettings],  */
+					['Theme', this.onTheme], 
+					['Alarms', this.onAlarms],
+					['Help', this.onHelp],
+					['Info', this.onInfo]
+				]
+				this.bottomMenu.load('', arr )
+			}
+			
+			public function onSettings() : void
+			{
+				this.dispatchEvent( new Event( SETTINGS ) ) ; 
+			}
+			
+			public function onTheme() : void
+			{
+				this.dispatchEvent( new Event( THEME ) ) ; 
+			}
+			public function onHelp() : void
+			{
+				this.dispatchEvent( new Event( HELP  ) ) ; 
+			}
+			public function onInfo() : void
+			{
+				this.dispatchEvent( new Event( INFO  ) ) ; 
+			}
+			public function onAlarms() : void
+			{
+				this.dispatchEvent( new Event( ALARMS  ) ) ; 
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	<view:BottomBar id="bottomMenu" />
+</s:Group>

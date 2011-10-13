@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"  
+				autoDrawBackground="false">
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import mx.collections.ArrayCollection;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.SearchVO;
+			
+			import spark.events.IndexChangeEvent;
+			static public const MOVE_UP : String = 'MOVE_UP.f'; 
+			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
+			static public const PLAY_ALL : String = 'PLAY_ALL';
+			static public const PRONOUNCE : String = 'PRONOUNCE';
+			static public const PLAY_AL_REV : String = 'PLAY_AL_REV';
+			
+			[Bindable] public var filter :    SearchVO = new SearchVO()
+			override public function set data(value:Object):void { 
+				super.data = value; 
+				
+				filter = value as SearchVO
+				
+				this.updateItemRenderer()
+				//onPlay(); 
+			} 
+			
+			public function updateItemRenderer(e:Event=null)  : void
+			{
+				txtLbl.text = this.filter.name.toString()
+				this.txtPro.text = this.filter.data; 
+				var ipa : String = this.filter.data; 
+				var arr : Array = []
+				for ( var i : int =0 ; i < ipa.length; i++ )
+				{
+					var s : SearchVO = new SearchVO(); 
+					s.name = ipa.charAt(i)
+					arr.push(s);
+				}
+				this.list.dataProvider = new ArrayCollection(arr); 
+			}
+			
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.filter ) ) ; 
+			}			
+			
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				if ( event.newIndex == -1 ) 
+					return; 
+				this.dispatchEvent( new CustomEvent( PRONOUNCE, 
+					this.list.dataProvider.getItemAt(event.newIndex) ) )
+			}			
+			
+			protected function onPlay(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new CustomEvent( PLAY_ALL, 
+					this.list.dataProvider.toArray()  ) )
+			}
+			protected function onPlayRev(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( PLAY_AL_REV, 
+					this.list.dataProvider.toArray()  ) )
+			}			
+			
+		]]> 
+	</fx:Script> 
+	
+	<fx:Declarations>
+		<s:Sine id="sineIn" easeInFraction="0.3" />
+	</fx:Declarations>	
+	<!--	<s:layout>
+	<s:HorizontalLayout gap="3"/>
+	</s:layout>-->
+	<s:states> 
+		<s:State name="normal"/> 
+		<s:State name="hovered"/> 
+		<s:State name="disabled"/> 
+		<s:State name="selected"/> 
+	</s:states> 
+<!-- 
+	<s:Rect id="bgRect"  width="100%" height="100%"  alpha.normal="0" >
+		<s:fill>
+			<s:SolidColor color="0x598E52"  color.hovered="0x598E52"  color.selected="0x36722E"/>
+		</s:fill>
+	</s:Rect>
+	-->
+	<s:VGroup verticalAlign="middle" verticalCenter="0" paddingLeft="5" paddingRight="5">
+ 
+		
+		<!--<s:Label id="seperator" text="|" color="0x6E6E6E"  />-->
+		<s:Label id="txtLbl" color="0"    verticalCenter="0"  
+				 useHandCursor.hovered="true" width="160"  maxDisplayedLines="2"
+				 buttonMode.hovered="true" x="5"
+				 fontSize="12" />
+		<s:Label id="txtPro" color="0"     width="160" verticalCenter="0"
+				 useHandCursor.hovered="true" 
+				 buttonMode.hovered="true"   maxDisplayedLines="2"
+				 fontSize="12"   /> 
+		
+		<s:List id="list" width="100%" height="100%" borderVisible="false"  maxWidth="200"
+				change="list_changeHandler(event)" contentBackgroundAlpha="0"
+				itemRenderer="org.syncon.RosettaStone.view.edit.PronunciationItemRenderer">
+			<s:layout>
+				<s:HorizontalLayout gap="0" paddingBottom="0" paddingLeft="0" paddingRight="0"/>
+			</s:layout>
+		
+		</s:List>
+		
+		<s:HGroup>
+			<s:Button label="Play" click="onPlay(event)" />
+			<s:Button label="Rev" click="onPlayRev(event)" />
+		</s:HGroup>
+	</s:VGroup>
+</s:ItemRenderer>

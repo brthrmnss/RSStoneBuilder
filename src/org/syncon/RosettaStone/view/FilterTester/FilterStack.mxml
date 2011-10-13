@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:view="org.syncon.RosettaStone.view.*"
+		 creationComplete="onInit(event)" xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.DragEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			static public const UPDATED_FILTER_ORDER : String = 'UPDATED_FILTER_ORDER' ; 
+			static public const IMPORT_FILTERS : String = 'goBveack'; 
+			static public const EXPORT_FILTERS : String = 'exportF'; 			
+			
+			static public const ADD_FILTER : String = 'nedxt' ; 			
+			static public var CHANGED_FILTER : String = 'changevevdNotebook';	
+			static public var PASTE : String = 'PASTE';	
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			protected function onInit(event:FlexEvent):void
+			{
+			}				//	 
+			protected function notebookChangeHandler(e:IndexChangeEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( CHANGED_FILTER, e.currentTarget.selectedItem ) )
+			}
+			
+			protected function btnAdd_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( ADD_FILTER )); 
+			}
+			
+			protected function btnImport_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( IMPORT_FILTERS )); 
+				
+			}
+			protected function onExport( ):void
+			{
+				this.dispatchEvent( new Event( EXPORT_FILTERS )); 
+				
+			}
+			protected function txtPaste_pasteHandler(event:Event):void
+			{
+				this.dispatchEvent( new Event( PASTE ) ) ; 
+			}
+			
+			protected function listx_dragCompleteHandler(event:DragEvent):void
+			{
+				this.dispatchEvent( new Event(UPDATED_FILTER_ORDER) ) ;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="new"/>
+		<s:State name="view"/>
+	</s:states>
+	
+	
+	
+	
+	<s:HGroup>
+		<s:Group>
+			<s:Rect left="0" right="0" top="0" bottom="0" radiusX="0" radiusY="0">
+				<s:fill>
+					<s:SolidColor color="0xFFFFFF"/>
+				</s:fill>	
+			</s:Rect>	
+			
+			<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+				<s:HGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+					<s:Button id="btnImport" label="Import" click="btnImport_clickHandler(event)"/>
+					<s:Button id="btnExport" label="Ex" click="onExport()"/>
+					<s:Button id="btnAdd" width="20" label="+" click="btnAdd_clickHandler(event)"/>
+				</s:HGroup>
+				<s:List id="listx" width="100%" height="300" allowMultipleSelection="true"
+						borderVisible="false" change="notebookChangeHandler(event) "
+						contentBackgroundAlpha="0.0" dragEnabled="true" dragMoveEnabled="true"
+						 focusAlpha="0.0" 
+						 dragComplete="listx_dragCompleteHandler(event)"
+						dropEnabled="true"
+						itemRenderer="org.syncon.RosettaStone.view.FilterTester.FilterStackItemRenderer"
+					/>
+			</s:VGroup>			
+			
+			
+		</s:Group>
+		
+		<FilterTester:FilterNewSelection includeIn="new"/>
+		<FilterTester:FilterEditor includeIn="view" alpha="0.8"/>
+	</s:HGroup>
+	
+	<s:TextArea id="txtPaste" visible="false" width="200" height="300"
+				paste="txtPaste_pasteHandler(event)"/>
+	
+</s:Group>

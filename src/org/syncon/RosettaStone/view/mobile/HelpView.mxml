@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			xmlns:view="org.syncon2.utils.mobile.view.*"
+			creationComplete="onInit(event)" destructionPolicy="auto" title="Help">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const OK : String = 'OK' 
+			protected function onInit(event:FlexEvent):void
+			{
+				this.scroller.verticalScrollBar.visible = true; 
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onOk() : void
+			{
+				this.dispatchEvent( new Event( OK ) ) 
+			}
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button id="btnGoBack" label="Back" click="this.onBack()"/>
+	</views:navigationContent>
+	<s:Scroller id="scroller" top="0" bottom="0" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1" verticalScrollPolicy="on">
+		<s:VGroup width="100%" height="100%" gap="20" horizontalAlign="center" paddingBottom="20"
+				  paddingLeft="10" paddingRight="10" paddingTop="20">
+			<s:Group  width="100%"  >
+				<s:Button label="OK" horizontalCenter="0" click="onOk()" />
+			</s:Group>
+			<mobile:TextAreaLabel2 text="Settings"  styleName="sectionTitle" />
+			<mobile:TextAreaLabel  text="Access the settings by tapping the anywhere on the  screen."/>
+			<mobile:TextAreaLabel2 text="Clocks"  styleName="sectionTitle" />
+			<mobile:TextAreaLabel  text="Go to the Config Page and 'Select Theme' to change clocks"/>
+			<mobile:TextAreaLabel2 text="Screen Dimming"  styleName="sectionTitle" />
+			<mobile:TextAreaLabel  text="Tap on the screen and scroll down to the 'Brightness' slider in the bottom popup"/>
+			<mobile:TextAreaLabel  fontWeight="bold" text="This app can drain your battery very quickly. Only use this app for extended periods of time with your device plugged in."/>
+			<s:Group  width="100%"  >
+				<s:Button label="OK" horizontalCenter="0" click="onOk()" />
+			</s:Group>
+			
+		</s:VGroup>
+	</s:Scroller>
+ 
+</views:View>

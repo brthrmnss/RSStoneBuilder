@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*" removedFromStage="this.onRemove(event)"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.vo.VoiceVO;
+			
+			
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			static public const SETUP : String = 'setup'; 		
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			
+			public var timer_delayedChange : Timer = new Timer(1000, 1 )  ;
+			
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			private var intruders: Array=[];
+			private var chasers: Array=[];
+			private var specificTimes : Array = [] 
+			private var c : ChainUpSamples = new ChainUpSamples(); 
+			private var secondsInterval : Number = 20 
+			private var minutesInterval : Number = 1
+			private var path : String = ''; 
+			private var _24hour:Boolean=false;
+			public var req:URLRequest; //deprec
+			/**
+			 * will generate url request to append, only in flex mode
+			 
+			 */
+			public var fxGenerateUrlRequest : Function; 
+			public var modeManual :Boolean=false;
+			public var modeTest : Boolean = false; 
+			private var lastMinute:Number=-1;
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				if ( modeManual == false ) 
+				{
+					this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+					this.timer.start() ;
+				}
+				if ( modeTest ) 
+				{
+					this.intruders =  ['rockself', 'aye', 'sorrytobother']
+					this.chasers = ['oclock', 'a']
+					this.path = 'voices/chav'
+					//this.TwenetFourHour = true
+					this.TwenetFourHour = false
+				}
+				/* 	
+				this.secondsInterval = 20; 
+				this.minutesInterval = 1;  */
+			}
+			public function onRemove(e:Event):void{
+				trace();
+			}
+			public function loadVoice ( v : VoiceVO ) :void //, reqPreamble :  URLRequest= null) : void
+			{
+				this.intruders = v.intruders.toArray(); 
+				this.chasers = v.chasers.toArray(); 
+				this.specificTimes = v.specialTimes.toArray(); 
+				this.path = v.path; 
+				//this.req = reqPreamble; 
+				this.dispatchEvent( new Event( SETUP ) ) 
+				//get custom req here ....
+			}
+			
+			public function set TwenetFourHour( n :   Boolean ) : void
+			{
+				this._24hour=n
+				if ( this._24hour )
+				{
+					this.DateDisplay2b.dateTimePattern = 'H'; 
+				}
+				else
+				{
+					this.DateDisplay2b.dateTimePattern = 'h'; 
+				}
+			}
+			
+			public function say ( date : Date = null ) : void
+			{
+				this.onTime(null, date ) ; 
+			}
+			
+			protected function onTime(event:TimerEvent, date : Date=null):void
+			{
+				var checkForInterval : Boolean = true; 
+				if ( date == null ) 
+					date = new Date()
+				else
+					checkForInterval = false; 
+				var hours : String =this.DateDisplay2.format( date ) 
+				var mins : String = this.DateDisplay3.format( date ) 
+				var secs : String = this.DateDisplay4.format( date ) 
+				
+				var hours2 : String =this.DateDisplay2b.format( date ) 
+				var mins2 : String = this.DateDisplay3b.format( date  ) 
+				//var secs2 : String = this.DateDisplay4b.format( new Date ) 
+				this.parent
+					this.parentDocument
+				//trace(hours2, mins2, secs ); 
+				//asdf
+				if ( this.enabled == false && checkForInterval == true) 
+					return; 
+				if ( checkForInterval  ) 
+				{
+					if ( this.secondsInterval != 0 &&  Number(secs) % this.secondsInterval  != 0 ) 
+						return; 
+					if ( this.minutesInterval != 0 && Number(mins) % this.minutesInterval  != 0 ) 
+						return; 
+					if ( this.minutesInterval >=  1  ) 
+					{
+						if ( lastMinute != Number(mins) )
+							{
+								this.lastMinute = Number(mins)
+							}
+							else
+							{
+								return; 
+							}
+					}
+				}
+				var songs : Array = [   ] ;
+				
+				this.addIntruders( songs ) ; 
+				if ( this._24hour )
+				{
+					this.splitIntoTens(songs, hours2, true )
+				}  
+				else
+				{
+					songs.push( hours2 )
+				}
+				
+				
+				this.splitIntoTens(songs, mins, true )
+				//this.splitIntoTens(songs, secs )
+				
+				if  ( this._24hour == false  ) 
+					this.addPM( songs ) ; 
+				
+				this.addChasers( songs ) ; 
+				trace('songs', songs ) ; 
+				trace(); 
+				var slash : String = '\\'
+				this.c.playSounds( songs, path, '.mp3'  ) 
+				return; 
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			
+			
+			protected function rotateS_Bottom_effectEndHandler(event:EffectEvent):void
+			{
+				//this.txtSecHolder_Button.visible = false; 
+				
+			}
+			
+			protected function rotateS_Bottom_effectStartHandler(event:EffectEvent):void
+			{
+				
+				//this.txtSecHolder_Button.visible = true; 
+				
+			}
+			
+			
+			private function splitIntoTens(songs:Array, input:String, say0 : Boolean = false ):void
+			{
+				if ( input.length == 1 ) 
+				{
+					songs.push( input ) ; 
+					return 
+				}
+				var s :  String = input.charAt( 0 ) 
+				var a : Array  = [0,1,2,3,4,5,6,7,8,9]
+				var b : Array = [0, 'yyy', 20,30,40, 50]
+				for ( var i : int = 0; i < a.length; i++ )
+				{
+					if ( s == a[i] )
+						var converted  :  Object = b[i]; 
+				}
+				if ( converted == 'yyy' ) 
+				{
+					songs.push( input ) ; 
+				}
+				else// if ( converted != '' ) 
+				{
+					if ( converted == 0 )
+					{
+						if ( say0 == false )
+						{}
+						else
+						{
+							songs.push( '0' ) ;
+						}
+					}
+					else {
+						songs.push( converted ) ;
+					}
+					var ones : String =  input.charAt( 1 ) 
+					if ( ones != "0" ) 
+						songs.push( ones ) ;
+				}
+			}
+			
+			private function addIntruders(songs:Array):void
+			{
+				// TODO Auto Generated method stub
+				if ( this.intruders.length == 0 ) 
+					return ;
+				var bdg :  Array =[ Math.random(),this.intruders.length-1]
+				var index : int = Math.random()*this.intruders.length-1
+				//if ( index == this.lastIntruderIndex )
+				//this.lastIntruderIndex  = index; 
+				var intruder : String =getRandom( this.intruders).toString()
+				
+				songs.push(intruder); 
+			}
+			
+			private function addPM(songs:Array):void
+			{
+				// TODO Auto Generated method stub
+				var pm  : String = pmFormatter.format(new Date ); 
+				
+				songs.push ( pm ) 
+				
+			}
+			
+			private function addChasers(songs:Array):void
+			{
+				if ( this.intruders.length == 0 ) 
+					return ;
+				var index : int = Math.random()*this.chasers.length
+				var chaser : String = getRandom(this.chasers).toString()
+				songs.push(chaser); 
+			}
+			
+			
+			
+			/**
+			 * http://www.actionscript.org/forums/showthread.php3?t=47634
+			 * even distro  
+			 * */
+			public function getRandom( arr : Array ) : Object
+			{
+				var randomNo:int = Math.round(Math.random() * (arr.length)) - 1;
+				
+				if (randomNo < 0)
+					randomNo = arr.length - 1;
+				
+				return arr[randomNo]
+			}
+			
+			
+			public function updateSettings(  enabled : Boolean, mins  : Number, secs : Number ) : void
+			{
+				this.minutesInterval = mins; 
+				this.secondsInterval = secs; 
+				this.enabled = enabled; 
+			}
+			
+			
+			
+			override public function set enabled(value:Boolean):void
+			{
+				super.enabled = value;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format" dateStyle="none" dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" dateTimePattern="hh"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" dateTimePattern="mm" />
+		<s:DateTimeFormatter id="DateDisplay4" dateTimePattern="ss"/>	
+		
+		<s:DateTimeFormatter id="DateDisplay2b" dateTimePattern="h"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3b" dateTimePattern="m" />
+		
+		
+		<s:DateTimeFormatter id="pmFormatter" dateTimePattern="a" />
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+		
+	</fx:Declarations>
+	
+</s:Group>

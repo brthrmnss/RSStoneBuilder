@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"   
+			xmlns:view="org.syncon2.utils.mobile.view.*"
+			 actionBarVisible="false"
+			creationComplete="onInit(event)" destructionPolicy="auto" title="Settings" xmlns:parts="org.syncon.RosettaStone.view.parts.*" xmlns:popup="org.syncon.RosettaStone.view.popup.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const RESTART_APP : String = 'restart' 
+			protected function onInit(event:FlexEvent):void
+			{
+				
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			
+			protected function chkBoxReverseText_changeHandler(event:Event):void
+			{
+				this.dispatchEvent( new Event( CHANGED_FORM ) ) 
+			}
+			
+			protected function cb_HighSpeed_changeHandler(event:Event):void
+			{
+				this.dispatchEvent( new Event( CHANGED_FORM ) ) 
+				this.dispatchEvent( new Event( RESTART_APP ) ) 
+			}
+			
+			protected function slider_fontSize_changeHandler(event:Event):void
+			{
+				
+			}
+			
+			protected function slider_fontSize_changeEndHandler(event:FlexEvent):void
+			{
+				this.dispatchEvent( new Event( CHANGED_FORM ) )  
+				
+			}
+			
+			public function hmsSelector_changeHandler(event:Event):void
+			{
+				this.dispatchEvent( new Event( CHANGED_FORM ) )  
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button label="Back" click="this.onBack()"/>
+	</views:navigationContent>
+	
+	
+	
+	<s:Scroller id="scroller" top="150" bottom="80" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1">
+		<s:VGroup width="100%"   top="0" bottom="0" gap="20" paddingBottom="20" paddingLeft="10"
+				  paddingRight="10" paddingTop="20">
+			
+			<!--
+			<mobile:TextAreaLabel2    text="Font Size"      />
+			<s:HSlider id="slider_fontSize"
+			changeEnd="slider_fontSize_changeEndHandler(event)"
+			change="slider_fontSize_changeHandler(event)" width="100%" minimum="6" maximum="80"/>
+			
+			-->
+			<!--<mobile:TextAreaLabel2  text="Reverse Text"   color="0xA2A2A2"  />-->
+			<!--<s:CheckBox id="cb_ReverseText" label="Reverse Text" change="chkBoxReverseText_changeHandler(event)"/>-->
+			<!--<mobile:TextAreaLabel  text="Only disable if you have inconsistent performance"   color="0xA2A2A2"  />	-->		
+			<!--<s:Line width="100%" >
+			<s:stroke>
+			<s:SolidColorStroke color="0" />
+			</s:stroke>
+			</s:Line>
+			-->
+			<mobile:TextAreaLabel2 styleName="sectionTitle" text="Global Clock Settings"/>
+			<!--<mobile:TextAreaLabel2 styleName="subText"
+								  text="Some Features may not apply to all clocks"/>
+			-->
+			<s:CheckBox id="cb_Enabled" label="Enable Voice"
+						change="chkBoxReverseText_changeHandler(event)"/>
+			<s:Label text="Speak Every" />
+			<popup:MinHourSelector id="timeSelector" change="hmsSelector_changeHandler(event)" />
+			<mobile:TextAreaLabel2  id="subText" />
+			<!-- 
+			tell user what u said 
+			-->
+			<s:CheckBox id="cb_format24Hours" label="Use 24 Clock"
+						change="chkBoxReverseText_changeHandler(event)"/>
+			<!--			
+			<s:CheckBox id="cb_ShowDate" label="Show Date"
+						change="chkBoxReverseText_changeHandler(event)"/>
+			<s:CheckBox id="cb_ShowDay" label="Show Day of Week"
+						change="chkBoxReverseText_changeHandler(event)"/>
+			<s:CheckBox id="cb_ShowSeconds" label="Show Seconds"
+						change="chkBoxReverseText_changeHandler(event)"/>
+			
+			-->
+			<s:Line width="100%">
+				<s:stroke>
+					<s:SolidColorStroke color="0"/>
+				</s:stroke>
+			</s:Line>
+			<!--
+			<mobile:TextAreaLabel2 styleName="sectionTitle" text="Other Settings"/>
+			<s:CheckBox id="cb_HighSpeed" label="Hi-Speed Mode"
+						change="cb_HighSpeed_changeHandler(event)"/>
+			<mobile:TextAreaLabel width="100%" styleName="subText"
+								  text="Only disable if you experience inconsistent performance. Restart App (app will auto exit)"/>
+			-->
+		</s:VGroup>
+	</s:Scroller>
+	<!--
+	<mobile:TextAreaLabel id="txtLoading" visible="true" width="100%" text="Loading..."
+	textAlign="center" verticalCenter="-40"/>
+	<s:VGroup id="txtError" visible="false" horizontalAlign="center" horizontalCenter="-40"
+	verticalCenter="0">
+	<mobile:TextAreaLabel width="100%" text="Failed loading devotions. Retry later"
+	textAlign="center"/>
+	<s:HGroup horizontalAlign="center">
+	
+	<s:Button label="Go Back" click="onBack()"/>
+	<s:Button label="Retry" click="onTryAgain()" />
+	
+	</s:HGroup>
+	</s:VGroup>
+	-->
+	<parts:BackBtn   x="17" y="27"  />
+	<parts:ViewTitle label="settings" x="180" y="25" height="90"  />
+
+	<!--<mobile:BottomNavMenu/>-->
+</views:View>

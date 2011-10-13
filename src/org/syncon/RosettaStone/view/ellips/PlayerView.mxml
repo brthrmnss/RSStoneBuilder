@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<controls:ScreenView xmlns:mx="http://www.adobe.com/2006/mxml"
+					 xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+					 xmlns:views="views.*"
+					 xmlns:controls="openplug.elips.controls.*"
+					 xmlns:view="org.syncon.TalkingClock.view.mobile.view.*"
+					 creationComplete="onInit(event)" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			import org.syncon.TalkingClock.vo.MobileMenuConfigVO;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const SHOWING : String = 'SHOWING';
+			static public const CURRICLUM : String = 'CURRICLUM' 
+			static public const HOME : String = 'HOME' 
+			static public const INFO : String = 'INFO' 		
+			static public const SETTINGS : String = 'SETTINGS' 		
+			static public const MENU : String = 'MENU';
+			
+			public var menuProvider2:MobileMenuConfigVO;
+			protected function onInit(event:FlexEvent):void
+			{
+				NightStandConstants.PlatformGlobals.fxMediate( this ) ; 
+				/* 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnSettings, this.onSettings ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnHome, this.onHome ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnCurriculum, this.onCurriculum ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnInfo, this.onInfo ) ; 
+				 */
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnMenu, this.onMenu ) ;				
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnBack, this.onBack ) ;				
+			}
+			
+			[Bindable] public var autoStart : Boolean = false; 
+			
+			public function showing() : void
+			{
+				if ( autoStart == false ) 
+				{
+					//this.dispatchEvent( new Event( SHOWING  ) ) ; 
+					autoStart= true; 
+					if ( this.automate != null ) 
+					this.automate.onRestart(null)
+				}
+			}
+			
+			override public function set visible ( f : Boolean ) : void
+			{
+				super.visible = f; 
+			}
+			
+			public function onBack(e:Event=null) : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain(e:Event=null) : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+ 
+			public function  onHome(e:Event=null) : void
+			{
+				this.dispatchEvent( new Event( HOME ) ) 
+			}			
+			public function  onInfo(e:Event=null) : void
+			{
+				this.dispatchEvent( new Event( INFO ) ) 
+			}
+			public function  onCurriculum(e:Event=null) : void
+			{
+				this.dispatchEvent( new Event( CURRICLUM ) ) 
+			}			
+			public function  onSettings(e:Event=null) : void
+			{
+				this.dispatchEvent( new Event( SETTINGS ) ) 
+			}					
+			
+			private function onMenu(e:Event):void
+			{
+				this.dispatchEvent( new Event( MENU ) ) 
+			}
+			
+		]]>
+	</mx:Script>
+	<!--	<viewmx:navigationContent>
+	<mx:Button label="Back" click="this.onBack()"/>
+	</viewmx:navigationContent> -->
+	
+	<mx:Canvas width="100%" height="100%" backgroundColor="0x262425"/>
+	
+	
+	<mx:Canvas width="100%">
+		<mx:Canvas width="100%" height="100%" alpha="0.6" backgroundColor="0x262425">
+		</mx:Canvas>
+		
+	
+		
+		<controls:Label id="txtLessonInfo"   fontSize="24" width="100%"
+						 color="0xFFFFFF"   textAlign="center"
+						verticalCenter="0"/>
+		
+		<ellips:OpenPlugButton   iconS="assets/buttons/arrowleft.png"   left="10" top="10"  id="btnBack"/>
+		
+		<mx:HBox right="10" top="10" horizontalAlign="center">
+			
+			<!--	<controls:Image source="assets/buttons/lightbulb.png"/>
+			<controls:Button />-->
+				<!--			
+			<ellips:OpenPlugButton   iconS="assets/buttons/20-gear2.png" labelS=""   id="btnSettings"/>
+			<ellips:OpenPlugButton   iconS="assets/buttons/home.png" labelS=""   id="btnHome"/>
+			<ellips:OpenPlugButton   iconS="assets/buttons/lightbulb.png"    id="btnInfo"/>
+			<ellips:OpenPlugButton   iconS="assets/buttons/arrowleft.png"    id="btnCurriculum"/>
+			-->
+			<ellips:OpenPlugButton   iconS="assets/buttons/20-gear2.png"    id="btnMenu"/>
+		</mx:HBox>
+		
+		
+	</mx:Canvas>
+	
+	
+	
+	<mx:VBox  width="100%" y="80"  >
+		<ellips:Player id="tester" width="100%" height="100%" name="Tester"/>
+		<!--mx:Canvas height="50" />-->
+		<ellips:PlayerAutomate  id="automate" width="100%" 
+								  active="{this.visible}"
+								autoStart="{this.autoStart}"/>
+	</mx:VBox>
+	
+
+</controls:ScreenView>

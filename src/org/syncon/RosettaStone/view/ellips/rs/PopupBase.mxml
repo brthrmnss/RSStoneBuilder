@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<controls:ScreenView 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="onInit2()" styleName="bgBackground"
+	height="100%" xmlns:controls="openplug.elips.controls.*"
+	>
+	<mx:Script>
+		<![CDATA[
+			import mvc.controller.SwitchScreensCommand;
+			
+			import mx.core.UIComponent;
+			
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			public var creationComplete : Boolean = false; 
+			public function onInit2() : void 
+			{
+				this.creationComplete = true; 
+				//this.visible = false; 
+				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
+ 
+				
+			}
+			/* 
+			public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupSelectionResult = new PopupSelectionResult()
+				popup.popupCode =  PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+		 */
+			public function show()  : void
+			{
+				this.visible = true; 
+				//this.popupCode.open( false,false ) 
+			}
+			public function hide( ) : void
+			{
+				//this.popupCode.close()
+			 	this.visible = false; 
+				//this.alpha = 0.2
+			 SwitchScreensCommand.goBack(this)
+			}
+ 
+ 
+		]]>
+	</mx:Script>
+ 
+	
+</controls:ScreenView>

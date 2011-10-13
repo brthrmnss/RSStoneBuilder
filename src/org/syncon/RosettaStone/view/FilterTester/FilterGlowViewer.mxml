@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:views="views.*"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.ColorPickerEvent;
+			import mx.events.DropdownEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.TalkingClock.vo.FilterVO;
+			
+			import spark.filters.GlowFilter;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const NEXT : String = 'next' ; 			
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			[Bindable] private var _filter:FilterVO=new FilterVO();
+			[Bindable] public var f :  GlowFilter = new GlowFilter(); 
+			protected function onInit(event:FlexEvent):void
+			{
+				this.addEventListener( FilterEditor.CHANGED_FILTER, this.onUpdateDisplay ) 
+			}
+			
+			
+			public function set filter (event:  FilterVO):void
+			{
+				this._filter = event; 
+				this.f = this._filter.filter as spark.filters.GlowFilter
+				this.cp.selectedItem = f.color; 
+				updateDisplay()
+			}
+			
+			public function updateDisplay( ) : void
+			{
+				this.slider_Alpha.value = f.alpha
+				this.lblAlphaValue.text=f.alpha.toFixed(1).toString()
+				this.stepperAlpha.value = f.alpha
+					
+				this.slider_blurX.value = f.blurX; 
+				this.stepperBlurX.value = f.blurX
+				this.lblValueBlurX.text=f.blurX.toFixed(1).toString()
+				
+				this.slider_blurY.value = f.blurY; 
+				this.stepperBlurY.value = f.blurY 
+				this.lblValueBlurY.text=f.blurY.toFixed(1).toString()
+				
+				this.slider_Quality.value = f.quality 			
+				this.lblValueQuality.text= f.quality.toFixed(1).toString()		
+				
+				this.slider_Strength.value = f.strength;  
+				this.lblValueStrength.text = f.strength.toString()		
+				this.stepperStrength.value = f.strength 	
+					
+				this.cb_Inner.selected = f.inner;  
+				this.cb_Knockout.selected = f.knockout;  
+				
+			}
+			
+			
+			public function openEvt(event: Event):void {
+				//forChange.text="Opened";
+			}       
+			
+			public function changeEvt(event: Event):void {
+				/* forChange.text="Selected Item: "
+				+ event.currentTarget.selectedItem + " Selected Index: "
+				+ event.currentTarget.selectedIndex; */
+				this.f.color = event.currentTarget.selectedItem as uint 
+			}
+			
+			protected function slider_Alpha_changeHandler(event:Event):void
+			{
+				this.f.alpha = this.slider_Alpha.value; 
+				this.lblAlphaValue.text = this.slider_Alpha.value.toString(); 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			protected function slider_blurX_changeHandler(event:Event):void
+			{
+				this.f.blurX = this.slider_blurX.value; 
+				this.lblValueBlurX.text = this.slider_blurX.value.toString();
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			protected function slider_blurY_changeHandler(event:Event):void
+			{
+				this.f.blurY = this.slider_blurY.value; 
+				this.lblValueBlurY.text = this.slider_blurY.value.toString(); 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}	
+			protected function slider_Strength_changeHandler(event:Event):void
+			{
+				this.f.strength = this.slider_Strength.value; 
+				this.lblValueStrength.text = this.slider_Strength.value.toString();  
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			protected function slider_Quality_changeHandler(event:Event):void
+			{
+				this.f.quality = this.slider_Quality.value; 
+				this.lblValueQuality.text = this.slider_Quality.value.toString(); 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}				
+			
+			protected function cb_Knockout_changeHandler(event:Event):void
+			{
+				this.f.knockout = this.cb_Knockout.selected; 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			protected function cb_Inner_changeHandler(event:Event):void
+			{
+				this.f.inner = this.cb_Inner.selected; 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}			
+			
+			protected function stepperBlurX_changeHandler(event:Event):void
+			{
+				//	this.f.blurX = this.stepperBlurX.value; 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			protected function stepperBlurY_changeHandler(event:Event):void
+			{
+				//	this.f.blurY = this.stepperBlurY.value; 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			
+			protected function stepperAlpha_changeHandler(event:Event):void
+			{
+				//this.f.alpha = this.stepperAlpha.alpha; 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+				
+			}
+			
+			protected function onUpdateDisplay(event:Event):void
+			{
+				this.updateDisplay()
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<s:HGroup>
+		<s:Label text="Color"/>
+		<views:ColorPicker id="cp" change="changeEvt(event);" open="openEvt(event);"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Label width="111" text="Alpha"/>
+		<s:HSlider id="slider_Alpha" width="150" change="slider_Alpha_changeHandler(event)"
+				   liveDragging="true" maximum="1" minimum="0" snapInterval="0"/>
+		<s:Label id="lblAlphaValue"  />	
+		<s:NumericStepper id="stepperAlpha"
+						  change=" this.f.alpha = this.stepperAlpha.value;  stepperAlpha_changeHandler(event);"
+						  maximum="1" minimum="0" snapInterval="0" stepSize="0.1"
+						  />
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label width="111" text="blurX"/>
+		<s:HSlider id="slider_blurX" width="150" change="slider_blurX_changeHandler(event)"
+				   maximum="255" minimum="0"/>
+		<s:Label id="lblValueBlurX"  />	
+		<s:NumericStepper id="stepperBlurX"
+						  change=" this.f.blurX = this.stepperBlurX.value; stepperAlpha_changeHandler(event);"
+						  maximum="1000" minimum="0" snapInterval="0"  />
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label width="111" text="blurY"/>
+		<s:HSlider id="slider_blurY" width="150" change="slider_blurY_changeHandler(event)"
+				   maximum="255" minimum="0"/>
+		<s:Label id="lblValueBlurY" text="{this.slider_blurY.value}"/>	
+		<s:NumericStepper id="stepperBlurY"
+						  change=" this.f.blurY = this.stepperBlurY.value; stepperAlpha_changeHandler(event); "
+						  maximum="1000" minimum="0" snapInterval="0"  />
+	</s:HGroup>
+	
+	
+	<s:HGroup>
+		<s:Label width="111" text="Strength"/>
+		<s:HSlider id="slider_Strength" width="150" change="slider_Strength_changeHandler(event)"
+				   maximum="255" minimum="0"/>
+		<s:Label id="lblValueStrength" />	
+		<s:NumericStepper id="stepperStrength"
+						  change=" this.f.strength = this.stepperStrength.value; stepperAlpha_changeHandler(event); "
+						  maximum="1000" minimum="0" snapInterval="0"  />
+		
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label width="111" text="Quality"/>
+		<s:HSlider id="slider_Quality" width="150" change="slider_Quality_changeHandler(event)"
+				   maximum="15" minimum="0"/>
+		<s:Label id="lblValueQuality" text="{this.slider_Quality.value}"/>	
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label width="111" text="Knockout"/>
+		<s:CheckBox id="cb_Knockout" change="cb_Knockout_changeHandler(event)"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label width="111" text="Inner"/>
+		<s:CheckBox id="cb_Inner" change="cb_Inner_changeHandler(event)"/>
+	</s:HGroup>
+	
+</s:Group>

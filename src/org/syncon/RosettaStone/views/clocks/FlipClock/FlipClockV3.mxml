@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:local="*"
+		 creationComplete="onInit(event)" xmlns:clocks="org.syncon.TalkingClock.view.clocks.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			public var timer_delayedChange : Timer = new Timer(1000, 1 )  ;
+			private var _fontFamilyS:String;
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+				this.timer.start() ;
+				
+				if ( _fontFamilyS  != null  ) 
+				{
+					this.txtFronts(true, _fontFamilyS )
+				}
+				//this.rect2.width = this.width; 
+				this.setFontSize( (this.width*.9)/(6*.5) , true ) 
+				
+			}
+			public function set fontFamilyS(event:String):void
+			{
+				this._fontFamilyS = event; 
+				//this._fontFamilyG = 
+			}
+			
+			protected function onTime(event:TimerEvent):void
+			{
+				var hours : String =this.DateDisplay2.format( new Date ) 
+				var mins : String = this.DateDisplay3.format( new Date ) 
+				var secs : String = this.DateDisplay4.format( new Date ) 
+				
+				var dur : Number = 500
+				this.digitHour.text = hours; 
+				if ( this.testing ) 
+				{
+				//
+				this.digitMin.text = secs
+				}
+				else
+				{
+					this.digitMin.text =mins
+				}
+				//this.digitSec.text = secs; 
+				
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			
+			override public function set enabled(value:Boolean):void
+			{
+				super.enabled = value;
+				if ( value ) 
+				{
+					this.timer.start(); 
+				}
+				else
+				{
+					this.timer.stop(); 
+				}
+			}
+			
+			private function txtFronts(visible:Boolean, _fontFamily:String=''):void
+			{
+				var txt : Array = [this.Sep] //, this.digitHour, this.digitMin ]//, this.txtDate];
+				var digits : Array = this.getDigits()
+				var digitsTfs : Array = this.getDigitTfs() 
+				
+				txt  = txt.concat( digitsTfs ) 
+				
+				for each ( var tf : Object in txt ) 
+				{
+					tf.visible = visible; 
+					/* if ( tf == this.txtDayFront )
+					continue;  */
+					if ( _fontFamily != '' ) 
+						tf.setStyle('fontFamily', _fontFamily ) ; 	
+				}
+				
+			}						
+			
+			public function get textFontSize() : Number
+			{
+				return this.fontSize
+			}
+			private var fontSize :   Number = 0 ; 
+			private var testing:Boolean;
+			public function setFontSize(fontSize_ : Number, init : Boolean = false ) : void
+			{
+				//	return;
+				if ( fontSize_ == this.fontSize && init == false  ){
+					return ;}
+				this.fontSize = fontSize_; 
+				var largeTxt : Array = this.getDigitTfs()
+				var smallTxt :  Array = [ this.Sep ] 
+				var ratioLageToSmall : Number = 88/100
+				var ratioLargeToTiny : Number = 22/100
+				var smallFontSize : Number = ratioLageToSmall * this.fontSize; 
+				var tinyFontSize : Number = ratioLargeToTiny * this.fontSize
+				
+				for each ( var digit : FlipClockDigit in this.getDigits() ) 
+				{
+					digit.txtSpacer.setStyle('fontSize', this.fontSize ) ; 
+				}
+				
+				for each ( var o : Object in smallTxt ) 
+				{
+					o.setStyle('fontSize', smallFontSize ) 
+				}
+				/* 		for each (   o   in tinyTxt ) 
+				{
+				o.setStyle('fontSize', tinyFontSize ) 
+				}				 */
+				for each (   o in largeTxt ) 
+				{
+					//continue
+					o.setStyle('fontSize',this.fontSize ) 
+				} 
+				
+				
+			}	
+			
+			
+			private function getDigits():Array
+			{
+				var d : Array = [this.digitHour ,  this.digitMin  ] 
+				return d;
+			}
+			
+			private function getDigitTfs():Array
+			{
+				var txt : Array = []; 
+				for each ( var digit : FlipClockDigit in this.getDigits() ) 
+				{
+					txt = txt.concat( digit.getAreas() ) ; 
+				}
+				return txt;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format" dateStyle="none" dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" dateTimePattern="hh"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" dateTimePattern="mm"/>
+		<s:DateTimeFormatter id="DateDisplay4" dateTimePattern="ss"/>		
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+		
+	</fx:Declarations>
+	<!--
+	 <s:Rect top="0" right="0" left="0" bottom="0">
+		<s:fill>
+			<s:SolidColor color="0x0" />
+		</s:fill>
+	</s:Rect>
+	<s:Rect id="rect2" top="0"  bottom="0"  >
+		<s:fill>
+			<s:SolidColor color="0xFF" />
+		</s:fill>
+	</s:Rect>  
+	-->
+	<s:HGroup verticalAlign="middle" color="0xFFFFFF" fontSize="64" verticalCenter="0" horizontalCenter="0"> 
+		
+		<clocks:FlipClockDigit id="digitHour"/> 
+		<s:Label id="Sep"   alpha="1" horizontalCenter="0" text=":"
+				 verticalCenter="0"/>
+		<!--
+		<s:Label id="Sep2" width="30" height="61" alpha="0.3" horizontalCenter="0" text=":"
+		verticalCenter="0"/>
+		-->
+		<clocks:FlipClockDigit id="digitMin"/>
+		<!--
+		<s:Label id="Sep3"   alpha="1"  text=":"
+		/>
+		
+		<clocks:FlipClockDigit id="digitSec"/>
+		-->
+	</s:HGroup>
+	
+	
+	<!--<s:Button id="btnEdit" left="10" top="10" width="20" label="e" click="onEdit(event)"/>-->
+</s:Group>

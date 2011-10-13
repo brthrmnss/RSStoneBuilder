@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%" creationComplete="onInit(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.RSModel;
+			import org.syncon.RosettaStone.test.cases.TestPromptsAndDefinitions;
+			import org.syncon2.utils.sound.PlaySound_Flex;
+			protected function onInit(event:FlexEvent):void
+			{
+				var tests : Array = [TestPromptsAndDefinitions]
+				for each ( var test : Class   in tests ) 
+				{
+					/* var fx : Function = test.constructor
+					var test_ : Object = fx.call()
+						test_.execute();  */
+					var factory : IFactory = new ClassFactory( test ) 
+		
+					var test_ : Object = factory.newInstance()
+					//var test_ : Object = new  test
+					test_.execute(); 
+				}
+				
+			}
+			
+			private function setupStatic():void
+			{
+				
+				RSModel.BASE_FOLDER= 'assets/'
+				RSModel.PlaySound = new PlaySound_Flex()
+			}
+			
+		]]>
+	</fx:Script>
+ 
+	
+</s:Group>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"  
+				height="100%"
+				autoDrawBackground="false" xmlns:lesson="org.syncon.RosettaStone.view.edit.lesson.*">
+	
+	
+	<fx:Script> 
+		<![CDATA[ 
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.ItemRendererHelpers;
+			import org.syncon.RosettaStone.vo.LessonSetVO;
+			static public const MOVE_UP : String = 'MOVE_UP.f'; 
+			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
+			static public const COPY_FILTER : String = 'COPY_FILTER';
+			
+			public var help : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
+			
+			[Bindable] public var set : LessonSetVO = new LessonSetVO()
+			override public function set data(value:Object):void { 
+				if ( data == value ) 
+					return //should've updated ...
+					super.data = value; 
+				this.help.listenForObj(value,LessonSetVO.UPDATED, this.updateItemRenderer )
+				set = value as LessonSetVO
+				this.help.disableIfNull( value, new LessonSetVO, 'set' )  
+				this.help.setupParent( this.owner ) ;
+				this.help.fxSetup( this.btnUp, this.btnDown, this.btnDelete  ) ; 
+				this.updateItemRenderer()
+			} 
+			
+			
+			public function updateItemRenderer(e:Event=null)  : void
+			{
+				txtLbl.text = this.set.name.toString()
+				if (this.selected == false && this.currentState == 'selected' )
+					this.currentState = ''; 
+				this.itemSets.list.dataProvider = this.set.items; //
+			}
+			
+			public function onEdit() : void
+			{
+				
+			}
+			
+			
+			protected function onUp():void
+			{
+				this.dispatchEvent( new CustomEvent( MOVE_UP, this.set ) ) ; 
+			}
+			protected function onDown():void
+			{
+				this.dispatchEvent( new CustomEvent( MOVE_DOWN, this.set ) ) ; 
+			}
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.set ) ) ; 
+			}			
+			
+			protected function onCopy():void
+			{
+				this.dispatchEvent( new CustomEvent( COPY_FILTER, this.set ) ) ; 
+			}		
+			
+			protected function ch_Visible_changeHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function onExitSelectedState(event:FlexEvent):void
+			{
+				this.itemSets.list.selectedIndex = -1 ; 
+			}
+			
+		]]> 
+	</fx:Script> 
+	
+	<fx:Declarations>
+		<s:Sine id="sineIn" easeInFraction="0.3" />
+	</fx:Declarations>	
+	<!--	<s:layout>
+	<s:HorizontalLayout gap="3"/>
+	</s:layout>-->
+	<s:states> 
+		<s:State name="normal"/> 
+		<s:State name="hovered"/> 
+		<s:State name="disabled"/> 
+		<s:State name="selected"  exitState="onExitSelectedState(event)"/> 
+	</s:states> 
+	
+	<s:transitions>
+		
+		<s:Transition toState="*" >
+			<s:Fade targets="{[this.bgRect]}"   easer="{sineIn}"
+					duration="350" />
+		</s:Transition>
+		
+		
+		<s:Transition toState="*" >
+			<s:AnimateColor targets="{[this.txtLbl, this.txtDesc ]}"   easer="{this.sineIn}"
+							duration="350" />
+		</s:Transition>		
+		
+	</s:transitions>		
+	
+	<s:Rect id="bgRect"  width="100%" height="25"  alpha.normal="0" >
+		<s:fill>
+			<s:SolidColor color="0x598E52"  color.hovered="0x598E52"  color.selected="0x36722E"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:VGroup x="0">
+		<s:HGroup verticalAlign="middle" verticalCenter="0" paddingLeft="0" paddingRight="5">
+			<!--<s:Label id="seperator" text="|" color="0x6E6E6E"  />-->
+			<s:TextInput id="txtLbl" color="0"    verticalCenter="0"  
+					  width="160"     
+					 fontSize="12" />
+			<s:Label id="txtDesc" color="0"    width="80" verticalCenter="0"
+					 fontSize="12"   /> 
+			<!--<s:CheckBox id="ch_Visible" change="ch_Visible_changeHandler(event)" />-->
+			<s:Button  label="Edit"  id="btnEdit" click="onEdit()"/>
+			<s:Button width="30" label="U"  id="btnUp" click="onUp()"/>
+			<s:Button width="30" label="D"  id="btnDown" click="onDown()"/>
+			<s:Button width="30" label="X"  id="btnDelete" click="onDelete()"/>		
+		</s:HGroup>
+		<s:Group>
+			<!--<s:Rect id="bgRectd"  width="100%" height="100%"   >
+				<s:fill>
+					<s:SolidColor color="0x598E52"  />
+				</s:fill>
+			</s:Rect>-->
+			<lesson:ItemSetsBulk   x="20"    id="itemSets"   name="Item Sets"/>
+		</s:Group>
+	</s:VGroup>
+	
+</s:ItemRenderer>

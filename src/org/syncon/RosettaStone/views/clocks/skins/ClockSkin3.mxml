@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		creationComplete="complete()">
+	
+	<fx:Metadata>
+		[HostComponent("org.syncon.TalkingClock.views.Clock")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.PropertyChangeEvent;
+			import mx.graphics.GradientBase;
+			import mx.graphics.GradientEntry;
+			import mx.graphics.IFill;
+			import mx.graphics.IStroke;
+			import mx.graphics.LinearGradient;
+			import mx.graphics.LinearGradientStroke;
+			import mx.graphics.RadialGradient;
+			import mx.graphics.SolidColor;
+			import mx.graphics.SolidColorStroke;
+			
+			import spark.components.Group;
+			import spark.filters.BlurFilter;
+			import spark.filters.DropShadowFilter;
+			import spark.primitives.Ellipse;
+			import spark.primitives.Path;
+			import spark.primitives.Rect;
+			
+			public function sin(angle : Number ) : Number
+			{ 
+				return Math.sin(angle * Math.PI / 180)
+			}
+			
+			public function cos(angle : Number ) : Number
+			{
+				return Math.cos(angle * Math.PI / 180)
+			}
+			
+			
+			/**
+			 * Handle scroll position changes
+			 */
+			private function handleScroll(e: PropertyChangeEvent):void {
+				var rota : Number = Number( e.newValue )
+				if ( handSec ==null ) 
+					return; 
+				if (e.source == e.target && e.property == "secAngle")
+				{
+					handSec.rotation = rota
+					if ( handSec2 != null ) handSec2.rotation = rota; 
+					for each ( var o : Object in secondRotate ) 
+					{
+						o.rotation = rota; 
+					}
+				}
+				if (e.source == e.target && e.property == "minAngle")
+				{
+					handMin.rotation = rota
+				}
+				if (e.source == e.target && e.property == "hourAngle")
+				{
+					handHour.rotation = rota
+				}
+				//this.newHeight ;
+			}
+			
+			private var secondRotate : Array = []; 
+			public var handHour : Path; 
+			public var handMin : Path; 
+			public var handSec : Path; 
+			public var handSec2 : Object; 
+			private var _dialDiamter:Number;
+			private var fixedSize:Boolean=false;
+			public function set dialDiamter(value: Number):void
+			{
+				_dialDiamter = value;
+				
+			}		
+			private function complete():void {
+				this.hostComponent.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, handleScroll);
+				var clockDiamter : Number = this.width*.9; 
+				var r : Number = clockDiamter/2
+				var d : Number = clockDiamter;
+				var currentD : Number = d
+				var gray:SolidColor = new SolidColor();
+				gray.color = 0x444444;
+				
+				var brown:SolidColor = new SolidColor();
+				brown.color = 0xbca981;
+				
+				var white:SolidColor = new SolidColor();
+				white.color = 0xFFFFFF;
+				
+				
+				var bg : Group = new Group()
+				this.holder.addElement( bg ) ; 
+				this.addRectTo( bg , 0,false ) ; 
+				bg.height = bg.width = d
+				
+				var backOfClock : Group = new Group()
+				this.holder.addElement( backOfClock ) ; 
+				this.wH( backOfClock, d ) ; 
+				
+				var bgClockFill : IFill = this.createSolidFill( 0xFF ) 
+				
+				strokeF = this.createGradientStroke([0xFFFFFF , 0 ].reverse(),2, 0+ 135+90
+				) as IStroke
+				this.addEllips( backOfClock, d-0, bgClockFill,true, strokeF) 
+				
+				
+				//currentD-=10
+				//inner gray base of outline 
+				bgClockFill = this.createSolidFill( 0x918989 ) 
+				this.addEllips( backOfClock, currentD, bgClockFill ) 
+				
+				var takeIn : Number  
+				if ( fixedSize ) 
+				{
+					takeIn =15
+				}
+				else
+				{
+					takeIn  = currentD*.1
+				}
+				currentD-=takeIn
+				//inner gray base of outline 
+				var strokeF : IStroke
+				
+				
+				bgClockFill = this.createSolidFill( 0 ) 
+				//var strokeF : IStroke = this.createGradientStroke([0xFFFFFF, 0x52494B ],15, 135) as IStroke
+				this.addEllips( backOfClock, currentD, bgClockFill , false, strokeF) 
+				//
+				//add highlights
+				strokeF = this.createGradientStroke([0xFFFFFF,0x52494B, 0x52494B ].reverse(),takeIn , 135+90) as IStroke
+				this.addEllips( backOfClock, currentD-(takeIn*0), null , false, strokeF) 
+				//return;
+				strokeF = this.createGradientStroke([0xFFFFFF, 0x52494B, 0x52494B ].reverse(),takeIn, 135+90+180, null, null, [0, 0,1]) as IStroke
+				this.addEllips( backOfClock, currentD, null , false, strokeF) 
+				
+				/*  	
+				//thi slooks cool 
+				var asideHolder : Group = new Group()
+				//this.holder.addElement( asideHolder ) ; 
+				this.addElement( asideHolder ) ; 
+				this.wH( asideHolder, d ) ; 
+				asideHolder.width = asideHolder.height = 1; 
+				strokeF = this.createGradientStroke([0xFF0000, 0x52494B, 0x52494B ].reverse(),15+60, 135+110, null, null, [0, 0,1]) as IStroke
+				ellip = this.addEllips( asideHolder, currentD, null , false, strokeF) 
+				var dbg : Array = [ ellip.width, ellip.height, ellip.x]
+				asideHolder.x = d/2
+				asideHolder.y = d/2; 
+				this.addRectTo( asideHolder , 0,true ) ; 
+				//this.secondRotate.push( ellip )
+				this.secondRotate.push( asideHolder ) */
+				
+				/*	
+				//thi slooks cool 
+				var asideHolder : Group = new Group()
+				//this.holder.addElement( asideHolder ) ; 
+				this.addElement( asideHolder ) ; 
+				this.wH( asideHolder, d ) ; 
+				asideHolder.width = asideHolder.height = 1; 
+				strokeF = this.createGradientStroke([0xFF0000, 0x52494B, 0x52494B ].reverse(),15+60, 135+110, null, null, [0, 0,1]) as IStroke
+				ellip = this.addEllips( asideHolder, currentD, null , false, strokeF) 
+				var dbg : Array = [ ellip.width, ellip.height, ellip.x]
+				asideHolder.x = d/2
+				asideHolder.y = d/2; 
+				this.addRectTo( asideHolder , 0,true ) ; 
+				//this.secondRotate.push( ellip )
+				this.secondRotate.push( strokeF )
+				*/
+				
+				//inner brown outline 
+				//reverse b/c last color gets put at requesd angle 
+				//see:
+				//	strokeF = this.createGradientStroke([0x846F55, 0x201C17, 0x171813,0xFF0000, 0xFF ].reverse(),5, 135) as IStroke
+				strokeF = this.createGradientStroke([0x846F55, 0x201C17, 0x171813,0xFFFFFF,0xFFFFFF ].reverse(),currentD/360*6, 135+90+20) as IStroke
+				this.addEllips( backOfClock, currentD, null , false, strokeF) 
+				//inner highlight 
+				
+				//fill in with light gray 
+				bgClockFill = this.createGradient( [0x3E4143,0x1D2025 ], new RadialGradient() ) as IFill
+				this.addEllips( backOfClock, currentD, bgClockFill ) 
+				var dOfInner : Number = currentD
+				//return
+				//this.holder.removeAllElements(); 
+				//draw ticks ... hour 
+				var tickMarks : Group = new Group()
+				this.holder.addElement( tickMarks ) ; 
+				this.wH( tickMarks, d ) ; 
+				currentD-=10
+				
+				bgClockFill = this.createSolidFill( 0xFFFFFF )
+				
+				var tickMarkLength : Number = Math.ceil(dOfInner / (2*20) )
+				var tickMarkWidth :  Number = dOfInner / (360) 
+				//bgClockFill = this.createSolidFill( 0xFF0000)
+				var path : Path 
+				//minute ticks
+				for ( var i : int = 0 ; i < 360; i= i+360/60 )
+				{
+					
+					path = this.addXAt( tickMarks, currentD, bgClockFill )
+					path.data = drawRectangle3( currentD/2-10, 0, 10, 4); 
+					//path.data = drawRectangle2( currentD-10, 0, 50, 50);
+					
+					path.data = drawRectangle3( currentD/2-tickMarkLength, 0, tickMarkLength ,  tickMarkWidth);
+					//path.data = drawRectangle3( 0, 0, 5, 4);
+					//path.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+					path.rotation = i;
+					//trace(path.data ) ; 
+					//return;
+				}
+				//hour ticks 
+				for ( i = 0 ; i < 360; i= i+360/12 )
+				{
+					path = this.addXAt( tickMarks, currentD, bgClockFill )
+					path.data = drawRectangle3( currentD/2-6-10, 0, 16, 3);
+					var hourTickLength : int = tickMarkLength*3
+						var hourTickWidth : int = 0 ; 
+					path.data = drawRectangle3( currentD/2-hourTickLength, 0, hourTickLength, tickMarkWidth*6);
+					//path.data = drawRectangle3( 0, 0, 5, 4);
+					//path.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+					path.rotation = i;
+					//trace(path.data ) ; 
+					//return;
+				}
+				
+				//return;
+				//add dark gray center cover on top of center fill, to give realism to tick marks 
+				radialFill = this.createGradient( [0,0,0 ], new RadialGradient() , null, [0,0.4,0.6] ) as RadialGradient
+				ellip = this.addEllips( tickMarks, dOfInner, radialFill ) 	
+				var radialFill : RadialGradient; // = this.createGradient( [0x3E4143,0x1D2025 ], new RadialGradient() , null, [0.3,0] ) as RadialGradient
+				
+				
+				var hands : Group = new Group()
+				
+				this.holder.addElement( hands ) ; 
+				this.wH( hands, d ) ; 
+				
+				bgClockFill = this.createSolidFill( 0xFFFFFF )
+				path = this.addXAt( hands, currentD, bgClockFill )
+				var handWidth : Number = tickMarkWidth*10
+				var handWidthTaperEned : Number = tickMarkWidth*2
+				path.data = drawRectangle3( -25, 0, currentD/2+10, handWidth,handWidthTaperEned);
+				var shadowDistance : Number = currentD*9/360
+				path.filters =[ new spark.filters.DropShadowFilter(2,45,0,0.6,shadowDistance,shadowDistance, 1 )]
+				this.handMin = path ; 
+				
+				bgClockFill = this.createSolidFill( 0xFFFFFF )
+				path = this.addXAt( hands, currentD, bgClockFill )
+				var handHourWidth : Number = tickMarkWidth*8
+				var handHourWidthTaperEned : Number = tickMarkWidth*2
+				path.data = drawRectangle3( -12, 0, currentD/2-15,handHourWidth,handHourWidthTaperEned);
+				path.filters =[ new spark.filters.DropShadowFilter(2,45,0,0.6,shadowDistance,shadowDistance, 1 )]
+				this.handHour = path ; 
+				
+				
+				bgClockFill = this.createSolidFill( 0xcc2211 )
+				path = this.addXAt( hands, currentD, bgClockFill )
+				path.data = drawRectangle3( -20, 0, currentD/2+15, 1);
+				path.filters =[ new spark.filters.DropShadowFilter(2,45,0,0.6,4,4, 1 )]
+				this.handSec = path ; 
+				
+				//hand ellips 
+				bgClockFill = this.createSolidFill( 0xcc2211 )
+				var ellipsHolder : Group = new Group(); 
+				this.holder.addElement( ellipsHolder ) ; 
+				//this.wH( ellipsHolder, d ) ; 
+				ellipsHolder.width = d/2; 
+				ellipsHolder.height = 2
+				ellipsHolder.x = d/2 
+				ellipsHolder.y = d/2// -ellipsHolder.height/2
+				//this.addRectTo( ellipsHolder , 0xFFF ) ;
+				var degree : Number = currentD/360
+				var ellip : Ellipse = this.addEllips( ellipsHolder, degree*12, bgClockFill ) 
+				/* ellip.x = d/2 
+				
+				ellip.y = d/2 */
+				//ellip.x += 10+degree*12*2
+				//push the dot further up the line (it starts in the middle ) 
+				ellip.x +=  currentD/5
+				ellip.y = -degree*12/2
+				ellip.filters =[ new spark.filters.DropShadowFilter(2,45,0,0.6,4,4, 1 )]
+				this.handSec2 = ellipsHolder ; 
+				
+				//center red dot 
+				bgClockFill = this.createSolidFill( 0xcc2211 ) 
+				this.addEllips( hands, 4, bgClockFill ) 
+				
+				var topFxHolder : Group = new Group(); 
+				this.holder.addElement( topFxHolder ) ; 
+				this.wH( topFxHolder, d ) ; 
+				
+				//return; 
+				//lens effect
+				/* 
+				radialFill = this.createGradient( [0,0,0 ], new RadialGradient() , null, [0,0.4,0.8] ) as RadialGradient
+				ellip = this.addEllips( topFxHolder, d-15, radialFill ) 	
+				
+				var radialFill : RadialGradient = this.createGradient( [0x3E4143,0x1D2025 ], new RadialGradient() , null, [0.3,0] ) as RadialGradient
+				*/
+				//lense flair
+				//center red dot 
+				var lensFlairHolder : Group = new Group(); 
+				this.holder.addElement( lensFlairHolder ) ; 
+				this.wH( lensFlairHolder, d ) ; 
+				radialFill = this.createGradient( [0xFFFFFF,0xFFFFFF ], new RadialGradient() , null , [0,0.4].reverse() ) as RadialGradient
+				ellip = this.addEllips( lensFlairHolder, d, radialFill ) 	
+				ellip.x -= d/3
+				ellip.y -= d/3
+				
+				var lensFlairMaskHolder : Group = new Group(); 
+				this.wH( lensFlairMaskHolder, d ) ; 
+				var mask : Ellipse = this.addEllips( lensFlairMaskHolder, d, bgClockFill ) 
+				
+				lensFlairHolder.mask = lensFlairMaskHolder ; 
+				
+				
+				labelHolder.y = d*1.1
+			}
+			
+			private function drawRectangle(xx:Number, yy:Number, ww:Number, hh:Number, squander : int = 0 ):String
+			{
+				//p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+				//p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+				var data : String = "M 70,-3 l 4,0 0,6 -4,0 Z";// TODO Auto Generated method stub
+				var push : Array = ['m', xx, yy-hh, 'l',ww,-hh, 0,hh, -ww, hh, 'z' ]
+				push = ['M', xx, yy-hh, 'L',xx+ww,-hh, xx+ww,hh, xx, hh, 'Z' ]//'// , 'M', xx+ww+squander,yy ]
+				var str : String = push.join(' '); 
+				return push.join(' '); 
+			}
+			
+			private function drawRectangle2(xx:Number, yy:Number, ww:Number, hh:Number, squander : int = 0 ):String
+			{
+				//p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+				//p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+				var data : String = "M 70,-3 l 4,0 0,6 -4,0 Z";// TODO Auto Generated method stub
+				var push : Array = ['m', xx, yy-hh, 'l',ww,-hh, 0,hh, -ww, hh, 'z' ]
+				var taper : Number = hh*0.3
+				push = ['M', xx, yy-hh, 'L',xx+ww,-hh+taper, xx+ww,hh-(taper*2), xx, hh, 'Z' ]//'// , 'M', xx+ww+squander,yy ]
+				var str : String = push.join(' '); 
+				return push.join(' '); 
+			}
+			
+			private function drawRectangle3(xx:Number, yy:Number, ww:Number, hh:Number, squander : int = 0 ):String
+			{
+				//p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+				//p1.data = "M 180,-3 L 184,-3 184,3 180,3 Z";
+				var data : String = "M 70,-3 l 4,0 0,6 -4,0 Z";// TODO Auto Generated method stub
+				var push : Array = ['m', xx, yy-hh, 'l',ww,-hh, 0,hh, -ww, hh, 'z' ]
+				var taper : Number = squander
+				push = ['M', xx, yy-hh, 'L',xx+ww,-hh+taper, xx+ww,hh-(taper*2), xx, hh, 'Z' ]//'// , 'M', xx+ww+squander,yy ]
+				var str : String = push.join(' '); 
+				return push.join(' '); 
+			}
+			
+			private function addRectTo(bg:Group, color_:uint=0xFFFFFF, addColor:Boolean=true):void
+			{
+				var re : Rect = new Rect()
+				re.top = re.right = re.left = re.bottom = 0 ; 
+				var color : SolidColor = new SolidColor()
+				color.color = color_
+				if ( addColor == false ) 
+				{
+					color.alpha = 0 	
+				}
+				re.fill = color; 
+				bg.addElement( re ) ; 
+			}
+			
+			private function wH(g:Group, d:Number):void
+			{
+				g.width = g.height = d; 
+			}
+			
+			private function createSolidFill(color_:uint):IFill
+			{
+				var color : SolidColor = new SolidColor()
+				color.color = color_
+				return color; 
+			}
+			private function createGradient(colors:Array, gradient : GradientBase= null, ratios : Array = null, 
+																						 alphas : Array = null ): Object
+			{
+				if ( gradient == null ) 
+				{
+					gradient = new LinearGradient()
+				}
+				var entries : Array = [] ; 
+				for ( var i : int = 0 ; i < colors.length; i++ )
+				{
+					var g : GradientEntry = new GradientEntry()
+					g.color = colors[i] 
+					if ( alphas != null ) 
+						g.alpha = alphas[i] ; 
+					entries.push( g ) 
+				}
+				
+				gradient.entries = entries
+				return gradient; 
+			}			
+			private function createGradientStroke(colors:Array,weight : Number =1 , angle : Number = 0,
+																					ratios : Array = null, gradient : GradientBase= null , 
+																					alphas : Array = null ): Object
+			{
+				if ( gradient == null ) 
+				{
+					gradient = new LinearGradientStroke(weight,true)
+					gradient.rotation = angle; 
+				}
+				
+				var entries : Array = [] ; 
+				for ( var i : int = 0 ; i < colors.length; i++ )
+				{
+					var g : GradientEntry = new GradientEntry()
+					g.color = colors[i] 
+					if ( alphas != null ) 
+						g.alpha = alphas[i] ; 
+					entries.push( g ) 
+				}
+				
+				gradient.entries = entries
+				return gradient; 
+			}					
+			
+			private function addEllips(g:Group, d:Number, bgClockFill:IFill=null, showFill: Boolean = true, stokr : IStroke =null): Ellipse
+			{
+				var eelll : Ellipse = new Ellipse()
+				eelll.width = eelll.height = d; 
+				if ( bgClockFill == null ) 
+				{
+					bgClockFill = this.createSolidFill( 0xFF0000 ) 
+					if ( showFill == false ) 
+						bgClockFill['alpha'] = 0; 
+				}
+				eelll.fill = bgClockFill
+				if ( stokr != null ) eelll.stroke = stokr; 
+				g.addElement( eelll) 
+				
+				var diamter : Number = g.width
+				var offxetX : Number = (diamter - d) / 2
+				
+				eelll.x = offxetX
+				eelll.y = offxetX
+				return eelll; 
+			}
+			private function addXAt(g:Group, d:Number, bgClockFill:IFill=null, showFill: Boolean = true): Path
+			{
+				var eelll : Path = new Path()
+				//eelll.width = eelll.height = d; 
+				if ( bgClockFill == null ) 
+				{
+					bgClockFill = this.createSolidFill( 0xFF0000 ) 
+					if ( showFill == false ) 
+						bgClockFill['visible'] = false; 
+				}
+				eelll.fill = bgClockFill
+				g.addElement( eelll) 
+				
+				var diamter : Number = g.width
+				var offxetX : Number = (diamter - d) / 2
+				/* 
+				eelll.x = offxetX
+				eelll.y = offxetX
+				*/	
+				offxetX = g.width/2
+				eelll.x = offxetX
+				eelll.y = offxetX
+				return eelll; 
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		
+		.big { color:#444444; fontWeight:normal; fontSize:34; fontFamily:Georgia; }
+		.tiny { color:#444444; fontWeight:normal; fontSize:11; fontFamily:Georgia; fontWeight:bold; }
+	</fx:Style>
+	
+	
+	
+	<fx:DesignLayer d:userLabel="Label">
+		<s:Group horizontalCenter="0" y="220"   id="labelHolder" visible="false" >
+			
+			<s:Rect top="0" right="0" left="0" bottom="0" >
+				<s:fill>
+					<s:SolidColor color="#F9F8F4"/>
+				</s:fill>
+				<s:filters>
+					<s:DropShadowFilter alpha="0.5" angle="45.0" blurX="1.1" blurY="1.1" color="#000000"
+										distance="1.8" hideObject="false" inner="false" knockout="false"
+										quality="2" strength="1"/>
+					<s:DropShadowFilter alpha="0.5" angle="141.34019174590992" blurX="1" blurY="1" color="#000000"
+										distance="1.1" hideObject="false" inner="false" knockout="false"
+										quality="2" strength="1"/>
+				</s:filters>
+				<s:stroke>
+					<s:SolidColorStroke caps="none" color="#FFFFFF" joints="miter" miterLimit="4"
+										weight="1"/>
+				</s:stroke>
+			</s:Rect>
+			<s:Label color="#464646" fontSize="16" paddingBottom="6" fontWeight="bold"
+					 paddingLeft="10" paddingRight="10" paddingTop="6" id="localeLabel"
+					 text="SAN FRANCISCO"/>
+			
+		</s:Group>
+	</fx:DesignLayer>
+	
+	<s:Group id="holder" >
+		
+		
+		<s:filters>
+			<s:GlowFilter alpha="1.0" blurX="27.1" blurY="27.1" color="#000000" inner="false"
+						  knockout="false" quality="2" strength="1"/>
+			<s:DropShadowFilter alpha="0.5" angle="55.30484646876604" blurX="50" blurY="70" color="#000000"
+								distance="28" hideObject="false" inner="false" knockout="false"
+								quality="2" strength="1"/>
+			<s:DropShadowFilter alpha="0.5" angle="106.3895403340348" blurX="50" blurY="60.8" color="#000000"
+								distance="12.4" hideObject="false" inner="false" knockout="false"
+								quality="2" strength="1.5"/>
+			<s:DropShadowFilter alpha="0.5" angle="87.7974018382342" blurX="25.6" blurY="25.6" color="#000000"
+								distance="28" hideObject="false" inner="false" knockout="false"
+								quality="2" strength="1"/>
+		</s:filters>
+		
+	</s:Group>
+	
+</s:Skin>

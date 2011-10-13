@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.model.NightStandConstants;
+			
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			static public const NEW_FILTER_STIRNG : String = 'NEW_FILTER_STIRNG' ; 		
+			static public const NEW_FILTER_JSON : String = 'NEW_FILTER_JSON' ; 	
+			
+			public var creationComplete : Boolean = false; 
+			public var _filterString : String = null; 
+			public var _filterJSON : Array = null; 
+			public var target :  UIComponent ; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				if ( NightStandConstants.editFilters == false ) 
+				{
+					this.btnEdit.visible = false 					
+				}
+				  this.removeEventListener(  FlexEvent.CREATION_COMPLETE, this.onInit ) ; 
+				this.btnEdit.removeEventListener(MouseEvent.CLICK, this.onEdit ) ; 
+				this.btnEdit.addEventListener( MouseEvent.CLICK, this.onEdit , false, 0, true ) ; 
+			}
+			
+			public function set filterString( s : String ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_STIRNG, s, false ) ) ; 
+				this._filterString = s; 
+			}
+			
+			public function set filterJSON( s :  Array ) : void{
+				this._filterJSON = s; 
+			//	return;
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_JSON, s,false  ) ) ; 
+			}			
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button id="btnEdit"   width="30" label="e" click="onEdit(event)"/>
+</s:Group>

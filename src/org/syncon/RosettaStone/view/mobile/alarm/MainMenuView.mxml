@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"  title="Alarms"
+			xmlns:view="org.syncon2.utils.mobile.view.*" actionBarVisible="false" 
+			creationComplete="onInit(event)" destructionPolicy="auto"  >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.AlarmVO;
+			
+			import spark.events.IndexChangeEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const ADD_ALARM : String = 'SEND' 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const RELAYOUT : String = 'RELAYOUT'; 	
+			
+			private var ignoreNextClick:Boolean;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.addEventListener( 'changeAlarm', this.onChange, false, 0, true ) ; 
+				//this.list.addEventListener(Event.CHANGE, this.onChange, false, 0, true ) ; 
+				//this.list.dataGroup.addEventListener(Event.CHANGE, this.onChange, false, 0, true ) ;
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onAdd() : void
+			{
+				this.dispatchEvent( new Event( ADD_ALARM ) ) 
+			}
+			
+			protected function listChangeHandler(event:IndexChangeEvent, wait : Boolean = true ):void
+			{
+				if ( this.ignoreNextClick ) 
+				{
+					this.ignoreNextClick = true; 
+					return
+				}
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :     Object = this.list.dataProvider.getItemAt( index )  as Object; 
+				//trace('change sent'); 
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}
+			
+			protected function onChange(event:Event):void
+			{
+				trace('changed'); 
+				this.ignoreNextClick = true; 
+			}
+			
+			protected function onRelayout(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.dispatchEvent( new   Event( RELAYOUT  ) ) ; 
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button id="btnGoBack" label="Back" click="this.onBack()"/>
+	</views:navigationContent>
+	
+	<s:Scroller id="scroller" top="0" bottom="80" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1">
+		<s:VGroup width="100%" height="100%" gap="20" horizontalAlign="center" paddingBottom="20"
+				  paddingLeft="10" paddingRight="10" paddingTop="20">
+			<!--<mobile:TextAreaLabel text="Please Note: Alarms will only work when app is running. We are working on an update."  styleName="sectionTitle" />-->
+			<!--
+			<view:MobileHrLite />
+			-->
+			<s:Spacer  height="100" />
+			<!--<s:Button label="Add Alarm" click="onAdd()" />-->
+			<s:List id="list" width="100%" height="100%" change="listChangeHandler(event)" 
+					 useHandCursor="true" buttonMode="true"
+					contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"  borderVisible="false"
+					itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.MainMenuRenderer">
+				<s:layout>
+					<s:VerticalLayout gap="0" paddingLeft="60"/>
+				</s:layout> 
+				 
+				<s:filters>
+				<!--	<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="4.0" blurY="4.0" color="#000000"
+										distance="4.0" hideObject="false" inner="false" knockout="false"
+										quality="2" strength="1"/>-->
+				</s:filters>
+				 
+			</s:List>
+		</s:VGroup>
+	</s:Scroller>
+	
+	
+	<s:Rect  x="0" y="0" width="100" height="10">
+		<s:fill>
+			<s:SolidColor color="#F06A0B"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:Label x="271" y="37" color="#464646"  
+				fontSize="32"   fontWeight="bold" fontStyle="italic"
+			  text="Main Menu"/>
+	<s:Button label="lfffff" click="onRelayout(event)"  x="271" y="37" />
+	 <s:Button label="lfffff" click="onRelayout(event)"  horizontalCenter="0" verticalCenter="0" width="100" height="10"/>
+</views:View>

@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:local="*"
+		 color="#FFFFFF" creationComplete="onInit(event)" fontWeight="bold" xmlns:clocks="clocks.*" xmlns:clocks1="org.syncon.NightStand.view.clocks.*" xmlns:clocks2="org.syncon.TalkingClock.view.clocks.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			
+			public var timer_delayedChange : Timer = new Timer(1000, 1 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			
+			private var bottoms : Array = [] ; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				this.timer_delayedChange.addEventListener(TimerEvent.TIMER, this.startMove  ); 
+				for ( var i :int = 0 ; i < 6 ; i++ )
+				{
+					var bottomBg : DigitBottomsSkin = new DigitBottomsSkin()
+					this.bgH.addElementAt( bottomBg, 0 ) 
+					//	this.addElement( bottomBg )//, 0 ) 
+					this.bottoms.push(bottomBg)
+				}
+				txtSpacer_resizeHandler(null);
+			}
+			
+			
+			public function set text (str:String):void
+			{
+				var dur : Number = 500
+				
+				if ( lastText !=str ) 
+				{
+					this.lastText = str; 
+					this.txtSec.text = this.txtSecBg.text 
+					this.txtSecBottomOld.text = this.txtSecBg.text ; 
+					//this.txtSecBottom.text =  this.txtSecBg.text ; 
+					this.txtSecBg.text =str
+					//this.txtSecBottom.text =  secs
+					
+					
+					var alpha_ : Number = 0.6
+					/* this.txtSec.alpha = alpha_
+					this.txtSecBottomOld.alpha =alpha_ 
+					this.txtSecHolder.alpha =alpha_ */
+					//this.txtSecHolder_Button.alpha  =  0
+					
+					var dbg : Array = [this.txtSecHolder_Button.rotationX] 
+					
+					this.rotateS.duration = dur
+					this.rotateS.play([this.txtSecHolder]); 
+					this.rotateS_Bottom.startDelay = dur*.95; 
+					this.rotateS_Bottom.duration = dur//*2
+					this.rotateS_Bottom.play([this.txtSecHolder_Button]); 
+					//this.txtSecHolder_Button.visible = true; 
+					
+					this.timer_delayedChange.delay = this.rotateS_Bottom.startDelay
+					this.timer_delayedChange.start();
+					
+				}				
+				
+				/* 					if ( this.txtQuery2.visible )
+				{
+				this.txtQuery2.text = this.txtQuery.text; 
+				} */
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			public function set fontFamilyS(event:String):void
+			{
+				this._fontFamilyS = event; 
+				//this._fontFamilyG = 
+			}
+			
+			public function set  fontFamilyG(event:String):void
+			{
+				this._fontFamilyG = event; 
+			}		
+			public function set  fontFamilyG8(event:String):void
+			{
+				this._fontFamilyG8 = event; 
+			}		
+			
+			private var _filterString : String = null; 
+			private var _fontFamilyG8:String;
+			private var lastText:String;
+			
+			public function get initFilterString() : String
+			{
+				return this._filterString; 
+			}
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			protected function rotateS_Bottom_effectEndHandler(event:EffectEvent):void
+			{
+				//this.txtSecHolder_Button.visible = false; 
+				
+			}
+			
+			protected function rotateS_Bottom_effectStartHandler(event:EffectEvent):void
+			{
+				
+				//this.txtSecHolder_Button.visible = true; 
+				
+			}
+			
+			public function startMove(e:TimerEvent):void{
+				this.txtSecBottom.text =  this.txtSecBg.text
+			}
+			
+			
+			public function getAreas() : Array
+			{
+				return [txtSecBg, txtSec,txtSecBottomOld,txtSecBottom ]
+			}
+			public function getMasks() : Array
+			{
+				return [mask1, mask2, mask3]; //, txtSec,txtSecBottomOld,txtSecBottom ]
+			}
+			public function getGroupHolders() : Array
+			{
+				return [txtSecHolderBg, txtSecHolder, txtSecHolder_ButtonOld, this.txtSecHolder_Button]; 
+			}
+			
+			protected function txtSpacer_resizeHandler(event:ResizeEvent):void
+			{
+				// TODO Auto-generated method stub
+				var dbg : Array = [this.txtSpacer.width, this.txtSpacer.height]
+				var h : Number = this.txtSpacer.height; 
+				var w : Number = this.txtSpacer.width; 
+				
+				for each ( var x : Object in this.getAreas() ) 
+				{
+					x.width = w
+					x.height = h 
+					x.setStyle('verticalCenter',5
+					) ;
+				}
+				for each ( var groups : Object in this.getGroupHolders() ) 
+				{
+					groups.width = w+ 30
+					groups.height =h +30 
+					//groups.visible=false
+				}					
+				for each ( var xmasks : Object in this.getMasks() ) 
+				{
+					xmasks.width = w+ 30
+					xmasks.height = h +30 
+				}
+				/* for each ( var maskFill : Object in this.getMaskFills() ) 
+				{
+					xmasks.width = w+ 30
+					//xmasks.height = h +30 
+				} */
+				var yOffset : int = 3
+				for each ( var bg : Object in this.bottoms ) 
+				{
+					bg.width = w+ 30
+					bg.height = h +30 
+					bg.y = yOffset 
+					yOffset+=1.5
+					bg.bottomRectangle.width = w+ 30
+					bg.bottomRectangle.height =( h +30 )/2
+					//bg.visible=false
+				}				
+				
+				this.bgAll.width = w + 50
+				this.bgAll.height = h+ 50+20
+				this.bgAll.width = w + 30+10
+				this.bgAll.height = h+ 40+20//+20//+20					
+				this.bgAll.bottomRectangle2.width = groups.width+10//+20
+					//give space for extra flips 
+				this.bgAll.bottomRectangle2.height = groups.height+20
+				this.bgAll.bottomRectangle2.radiusX = 10; 
+				this.bgAll.bottomRectangle2.radiusY = 10;
+				this.bgAll.bottomRectangle2.radiusX = 12; 
+				this.bgAll.bottomRectangle2.radiusY = 12;
+			 
+				this.bgAll.bottomRectangle.height =  h/2
+				this.bgAll.topRectangle.height =  h/2
+					
+				//holder_topLines.y = h/2+10+5;
+				
+				//	this.addElement( this.bgAll ) ; 
+				return; 
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format" dateStyle="none" dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" dateTimePattern="hh"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" dateTimePattern="hh"/>
+		<s:DateTimeFormatter id="DateDisplay4" dateTimePattern="ss"/>		
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+		<s:Rotate3D id="rotateS" angleXFrom="0" angleXTo="90" autoCenterTransform="true"  easer="{sineIn}"
+					duration="2000" target="{txtSec}"/>
+		<s:Rotate3D id="rotateS_Bottom" angleXFrom="-90" angleXTo="0" autoCenterTransform="true"
+					duration="2000" effectEnd="rotateS_Bottom_effectEndHandler(event)" easer="{sineIn}"
+					effectStart="rotateS_Bottom_effectStartHandler(event)" target="{txtSec}"/>		
+		<s:Sine id="sineIn" easeInFraction="0.8" />
+		<!--
+		<s:Group id="txtSecHolderMask" width="{this.txtSecHolder.width}"
+		height="{this.txtSecHolder.height}">
+		<s:Rect left="0" right="0" bottom="0" height="50%" radiusX="8" radiusY="8">
+		<s:fill>
+		<s:SolidColor color="0xdddddd"/>
+		</s:fill>	
+		</s:Rect>	
+		</s:Group>-->
+	</fx:Declarations>
+ 	
+	<clocks2:DigitBgSkin2 id="bgAll" visible="true"  >
+		<clocks1:filters>
+			<s:BlurFilter blurX="2"   blurY="2"/>
+		</clocks1:filters>
+	</clocks2:DigitBgSkin2> 
+	<s:Group id="bgH"   fontSize="70" horizontalCenter="0" verticalCenter="0" >
+		
+		<s:Label id="txtSpacer"  paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0"
+				 text="00" resize="txtSpacer_resizeHandler(event)" visible="false"
+				 />
+		
+		<s:Group id="txtSecHolderBg">
+			<!--				<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+			<s:fill>
+			<s:SolidColor color="0xdddddd"/>
+			</s:fill>	
+			</s:Rect>	-->
+			<clocks2:DigitBgSkin/>
+			<s:Label id="txtSecBg"  color="#FFFFFF" horizontalCenter="0"
+					 text="" verticalCenter="0"  textAlign="center"/>	
+			<clocks2:DigitFgSkin/>
+		</s:Group>
+		
+		
+		
+		
+		<s:Group id="txtSecHolder">
+			<s:mask>
+				<s:Group width="81" height="61" id="mask1">
+					<s:Rect  id="maskFill1" top="0" width="100%" height="50%">
+						<s:fill>
+							<s:SolidColor alpha="0.1"/>
+						</s:fill>
+					</s:Rect>
+				</s:Group>
+			</s:mask>
+			<!--				<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+			<s:fill>
+			<s:SolidColor color="0xdddddd"/>
+			</s:fill>	 
+			</s:Rect>	
+			-->
+			<clocks2:DigitBgSkin/>
+			<s:Label id="txtSec"   color="#FFFFFF" horizontalCenter="0" text=""
+					 verticalCenter="0"  textAlign="center"/>	
+			<clocks2:DigitFgSkin />
+		</s:Group>
+		
+		
+		
+		<s:Group id="txtSecHolder_ButtonOld" >
+			<s:mask>
+				<s:Group width="81" height="61"  id="mask2">
+					<s:Rect id="maskFill2" bottom="0" width="100%" height="49%">
+						<s:fill>
+							<s:SolidColor alpha="0.1"/>
+						</s:fill>
+					</s:Rect>
+				</s:Group>
+			</s:mask>
+			<!--				<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+			<s:fill>
+			<s:SolidColor color="0xdddddd"/>
+			</s:fill>	
+			</s:Rect>	-->
+			<clocks2:DigitBgSkin />
+			<s:Label id="txtSecBottomOld"   color="#FFFFFF"
+					 horizontalCenter="0" text="" verticalCenter="0"  textAlign="center"/>	
+			<!--  color="0xFF0000" -->
+			<clocks2:DigitFgSkin />
+		</s:Group>
+		
+		
+		<s:Group id="txtSecHolder_Button" >
+			<s:mask>
+				<s:Group width="81" height="61"   id="mask3">
+					<s:Rect bottom="0" width="100%" height="50%">
+						<s:fill>
+							<s:SolidColor alpha="1"/>
+						</s:fill>
+					</s:Rect>
+				</s:Group>
+			</s:mask>
+			<!--<s:Rect left="0" right="0" top="0" bottom="0" radiusX="8" radiusY="8">
+			<s:fill>
+			<s:SolidColor color="0xdddddd"/>
+			</s:fill>	
+			</s:Rect>	-->
+			<clocks2:DigitBgSkin />
+			<!-- color="0x75FE00" -->
+			<s:Label id="txtSecBottom" color="#FFFFFF" horizontalCenter="0"
+					 text="" verticalCenter="0" />	 
+			<clocks2:DigitFgSkin width="100%" />
+		</s:Group>
+		
+		
+		
+	</s:Group>
+	
+	
+<!--	
+	<s:Group id="holder_topLines" >
+		<s:Line     alpha="0.2"  width="100%">
+			<s:stroke>
+				<s:SolidColorStroke caps="none" color="#5F5F5F" joints="miter" miterLimit="4"
+									weight="1"/>
+			</s:stroke>
+		</s:Line>
+		<s:Line  y="1" alpha="0.8" width="100%">
+			<s:stroke>
+				<s:SolidColorStroke caps="none" color="#3B3A3B" joints="miter" miterLimit="4"
+									weight="1"/>
+			</s:stroke>
+		</s:Line> 
+	</s:Group>
+	-->
+	<!--<local:DigitBgSkin2 id="bgAll"  alpha="0.8" visible="true" />-->
+	<!--	<s:Button left="10" top="10" width="20" label="e" click="onEdit(event)"/--> 
+</s:Group>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					  xmlns:s="library://ns.adobe.com/flex/spark"
+					  xmlns:popup1="org.syncon.NightStand.view.popup.*"
+					  xmlns:popup="org.syncon.RosettaStone.view.popup.*"
+					  xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+					  xmlns:search="org.syncon.RosettaStone.view.edit.search.*"
+					  width="100%" height="100%" backgroundAlpha="0.0" creationComplete="onInit()"
+					  implements="org.syncon.popups.view.IPopup">
+	
+	<fx:Metadata> 
+		[Event(name="cancel", type="flash.events.Event")] 		
+		[Event(name="setup", type="flash.events.Event")] 
+	</fx:Metadata> 	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			
+			import org.syncon.RosettaStone.vo.LessonVO;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const OK : String = 'save'; 	
+			static public const CANCEL : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 	
+			
+			static public const REPEAT : String = 'REPEAT'; 	
+			static public const NEXT_LESSON : String = 'NEXT_LESSON'; 	
+			static public const GO_HOME : String = 'GO_HOME'; 	
+			
+			static public const START_OP : String = 'START_OP'; 	
+			static public const STOP_OP : String = 'STOP_OP'; 	
+			
+			public var creationComplete : Boolean = false; 
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+				this.visible = false; 
+			}
+			
+			public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupSelectionResult = new PopupSelectionResult()
+				popup.popupCode =  PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			private var _popupCode :   PopupCode; 
+			public function get  popupCode () : PopupCode { return _popupCode  } 
+			public function set  popupCode ( _popupCode_ : PopupCode) : void {   _popupCode = _popupCode_  } 
+			
+			public function show()  : void
+			{
+				this.popupCode.open( false,false  ) ;  
+			}
+			public function hide( ) : void
+			{
+				this.popupCode.close() 
+			}
+			
+			
+			protected function onSave(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( OK) ) 
+			}
+			
+			protected function onCancel(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( CANCEL ) ) 
+			}
+			
+			
+			public var args : Array = [] ; 
+			private var fxDone:Function;
+			public var lesson : LessonVO
+			public function goTo(   goToUI :  UIComponent, query : String, selectedItems : Array    ) : void
+			{
+				if ( goToUI != null ) 
+				this.popupCode.moveToComponent( goToUI, 'bl', false,false, true, 20 ) ;
+				else
+					this.popupCode.center()
+				/* this.width =  this.parentApplication.width*.8
+				this.height =  this.parentApplication.height*.8 */
+						
+						
+						
+				this.txtQuery.text = query;
+				
+				
+				this.show()
+				this.lesson = lesson; 
+				this.fxDone = fxDone; 
+				
+				this.args = [ query, selectedItems ] 
+					
+				this.dispatchEvent( new Event (SETUP   )) 
+			}
+	/* 		public function goToIfOpen(   goToUI :  UIComponent ) : void
+			{
+				if ( this.popupCode.showing ) 
+				 this.goTo( goToUi ) 
+			} */
+			protected function onRepeat(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( REPEAT ) ) 
+			}
+			
+			protected function onNext(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( NEXT_LESSON ) )  
+			}
+			
+			protected function noHome(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( GO_HOME ) ) 
+			}			
+			
+			protected function onStart(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( START_OP ) ) 
+			}
+			
+			protected function onCancelOperation(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( STOP_OP ) ) 
+			}
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				
+				this.list.selectedIndex
+				this.list.selectedItem
+				/* this.dispatchEvent( new CustomEvent( EDIT_DATE,  
+					this.list.dataProvider.getItemAt(event.newIndex)  ) ) */
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button  label="Next" click="onNext("/>
+ 
+				<s:List id="list" width="100%" borderVisible="false"
+						change="list_changeHandler(event)" contentBackgroundAlpha="0"
+						itemRenderer="org.syncon.RosettaStone.view.popup.rs.PopupUpdateMultipleItemBulkRenderer">
+					<s:layout>
+						<s:VerticalLayout gap="0" paddingBottom="0" paddingLeft="0" paddingRight="0"/>
+					</s:layout>
+				</s:List>
+		 
+</s:SkinnableContainer>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:view="org.syncon.RosettaStone.view.*"
+		 xmlns:NightStand="org.syncon.NightStand.*"
+		 xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"
+		 xmlns:subview="org.syncon.RosettaStone.view.subview.*"
+		 xmlns:lite="views.lite.*"
+		 xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+		 xmlns:RosettaStone="org.syncon.RosettaStone.*"
+		 width="100%" height="100%" creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.ContextNightStand_PopupContext;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.ContextNightStand_AlarmsViewsSubContext;
+			import org.syncon.RosettaStone.ContextNightStand_ViewsSubContext;
+			import org.syncon.RosettaStone.controller.NavigateCommand;
+			import org.syncon.RosettaStone.model.NightStandConstants;
+			import org.syncon.RosettaStone.view.mobile.alarm.AlarmView;
+			import org.syncon.TalkingClock.view.subview.DigitalLED.ClockView;
+			protected function onInit(event:FlexEvent):void
+			{
+				
+				var xx :   ContextNightStand_ViewsSubContext = new ContextNightStand_ViewsSubContext()
+				this.context.addSubContext( xx ) ;
+				
+				var xxx :   ContextNightStand_AlarmsViewsSubContext = new ContextNightStand_AlarmsViewsSubContext()
+				this.context.addSubContext( xxx ) ;				
+				
+				var xxxx :   ContextNightStand_PopupContext = new ContextNightStand_PopupContext()
+				this.context.addSubContext( xxxx ) 
+				
+				NavigateCommand.nav = this.holder; 
+				NightStandConstants.flex = true; 
+			}				//	 
+			
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<RosettaStone:ContextNightStand id="context" contextView="{this}"/>
+	</fx:Declarations>
+	
+	<lite:ViewNavigator id="holder" width="100%" height="100%" firstView="{AlarmView}">
+	</lite:ViewNavigator>
+ 
+	<mobile:BottomNavMenu visible="false" bottom="0"/>
+</s:Group>

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					  xmlns:s="library://ns.adobe.com/flex/spark"
+					  xmlns:popup="org.syncon.evernote.basic.view.popup.*"
+					  xmlns:popup1="org.syncon.NightStand.view.popup.*"
+					  xmlns:view="org.syncon2.utils.mobile.view.*"
+					  xmlns:popup2="org.syncon.RosettaStone.view.popup.*"
+					  backgroundAlpha="0.0" creationComplete="onInit()">
+	
+	<fx:Metadata> 
+		[Event(name="cancel", type="flash.events.Event")] 		
+		[Event(name="change", type="flash.events.Event")] 
+	</fx:Metadata> 	
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			static public const OK : String = 'save'; 	
+			static public const CANCEL : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 				
+			public var creationComplete : Boolean = false; 
+			
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+			}
+			
+			public var args : Array = [] ; 
+			public function selectTime(title : String, date : Date, fxDone : Function ) : void
+			{
+				this.resize(); 
+				
+				if ( date == null ) 
+					date = new Date()
+				this.txtHour.text = date.getHours().toString()
+				this.txtMin.text = date.getMinutes().toString()
+				
+				this.args = [date, fxDone ]
+				
+				this.dispatchEvent( new Event (SETUP )) 
+			}
+			
+			
+			public function setup(title : String, hours : Number, min : Number, seconds : Number, fxDone : Function =null ) : void
+			{
+				this.resize(); 
+				
+				this.txtHour.text =hours.toString()
+				this.txtMin.text =   min.toString()
+				this.txtSec.text = seconds.toString()
+				//this.args = [date, fxDone ]
+				
+				this.dispatchEvent( new Event (SETUP )) 
+			}
+			
+			protected function listChangeHandler(event:IndexChangeEvent):void
+			{
+				var index:int = event.newIndex;
+				/* 	if ( index > -1 ) 
+				var item : Object = this.list.dataProvider.getItemAt( index ) */
+				//	this.dispatchEvent( new CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}
+			
+			public function resize(wait:Boolean=true):void
+			{
+				if ( wait ) 
+				{
+					this.callLater( this.resize, [false] )
+					return
+				}
+				this.parentApplication.width; 
+				this.parentApplication.height; 
+				//this.height = this.parentApplication.height-40-40
+				//this.list.height = this.height - this.header.height - 30 + 30 - 60 + +20 - this.bottomMenu.height; 
+				this.width = this.parent.width-40//-40
+				
+				this.txtHour.width = this.width  * .3
+				this.txtMin.width = this.width  * .3
+				this.txtSec.width = this.width  * .3
+				
+			}
+			
+			protected function upHour_clickHandler(event:MouseEvent):void
+			{
+				//this.numberValidator.validate().
+				var hour : Number = Number( this.txtHour.text ) 
+				if ( hour >= 23 ) 
+					hour = -1
+				this.txtHour.text = (hour + 1 ).toString()
+				onChange()
+			}
+			
+			protected function downHour_clickHandler(event:MouseEvent):void
+			{
+				
+				var hour : Number = Number( this.txtHour.text ) 
+				if ( hour >=24 )
+					hour = 24
+				if ( hour <= 0 ) 
+					hour = 24
+				this.txtHour.text = (hour - 1 ).toString()
+				onChange()
+			}
+			
+			
+			protected function upMin_clickHandler(event:MouseEvent):void
+			{
+				var min : Number = Number( this.txtMin.text ) 
+				if ( min >= 59 ) 
+					min = -1
+				this.txtMin.text = (min + 1 ).toString()
+				onChange()
+			}
+			
+			protected function downMin_clickHandler(event:MouseEvent):void
+			{
+				
+				var min : Number = Number( this.txtMin.text ) 
+				if ( min >=60 )
+					min = 60
+				if ( min <= 0 ) 
+					min = 60
+				this.txtMin.text = (min - 1 ).toString()
+				onChange()
+			}
+			
+			
+			
+			protected function upSec_clickHandler(event:MouseEvent):void
+			{
+				var sec : Number = Number( this.txtSec.text ) 
+				if ( sec >= 59 ) 
+					sec = -1
+				this.txtSec.text = (sec + 1 ).toString()
+				onChange()
+			}
+			
+			protected function downSec_clickHandler(event:MouseEvent):void
+			{
+				var sec : Number = Number( this.txtSec.text ) 
+				if ( sec >=60 )
+					sec = 60
+				if ( sec <= 0 ) 
+					sec = 60
+				this.txtSec.text = (sec - 1 ).toString()
+				onChange()
+			}
+			
+			public function getDate( ): Date
+			{
+				var hour : Number = Number( this.txtHour.text ) 
+				var min : Number = Number( this.txtMin.text ) 
+				var sec : Number = Number( this.txtSec.text ) 
+				var d : Date = new Date()
+				d.setHours( hour, min,sec)
+				return d; 
+			}
+			
+			public function get hours () : Number
+			{
+				return Number( this.txtHour.text ) 
+			}
+			public function get minutes () : Number
+			{
+				return Number( this.txtMin.text ) 
+			}
+			public function get seconds () : Number
+			{
+				return Number( this.txtSec.text ) 
+			}			
+			
+			
+			public function hideHours () : void
+			{
+				if ( this.holderHour.parent == null ) 
+					return; 
+				this.holder.removeElement( this.holderHour ) ; 
+				this.holder.removeElement( this.sep1 ) ; 
+			}	
+			
+			public function hideMins () : void
+			{
+				if ( this.holderMinute.parent == null ) 
+					return; 
+				this.holder.removeElement( this.holderMinute ) ; 
+				this.holder.removeElement( this.sep2 ) ; 
+			}			
+			public function hideSeconds () : void
+			{
+				if ( this.holderSec.parent == null ) 
+					return; 
+				this.holder.removeElement( this.holderSec ) ; 
+				this.holder.removeElement( this.sep2 ) ; 
+			}				
+						
+			
+			public function showPrompts () : void
+			{
+				var lbl : Label = new Label()
+					lbl.text = 'Hour'
+				this.holderHour.addElementAt( lbl, 0  ) 
+
+				 lbl = new Label()
+				lbl.text = 'Mins'
+				this.holderMinute.addElementAt( lbl, 0  ) 
+					
+				 lbl  = new Label()
+				lbl.text = 'Secs'
+				this.holderSec.addElementAt(  lbl, 0  ) 			
+			}
+			
+			protected function onChange(event:TextOperationEvent=null):void
+			{
+				this.dispatchEvent( new Event( Event.CHANGE ) ) ; 
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:NumberValidator id="validateSeconds" maxValue="59" minValue="1" property="text"
+						   source="{this.txtSec}" trigger="{txtSec}" triggerEvent="change"/>
+		<s:NumberValidator id="numberValidator" maxValue="59" minValue="1" property="text"
+						   source="{this.txtMin}" trigger="{txtMin}" triggerEvent="change"/>
+		<s:NumberValidator id="numberValidato2r" maxValue="23" minValue="1" property="text"
+						   source="{this.txtHour}" trigger="{txtHour}" triggerEvent="change"/>
+	</fx:Declarations>
+	<!--	
+	<s:Rect width="100%" height="100%" >
+	<s:stroke>
+	<s:SolidColorStroke color="0" />
+	</s:stroke>
+	</s:Rect>-->
+	
+	
+	
+	<s:VGroup width="100%" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
+		<s:HGroup id="holder" width="100%" horizontalAlign="center" verticalAlign="middle">
+			<s:VGroup id="holderHour" width="30%">
+				<s:Button id="upHour" width="100%" label="+" click="upHour_clickHandler(event)"/>
+				<s:TextInput id="txtHour" width="100%" contentBackgroundColor="0xFFFFFF" maxChars="2"
+							 restrict="0-9\\-\\.\\," change="onChange()" />
+				<s:Button id="downHour" width="100%" label="-" click="downHour_clickHandler(event)"/>
+			</s:VGroup>
+			<s:Label id="sep1" text=":"/>
+			<s:VGroup id="holderMinute" width="30%">
+				<s:Button id="upMin" width="100%" label="+" click="upMin_clickHandler(event)"/>
+				<s:TextInput id="txtMin" width="100%" contentBackgroundColor="0xFFFFFF" maxChars="2"
+							 restrict="0-9\\-\\.\\," change="onChange()" />
+				<s:Button id="downMin" width="100%" label="-" click="downMin_clickHandler(event)"/>
+			</s:VGroup>
+			<s:Label id="sep2" text=":"/>
+			<s:VGroup id="holderSec" width="30%">
+				<s:Button id="upSec" width="100%" label="+" click="upSec_clickHandler(event)"/>
+				<s:TextInput id="txtSec" width="100%" contentBackgroundColor="0xFFFFFF" maxChars="2" 
+							 restrict="0-9\\-\\.\\," change="onChange()" />
+				<s:Button id="downSec" width="100%" label="-" click="downSec_clickHandler(event)"/>
+			</s:VGroup>
+			
+		</s:HGroup>
+		
+	</s:VGroup>
+	
+</s:SkinnableContainer>

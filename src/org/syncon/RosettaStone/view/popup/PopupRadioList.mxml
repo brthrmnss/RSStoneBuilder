@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					  xmlns:s="library://ns.adobe.com/flex/spark"
+					  xmlns:popup="org.syncon.evernote.basic.view.popup.*"
+					  xmlns:popup1="org.syncon.NightStand.view.popup.*"
+					  xmlns:view="org.syncon2.utils.mobile.view.*"
+					  creationComplete="onInit()" backgroundAlpha="0.0"
+					  implements="org.syncon.popups.view.IPopup" xmlns:popup2="org.syncon.RosettaStone.view.popup.*">
+	
+	<fx:Metadata> 
+		[Event(name="cancel", type="flash.events.Event")] 		
+		[Event(name="ok", type="flash.events.Event")] 
+	</fx:Metadata> 	
+	
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const OK : String = 'save'; 	
+			static public const CANCEL : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 				
+			public var creationComplete : Boolean = false; 
+			
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+				
+				var arr : Array = [
+					['OK', this.onSave], 
+					['Cancel', this.onCancel], 
+				]
+				this.bottomMenu.load('', arr )
+			}
+			
+			public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupTextArea = new PopupTextArea()
+				popup.popupCode =  PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			private var _popupCode :   PopupCode; 
+			public function get  popupCode () : PopupCode { return _popupCode  } 
+			public function set  popupCode ( _popupCode_ : PopupCode) : void {   _popupCode = _popupCode_  } 
+			
+			public function show()  : void
+			{
+				this.popupCode.open( false, false ) 
+				
+			}
+			public function hide( ) : void
+			{
+				this.popupCode.close() 
+			}
+			
+			
+			protected function onSave(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( OK) ) 
+			}
+			
+			protected function onCancel(event:MouseEvent=null):void
+			{
+				this.dispatchEvent( new Event( CANCEL ) ) 
+			}
+			
+			public function updateLocation( currentLister_doNotReset : Object = null )  : void
+			{
+				/*
+				//dont' move to me if i'm not the current one? 
+				if ( currentLister_doNotReset != null && this.onenote_list != currentLister_doNotReset ) 
+				return 
+				this.popupCode.moveToComponent(  this.partial.leftEdgeUI, 'tl',  this.tween, false, true, -this.width-5 ) 
+				*/
+			}
+			
+			public var args : Array = [] ; 
+			public function selectFromList(title : String,  optiosn : Array, currentOptions :   String,
+																			 fxDone : Function, fxChange : Function=null , fxClose : Function = null ) : void
+			{
+				this.resize(); 
+				this.args = [optiosn, currentOptions, fxDone, fxChange,fxClose ]
+				this.dispatchEvent( new Event (SETUP   )) 
+				this.show()
+					this.header.label = title; 
+			}
+			
+			protected function listChangeHandler(event:IndexChangeEvent):void
+			{
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :      Object = this.list.dataProvider.getItemAt( index )   
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}
+			
+			public function resize(wait:Boolean=true):void
+			{
+				if ( wait ) 
+				{
+					this.callLater( this.resize, [false] )
+					return
+				}
+				this.parentApplication.width; 
+				this.parentApplication.height; 
+				this.height = this.parentApplication.height-40-40
+				this.list.height = this.height - this.header.height - 30 + 30 - 60 + +20 - this.bottomMenu.height; 
+				this.width = this.parentApplication.width-40//-40
+				this.popupCode.center(); 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<!--	
+	<s:Rect width="100%" height="100%" >
+	<s:stroke>
+	<s:SolidColorStroke color="0" />
+	</s:stroke>
+	</s:Rect>-->
+	
+	
+	<popup2:PopupBg/>
+	
+	<s:VGroup paddingBottom="15" paddingLeft="15" paddingRight="15" paddingTop="15"  width="100%">
+		<!--
+		<popup:PopupHeader  label.edit="Edit Tag" label="New Tag" padding="0"  width="100%"/>
+		-->
+		<popup2:PopupHeader id="header" label="Repeat" width="100%" />
+		
+		<s:List id="list" width="100%"  height="100%"  change="listChangeHandler(event)"
+				contentBackgroundAlpha="0" contentBackgroundColor="#FFFFFF"
+				itemRenderer="org.syncon.RosettaStone.view.popup.RadioListRenderer">
+			<s:layout>
+				<s:VerticalLayout gap="0" paddingLeft="0"/>
+			</s:layout> 
+		</s:List>
+		
+		<popup2:PopupBottomBarBg  id="bottomMenu"/>
+	</s:VGroup>
+	
+</s:SkinnableContainer>

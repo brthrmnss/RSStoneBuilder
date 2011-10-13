@@ -1,0 +1,403 @@
+package org.syncon.RosettaStone.view.edit
+{
+	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	
+	import org.robotlegs.mvcs.Mediator;
+	import org.syncon.RosettaStone.controller.AutomateEvent;
+	import org.syncon.RosettaStone.controller.ConfigCommandTriggerEvent;
+	import org.syncon.RosettaStone.controller.IO.LoadLessonPlanCommandTriggerEvent;
+	import org.syncon.RosettaStone.model.RSModel;
+	import org.syncon.RosettaStone.model.NightStandModelEvent;
+	import org.syncon.RosettaStone.vo.LessonGroupVO;
+	import org.syncon.RosettaStone.vo.LessonItemVO;
+	import org.syncon.RosettaStone.vo.LessonResultVO;
+	import org.syncon.RosettaStone.vo.LessonSetVO;
+	import org.syncon.RosettaStone.vo.LessonVO;
+	import org.syncon.popups.controller.HidePopupEvent;
+	import org.syncon.popups.controller.ShowPopupEvent;
+	import org.syncon2.utils.ArrayListMoveableHelper;
+	import org.syncon2.utils.data.GoThroughEach;
+	
+	public class PlayerAutomateMediator extends Mediator 
+	{
+		[Inject] public var ui : PlayerAutomate;
+		[Inject] public var model : RSModel;
+		private var currentLesson: LessonVO;
+		private var currentLessonSet: LessonSetVO=new LessonSetVO;
+		private var seenItems:Array;
+		private var indexSet:int;
+		
+		public var timerDelayIntroduction : Timer = new Timer(1000, 1); 
+		
+		override public function onRegister():void
+		{
+			/*
+			eventMap.mapListener(eventDispatcher, NightStandModelEvent.CHANGED_DATE_XML_FILE_DATE, 
+			this.onChangedFileDate);		
+			*/
+			/*eventMap.mapListener(eventDispatcher, NightStandModelEvent.CURRENT_LESSON_SET_CHANGED, 
+			this.onLessonSetChanged);	
+			this.onLessonSetChanged( null ) 
+			*/
+			eventMap.mapListener(eventDispatcher, NightStandModelEvent.CURRENT_LESSON_CHANGED, 
+				this.onLessonChanged);	
+			this.onLessonChanged( null ) 
+			
+			
+			eventMap.mapListener(eventDispatcher, NightStandModelEvent.SELECTED_LESSON_ITEM_CHANGED, 
+				this.onSelectedItemChanged);	
+			this.onSelectedItemChanged( null ) 
+			
+			eventMap.mapListener(eventDispatcher, AutomateEvent.START_LESSON, 
+				this.onStartLesson);	
+			//this.onStartLesson( null ) 
+			
+			eventMap.mapListener(eventDispatcher, AutomateEvent.NEXT_LESSON, 
+				this.onNextLesson);				
+			
+			
+			this.ui.addEventListener( PlayerAutomate.RESTART, this.onRestart ) 
+			this.ui.addEventListener( PlayerAutomate.NEXT, this.onNextItem ) 				
+			
+			this.ui.addEventListener( PlayerAutomate.NEXT_SET, this.onSkipToNextSet ) 		
+			this.ui.addEventListener( PlayerAutomate.DONE, this.onTestDone ) 		
+			this.timerDelayIntroduction.addEventListener(TimerEvent.TIMER, this.onDelayIntroductionComplete , false, 0, true)
+			
+		}
+		
+		/**
+		 * if not automating, do not call 
+		 * if introducing, do not allow ocntinue
+		 * */
+		private function onSelectedItemChanged(e: NightStandModelEvent): void
+		{
+			if ( this.model.selectedItem == null ) 
+				return; 
+			if ( this.model.automating == false ) return; 
+			if ( this.modeIntroducing )
+			{
+				this.gIntroduce.end(); 
+				if ( this.timerDelayIntroduction != null ) 
+					this.timerDelayIntroduction.stop(); 
+				return; 
+			}
+			var userChoice : LessonItemVO = this.model.selectedItem; 
+			this.model.selectedItem = null; 
+			if ( userChoice == this.model.currentLessonItem ) 
+			{
+				
+				this.model.playCorrect(this.onNextItem); 
+				this.model.correctItem()
+				this.receipt.currentCorrect(); 
+				this.dispatch( new ShowPopupEvent(ShowPopupEvent.SHOW_POPUP, 
+					'PopupSelectionResult', [userChoice.itemRenderer, true],'selectFromList') ) ; 
+				//this.onNext()
+				return; 
+			}
+			this.receipt.currentWrong();
+			this.model.playIncorrect(this.onRepeatPrompt); 
+			this.model.wrongItem()
+			this.dispatch( new ShowPopupEvent(ShowPopupEvent.SHOW_POPUP, 
+				'PopupSelectionResult', [userChoice.itemRenderer, false],'selectFromList') ) ; 	
+			/*
+			this.currentLesson = this.model.currentLesson ;
+			this.clear()
+			*/	
+		}		
+		
+		private function onLessonChanged(e: NightStandModelEvent): void
+		{
+			this.closeEndingPopups()
+			this.currentLesson = this.model.currentLesson ;
+			this.clear()
+			if ( this.ui.autoStart == true &&  this.model.automating == false ) 
+			{
+				this.onRestart()
+			}
+		}		
+		
+		private function closeEndingPopups():void
+		{
+			this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupLessonComplete' ) )
+			this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupGroupComplete' ))
+			this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupUnitComplete' ))
+		}
+		/**
+		 * load lesson from event and restart auotating
+		 * */
+		private function onStartLesson(e: AutomateEvent): void
+		{
+			this.model.currentLesson = e.lesson; 
+			this.currentLesson = this.model.currentLesson ;
+			this.onRestart(null) 
+		}	
+		/**
+		 * load lesson from event and restart auotating
+		 * */
+		private function onNextLesson(e: AutomateEvent): void
+		{
+			this.endAll()
+			var nextLesson : LessonVO = ArrayListMoveableHelper.nextAfter( 
+				e.lesson, this.model.currentLessonPlan.lessons )  as LessonVO
+			
+			var nextGroup : LessonGroupVO = ArrayListMoveableHelper.nextAfter( 
+				this.model.currentLessonPlan, this.model.currentUnit.groups )  as LessonGroupVO			
+			if ( nextLesson == null && nextGroup != null ) 
+			{
+				//if confirmed, this is fisrt time, tell user lesson-group is complete
+				if ( e.confirmed == false  ) 
+				{
+					this.closeEndingPopups(); 
+					this.dispatch( new ShowPopupEvent(ShowPopupEvent.SHOW_POPUP, 'PopupGroupComplete', [], 'done') )
+					return ;
+				}
+				else
+				{
+					//this.model.currentLessonPlan = nextGroup
+					
+					this.dispatch( new  LoadLessonPlanCommandTriggerEvent(
+						LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN, nextGroup ,'', loadFirstLessonPlan ) ) ; 
+					//load next group and lesson ...
+					return
+					//set current lesson 
+					nextLesson =  ArrayCollectionMoveableHelper.nextAfter( 
+						e.lesson, this.model.currentLessonPlan.lessons )  as LessonVO
+					//this.onRestart(null) 
+					//return;
+				}
+			}
+			
+			if ( nextLesson == null && nextGroup == null ) 
+			{
+				//if confirmed, this is fisrt time, tell user lesson-group is complete
+				if ( e.confirmed == false  ) 
+				{
+					this.closeEndingPopups(); 
+					this.dispatch( new ShowPopupEvent(ShowPopupEvent.SHOW_POPUP, 'PopupUnitComplete' , [], 'done'))
+					return ;
+				}
+				else
+				{
+					//oppu does not send user back here
+					return; ///
+				}
+			}
+			
+			
+			/*		
+			
+			if ( nextGroup == null ) 
+			{
+			//unit complete
+			this.dispatch( new ShowPopupEvent(ShowPopupEvent.SHOW_POPUP, 'PopupUnitComplete' , [], 'done')
+			
+			}
+			else
+			{
+			this.dispatch( new  LoadLessonPlanCommandTriggerEvent(
+			LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN, nextGroup , loadFirstLessonPlan ) ) ; 
+			//load next group and lesson ...
+			}
+			*/
+			
+			
+			
+			this.model.currentLesson = nextLesson
+			this.currentLesson = this.model.currentLesson ;
+			if ( this.ui.autoStart == false ) 
+				this.onRestart(null) 
+			
+		}	
+		
+		
+		public function loadFirstLessonPlan(e:Object=null):void
+		{
+			this.onRestart();
+		}
+		
+		public var g : GoThroughEach = new GoThroughEach()
+		public var gIntroduce : GoThroughEach = new GoThroughEach()
+		private var fxDoneIntroducingItems:Function;
+		private var modeIntroducing:Boolean;
+		private var receipt:LessonResultVO;
+		
+		protected function onRestart(event:Event=null):void
+		{
+			this.model.automating = true; 
+			this.dispatch( new ConfigCommandTriggerEvent(ConfigCommandTriggerEvent.SAVE_CONFIG) ) 
+			this.clear()
+			this.receipt = new LessonResultVO; 
+			g.go( this.currentLesson.sets.toArray(), onNextSet, this.onDoneAutomatingSets ) 
+			this.updateDisplay();
+		}
+		
+		public function onNextSet(o : LessonSetVO ) : void
+		{
+			this.endIntroductions()
+			this.currentLessonSet = o ;
+			this.model.currentLessonSet = this.currentLessonSet
+			this.dispatch( new NightStandModelEvent (
+				NightStandModelEvent.AUTOMATE_CLEAR 	) ) ; 
+			if ( o.items.length == 0 ) 
+			{
+				this.g.next(); 
+				return;
+			}
+			this.seenItems = []
+			this.introduceItems( this.onNextItem ) ; 
+			this.updateDisplay(); 
+			//this.onNext()
+		}
+		
+		
+		public function onDoneAutomatingSets() : void
+		{
+			this.model.automating = false; 
+			//trace('done'); 
+			this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupSelectionResult' ))
+			this.dispatch( new NightStandModelEvent ( NightStandModelEvent.AUTOMATING_COMPLETE )) ; 
+			this.dispatch( new ShowPopupEvent(ShowPopupEvent.SHOW_POPUP, 'PopupLessonComplete' ,
+				[this.ui, this.receipt, this.currentLesson, this.goToNextLesson], 'done' ))
+			this.clear()
+		}
+		private function introduceItems(fxDone:Function):void
+		{
+			this.modeIntroducing = true; 
+			this.fxDoneIntroducingItems = fxDone; 
+			gIntroduce.go( this.currentLessonSet.items.toArray(), introduceItem, this.onDoneIntroducingItems ) 
+			//	this.updateDisplay();
+		}
+		public function introduceItem( item : LessonItemVO ) : void
+		{
+			//play sound, higlight, 
+			this.model.playSound2( item.sourceSound , 1, null , this.onIntroduceNextItem) ; 
+			this.model.currentHighlightedItem = item; 
+		}
+		protected function onIntroduceNextItem(event:Event=null):void
+		{
+			//assume it has been cancled, if false ...
+			if ( this.modeIntroducing == false ) 
+				return; 
+			this.timerDelayIntroduction.start(); 
+			//this.gIntroduce.next(); 
+		}
+		private function onDelayIntroductionComplete(e:Event):void
+		{
+			this.gIntroduce.next(); 
+		}
+		public function onDoneIntroducingItems() : void
+		{
+			this.modeIntroducing = false; 
+			//trace('done introducing'); 
+			if ( this.fxDoneIntroducingItems != null ) 
+				this.fxDoneIntroducingItems(); 
+		}
+		
+		
+		protected function onNextItem(event:Event=null):void
+		{
+			if ( this.model.automating == false ) 
+				return;
+			this.receipt.newItem(); 
+			this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupSelectionResult' ))
+			this.dispatch( new NightStandModelEvent ( 	NightStandModelEvent.AUTOMATE_CLEAR 	) ) ; 
+			if ( this.seenItems.length == this.currentLessonSet.items.length ) 
+			{
+				this.g.next(); 
+				return; 
+			}
+			
+			//this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupSelectionResult' ))
+			
+			var item : LessonItemVO = this.currentLessonSet.getRandom( this.seenItems ) ; 
+			this.seenItems.push( item ) ; 
+			this.model.currentLessonItem = item;
+			this.model.playSound2( item.sourceSound ) ; 
+			this.updateDisplay()
+		}
+		
+		public function onSkipToNextSet(event:Event=null):void
+		{
+			this.endIntroductions()
+			this.g.next(); 
+		}
+		public function onTestDone(event:Event=null):void
+		{
+			if ( this.receipt == null ) 
+				return; 
+			for ( var i : int = 0 ; i < 15; i++ )
+			{
+				this.receipt.newItem()
+				if ( Math.random() < .5 ) 
+					this.receipt.currentCorrect();
+				else
+					this.receipt.currentWrong()
+			}
+			
+			this.g.end(); 
+		}
+		
+		protected function onRepeatPrompt(event:Event=null):void
+		{
+			if ( this.model.automating == false ) 
+				return;
+			this.model.playSound2( this.model.currentLessonItem.sourceSound ) ; 
+			
+			this.dispatch( new HidePopupEvent(HidePopupEvent.HIDE_POPUP, 'PopupSelectionResult' ))
+		}
+		
+		
+		private function updateDisplay():void
+		{
+			this.ui.txtCurrentSet.text =(this.g.index+1).toString()
+			this.indexSet =this.g.index
+			this.ui.txtSetCount.text = this.currentLesson.sets.length.toString(); 
+			
+			this.ui.txtCurrentItem.text =( this.seenItems.length ).toString()
+			
+			this.ui.txtItemCount.text = this.currentLessonSet.items.length.toString()
+			
+			/*
+			this.ui.txtCurrentSetIndex.text = this.
+			this.ui.txtCurrentSetCount.text = '0'; */
+		}
+		
+		protected function clear( ):void
+		{
+			this.ui.txtLesson.text = '';//this.currentLesson.name;
+			this.ui.txtCurrentSet.text = "0"
+			this.indexSet = 0 ; 
+			this.ui.txtSetCount.text ='0'; // this.currentLesson.sets.length.toString()
+			this.ui.txtCurrentItem.text ="0"
+			this.seenItems = []
+			this.ui.txtItemCount.text = '0';//this.currentLessonSet.items.length.toString()
+			
+			/*
+			this.ui.txtCurrentSetIndex.text ="0"
+			this.ui.txtCurrentSetCount.text = '0'; 
+			*/
+		}
+		
+		
+		public function endAll() : void
+		{
+			this.g.end(); 
+			this.endIntroductions()
+		}
+		
+		private function endIntroductions():void
+		{
+			this.gIntroduce.end(); 
+			if ( this.timerDelayIntroduction != null ) 
+				this.timerDelayIntroduction.stop(); 
+			return; 
+		}
+		public function goToNextLesson() : void
+		{
+			
+		}
+		
+	}
+}

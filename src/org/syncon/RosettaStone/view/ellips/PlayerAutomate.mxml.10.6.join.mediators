@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:edit="org.syncon.RosettaStone.view.edit.*"
+		   creationComplete="onInit(event)" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var NEXT : String = 'CLICK_ITEM'  ; 
+			static public var RESTART : String = 'RESTART---'  ; 
+			static public var NEXT_SET : String = 'NEXT_SET---'  ; 			
+			static public var DONE : String = 'DONE---'  ; 		
+			static public var ACTIVE_CHANGED: String = 'ACTIVE_CHANGED'
+			public var autoStart : Boolean = false;
+			private var _active : Boolean = true; 
+
+			/**
+			 * Indicates whether this can start...
+			 * if false, will not restart
+			 * */
+			public function get active():Boolean
+			{
+				return _active;
+			}
+
+			/**
+			 * @private
+			 */
+			public function set active(value:Boolean):void
+			{
+				_active = value;
+				this.dispatchEvent( new Event(ACTIVE_CHANGED ))  
+			}
+
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				NightStandConstants.PlatformGlobals.fxMediate( this ) ; 
+				
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnRestart, this.onRestart ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnNext, this.onNext ) ; 
+				
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnNExtSet, this.onNextSet ) ; 
+				
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnDone, this.onDone ) ; 
+				
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnHide, this.onHide ) ; 
+				
+			}			 
+			
+			public function onRestart(event:Event):void
+			{
+				this.dispatchEvent( new Event( RESTART) ) ; 
+			}
+			
+			protected function onNext(event:Event):void
+			{
+				this.dispatchEvent( new Event( NEXT) ) ; 
+			}
+			
+			protected function onNextSet(event:Event):void
+			{
+				this.dispatchEvent( new Event( NEXT_SET) ) ; 
+			}
+			
+			protected function onDone(event:Event):void
+			{
+				this.dispatchEvent( new Event( DONE) ) ; 
+			}			
+			protected function onHide(event:Event):void
+			{
+				this.visible = false; 
+			}					
+			
+		]]>
+	</mx:Script>
+	
+	<mx:VBox>
+		
+		
+		<mx:Label text="Automate"/>
+		
+		<mx:HBox horizontalScrollPolicy="off" verticalScrollPolicy="off">
+			<mx:Label id="txtLesson" width="110" text=""/>
+			
+			
+			<mx:HBox horizontalGap="2">
+				<mx:Label text="Item"/>
+				<mx:Label id="txtCurrentItem"/>
+				<mx:Label text="/"/>
+				<mx:Label id="txtItemCount"/>
+			</mx:HBox>
+			
+			<mx:HBox horizontalGap="2">
+				<mx:Label text="Sets"/>
+				<mx:Label id="txtCurrentSet"/>
+				<mx:Label text="/"/>
+				<mx:Label id="txtSetCount"/>
+			</mx:HBox>
+			
+			
+			<!--
+			<mx:HBox gap="2" >
+			<mx:Label text="Sets" />
+			<mx:Label id="txtCurrentSetIndex" />
+			<mx:Label text="/" />
+			<mx:Label id="txtCurrentSetCount" />
+			</mx:HBox>
+			-->
+		</mx:HBox>
+		
+		<mx:HBox>
+			<mx:Button id="btnRestart" label="Restart"/>
+			<mx:Button id="btnNext" label="Next"/>
+			<mx:Button id="btnNExtSet" label="Next Set"/>
+			<mx:Button id="btnDone" label="Done"/>
+			<mx:Button id="btnHide" label="Hide"/>
+		</mx:HBox>
+	</mx:VBox>
+</mx:Canvas>

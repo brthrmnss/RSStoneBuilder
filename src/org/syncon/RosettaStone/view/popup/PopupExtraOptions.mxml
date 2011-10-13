@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  xmlns:comps="org.syncon.comps.*" 
+					  creationComplete="onInit()" 
+					  implements="org.syncon.popups.view.IPopup"					  
+					  >
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="sans_title" />
+	</s:states>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.core.UIComponent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.onenote.viewer.vo.MenuAutomationVO;
+			import org.syncon.onenote.viewer.vo.MenuVO;
+			import org.syncon.popups.view.IPopup;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import sss.Shelpers.Shelpers.ShelpersUI;
+			import sss.Shelpers.Shelpers.other.TweenerHelpers;
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			public var dp : ArrayCollection =   new ArrayCollection
+			
+			public var creationComplete : Boolean = false; 
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+				this.addEventListener(MouseEvent.ROLL_OUT, this.onRollout ) 
+			}
+			
+			public  function create(app:Object)  : IPopup
+			{
+				var popup : PopupExtraOptions = new PopupExtraOptions()
+				popup._popupCode =     PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			private var _popupCode :   PopupCode; 
+			public function get  popupCode () : PopupCode { return _popupCode  } 
+			public function set  popupCode ( _popupCode_ : PopupCode) : void {   _popupCode = _popupCode_  } 
+			
+			public function show(  )  : void
+			{
+				this.popupCode.open( false, false ) 
+			 
+			}
+			
+			private var menuSet : MenuAutomationVO;
+			
+			public function open( options : MenuAutomationVO, goTo : UIComponent=null,
+								  	labelName :  String = '', x_ : Number = -1, y_ : Number =-1, 
+									 		bgColor_ : uint = -1 )  : void
+			{
+				if ( options.menuItems.length == 0 ) 
+					return; 
+				this.popupCode.open( false, false ) 
+				var offset : Number =  (labelName!='') ? 0 :-25
+				if ( x_ != -1  || y_ != -1 )
+				{
+					this.popupCode.moveTo( x_, y_ )
+				}
+				else
+				{
+					if ( labelName == '' ) 
+						this.popupCode.moveToComponent( goTo, 'bl', false );
+					else
+					{
+						this.popupCode.moveToComponent( goTo, 'tl', false , false,  true, -5,-7);
+				}
+				}
+				this.menuSet = options
+					
+				this.dp.removeAll()
+				for each ( var menu :  MenuVO in options.menuItems ) 
+				{
+					dp.addItem( menu)
+				}
+				this.list.dataProvider = dp; 
+				this.list.height = (dp.length+1)*20
+					
+				if ( labelName != '' ) 
+				{
+					this.currentState = 'normal'
+					this.lblTitle.text = labelName; 
+				}
+				else
+					this.currentState = 'sans_title'
+						
+				if ( bgColor_ != -1 ) 
+				{
+					this.bgColor.color = bgColor_ as uint
+				}
+			}			
+			
+			public function hide( ) : void
+			{
+				this.popupCode.close() 
+			}
+ 
+
+
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				this.menuSet.onClickIndex( event.newIndex )
+					this.hide();
+			}
+	
+			protected function onRollout(e:Event):void
+			{
+				this.hide()
+			}
+		]]>
+	</fx:Script>
+
+		
+ <s:VGroup gap="-1">
+	 <s:Group includeIn="normal">
+	<s:Rect width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor color="0xFFFFFF" />
+		</s:fill>	
+		<s:stroke>
+			<s:SolidColorStroke color="0x607980" />
+		</s:stroke>		
+	</s:Rect>	 
+	 
+	 <s:HGroup height="25" gap="2" verticalAlign="middle" paddingLeft="5"  paddingRight="5">
+		 <s:Label  text="Label" id="lblTitle" />
+		 <s:Line    height="14" >
+			 <s:stroke>
+				 <s:SolidColorStroke color="0x607980" />
+			 </s:stroke>
+		 </s:Line>
+		 <s:Button 
+				   skinClass="org.syncon.evernote.basic.view.skins.InvertedPyramidButtonSkin">
+		 </s:Button>
+	 </s:HGroup>
+	 </s:Group>
+	 <s:Group>
+		 
+		 
+		 <s:Rect width="100%" height="100%" >
+			 <s:stroke>
+				 <s:SolidColorStroke color="0x607980" />
+			 </s:stroke>
+		 </s:Rect>
+		 
+		 <s:Rect top="2" right="2" bottom="2" left="2" >
+			 <s:fill>
+				 <s:SolidColor  id="bgColor" color="0xEDF6F7" />
+			 </s:fill>
+		 </s:Rect>		 
+		 <s:List id="list" rollOverColor="0x607980"   
+				 change="list_changeHandler(event)"
+				 itemRenderer="org.syncon.RosettaStone.view.popup.PopupExtraOptions_itemRenderer"
+				 selectionColor="0x607980"  labelField="name"
+				 contentBackgroundColor="0xE6E6E6"
+				 />			 
+	 </s:Group>
+
+ </s:VGroup>
+
+	
+</s:SkinnableContainer>

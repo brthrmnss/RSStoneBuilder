@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="onInit()" 
+	height="100%" xmlns:mob="openplug.elips.controls.*"
+	>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const OK : String = 'save'; 	
+			static public const CANCEL : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 				
+			public var creationComplete : Boolean = false; 
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				//this.popupCode.center()
+				this.visible = false; 
+				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
+				var arr : Array = [
+					['OK', this.onSave], 
+					['Cancel', this.onCancel], 
+					/* 		['Help', this.onHelp],
+					['Info', this.onInfo] */
+				]
+				
+			}
+			/* 
+			public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupSelectionResult = new PopupSelectionResult()
+				popup.popupCode =  PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			 */
+			/* 
+			private var _popupCode :   PopupCode; 
+			public function get  popupCode () : PopupCode { return _popupCode  } 
+			public function set  popupCode ( _popupCode_ : PopupCode) : void {   _popupCode = _popupCode_  } 
+			 */
+			public function show()  : void
+			{
+				this.visible = true; 
+				//this.popupCode.open( false,false ) 
+			}
+			public function hide( ) : void
+			{
+				//this.popupCode.close()
+				this.visible = false; 
+			}
+			
+			
+			protected function onSave(event:Event=null):void
+			{
+				this.dispatchEvent( new Event( OK) ) 
+			}
+			
+			protected function onCancel(event: Event=null):void
+			{
+				this.dispatchEvent( new Event( CANCEL ) ) 
+			}
+			
+			public function updateLocation( currentLister_doNotReset : Object = null )  : void
+			{
+				/*
+				//dont' move to me if i'm not the current one? 
+				if ( currentLister_doNotReset != null && this.onenote_list != currentLister_doNotReset ) 
+				return 
+				this.popupCode.moveToComponent(  this.partial.leftEdgeUI, 'tl',  this.tween, false, true, -this.width-5 ) 
+				*/
+			}
+			
+			public var args : Array = [] ; 
+			public function selectFromList( goTo : UIComponent, right : Boolean,  fxDone : Function=null  ) : void
+			{
+				this.x = goTo.x; 
+				this.y = goTo.y;
+				this.show();
+				//this.popupCode.moveToComponent( goTo, 'tl', false ) ; 
+				this.height = goTo.height; 
+				this.width = goTo.width;
+				/* 
+				bug: heights were 0, it is b/c there were two player automaters, 
+				there is bug with them, they should nto be in singletone form ...
+				if ( goTo.height == 0 && goTo.hasOwnProperty('$height') ) 
+				{
+					this.x = goTo['$x']; 
+					this.y = goTo['$y'];
+					this.height = goTo['$height'] 
+					this.width = goTo['$width']
+					
+				} */
+				//	this.dispatchEvent( new Event (SETUP   )) 
+				this.show()
+				
+				this.imgRight.visible = right; 
+				this.imgWrong.visible = ! right 
+			}
+			
+			
+			
+		]]>
+	</mx:Script>
+	
+	<!--
+	<s:Rect width="100%" height="100%" >
+	<s:stroke>
+	<s:SolidColorStroke color="0xFFFFFF" alpha="0.3" />
+	</s:stroke>
+	</s:Rect> 
+	-->
+	
+	<mx:Canvas width="100%" height="100%" backgroundColor="0xFFFFFF"  alpha="0.3"/>
+	
+	<mx:Image id="imgRight" source="assets/buttons/Check-64.png"  verticalCenter="0" horizontalCenter="0"/>
+	<mx:Image id="imgWrong" source="assets/buttons/Gnome-Window-Close-64.png"  verticalCenter="0" horizontalCenter="0"/>
+	
+	
+	
+	
+</mx:Canvas>

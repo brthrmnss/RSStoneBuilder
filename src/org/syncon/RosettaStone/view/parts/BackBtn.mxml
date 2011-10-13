@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark" buttonMode="true" useHandCursor="true"
+		  creationComplete="onInit()" click="group1_clickHandler(event)"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.model.CustomEvent;
+			 
+			static public var GO_BACK_BTN : String = 'backBtnGoBack'
+			public function onInit():void
+			{
+				
+			}
+		 
+			
+			protected function group1_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( BackBtn.GO_BACK_BTN, null, true ) ) ; 
+			}
+			
+		]]>
+	</fx:Script>
+	
+
+	<s:BitmapImage width="93" height="93" smooth="true"  
+				   source="@Embed('/assets/buttons/Metro-Back-Blue-128.png')">
+		<s:filters>
+			<s:DropShadowFilter alpha="0.5" angle="45.0" blurX="2" blurY="2.0" color="#333333"
+								distance="4.0" hideObject="true" inner="false" knockout="false"
+								quality="2" strength="1"/>
+		</s:filters>
+	</s:BitmapImage>
+	
+</s:Group>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 right="10" creationComplete="onInit()" xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.model.NightStandConstants;
+			
+			import spark.components.RichEditableText;
+			
+			public var creationComplete : Boolean = false; 
+			private var _label:String;
+			public function onInit():void
+			{
+				this.creationComplete = true; 
+				this.label = this._label; 
+				if ( NightStandConstants.flex ) 
+				{
+					var  r : RichEditableText =  this.labelDisplay.textDisplay as RichEditableText
+					r.setStyle('trackingLeft' , -2 ) 
+				}
+				else
+				{
+					var tf : TextField = this.labelDisplay.textDisplay as TextField
+					/* var format : TextFormat = tf.defaultTextFormat
+					format.letterSpacing = -2
+					format.letterSpacing = -8
+					format.font = "myFontFamily2" 	 */
+					var spacing : Number = 	-Number(this.labelDisplay.getStyle('fontSize'))*.06
+					/* 		tf.defaultTextFormat = format; 
+					tf.embedFonts=true
+					tf.textHeight
+					tf.height = Number(format.size); 
+					var ee : StyleableTextField = StyleableTextField(this.labelDisplay.textDisplay )  ;  */
+					this.labelDisplay.setStyle( "letterSpacing", spacing )
+					this.labelDisplay.setStyle( "fontFamily", "myFontFamily2" )
+					//		return;
+				}
+			}
+			
+			public function set label ( s : String )  : void
+			{
+				this._label = s; 
+				if ( this.creationComplete ) 
+					this.labelDisplay.text = s; 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="9">
+		<s:fill>
+			<s:SolidColor color="#FD5B1B"/>
+		</s:fill>
+	</s:Rect>
+	
+	
+	
+	<s:BitmapImage width="80" height="80" smooth="true"  x="10"  verticalCenter="-2"
+				   source="@Embed('/assets/buttons/Metro-Back-Blue-128.png')">
+		<s:filters>
+			<s:DropShadowFilter alpha="1" angle="45.0" blurX="0" blurY="0" color="#FFFFFF"
+								distance="4.0" hideObject="true" inner="false" knockout="false"
+								quality="2" strength="1"/>
+		</s:filters>
+	</s:BitmapImage>
+	
+	<mobile:TextAreaLabel2  id="labelDisplay" color="#FFFFFF"  fontSize="43"
+							fontStyle="italic" fontWeight="bold" horizontalCenter="10" paddingBottom="0"
+							paddingLeft="12" paddingRight="0" paddingTop="12" 
+							textAlign="center"   verticalCenter="-4.5"/>
+	<!--<s:Label id="labelDisplay" color="#FFFFFF" fontFamily="Helvetica LT Std" fontSize="43"
+	fontStyle="italic" fontWeight="bold" horizontalCenter="10" paddingBottom="12"
+	paddingLeft="12" paddingRight="12" paddingTop="12"     trackingLeft=""
+	textAlign="center" verticalAlign="middle" verticalCenter="-4.5"/>-->
+	<s:filters>
+		<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="4.0" blurY="4.0" color="#000000"
+							distance="4.0" hideObject="false" inner="false" knockout="false"
+							quality="2" strength="1"/>
+	</s:filters>
+ 
+</s:Group>

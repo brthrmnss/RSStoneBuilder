@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%" creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			public static var UPDATE_JSON:String='UpdateJSON';
+			
+			protected function onInit(event:FlexEvent):void
+			{
+			}		
+			
+			public function export(str : String ) : void
+			{
+				var reg :  RegExp = new RegExp("\",", 'gi' ); 
+				str = str.replace(reg, "\",\r" )
+				this.txtJSON.text = str; 
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:TextArea text="Preview JSON" id="txtJSON" width="100%" height="100%" />
+</s:Group>

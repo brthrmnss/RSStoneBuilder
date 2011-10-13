@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 width="100%"
+		 height="100%"
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 creationComplete="onInit()">
+	<fx:Script>
+		<![CDATA[
+			
+			protected function onInit():void
+			{
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+		
+		<fx:DesignLayer d:userLabel="BgBottom">
+			<s:Rect d:userLabel="bottomRectangle" 
+					bottom="0" width="100%"
+					height="50%" 
+					bottomLeftRadiusX="10" bottomLeftRadiusY="10" bottomRightRadiusX="10" bottomRightRadiusY="10"
+					topLeftRadiusX="0" topLeftRadiusY="0" topRightRadiusX="0" topRightRadiusY="0"
+					>
+				<s:fill>
+					<s:LinearGradient rotation="90">
+						<s:GradientEntry alpha="1.0" color="#434343" ratio="0"/>
+						<s:GradientEntry alpha="1.0" color="#171717" ratio="1"/>
+					</s:LinearGradient>
+				</s:fill>
+			</s:Rect>
+		</fx:DesignLayer>
+		<fx:DesignLayer d:userLabel="BgTop">
+			<s:Rect d:userLabel="rectangleTop"  x="0" y="0" width="100%"
+					height="50%"
+					 bottomLeftRadiusX="0" bottomLeftRadiusY="0" bottomRightRadiusX="0" bottomRightRadiusY="0"
+					 topLeftRadiusX="10" topLeftRadiusY="10" topRightRadiusX="10" topRightRadiusY="10"
+					>
+				<s:fill>
+					<s:LinearGradient rotation="90">
+						<s:GradientEntry alpha="1.0" color="#151515" ratio="0.027450980392156862"/>
+						<s:GradientEntry alpha="1" color="#000000" ratio="1"/>
+					</s:LinearGradient>
+				</s:fill>
+			</s:Rect>
+			<s:Rect d:userLabel="rectangleTop2"  x="0" y="0" 
+					width="100%"
+					height="50%"
+					alpha="0.41000000000000003"
+					
+					bottomLeftRadiusX="0" bottomLeftRadiusY="0" bottomRightRadiusX="0" bottomRightRadiusY="0"
+					topLeftRadiusX="10" topLeftRadiusY="10" topRightRadiusX="10" topRightRadiusY="10"
+					
+					>
+				<s:fill>
+					<s:LinearGradient rotation="90">
+						<s:GradientEntry alpha="1.0" color="#333333" ratio="0"/>
+						<s:GradientEntry alpha="1.0" color="#000000" ratio="1"/>
+					</s:LinearGradient>
+				</s:fill>
+			</s:Rect>
+		</fx:DesignLayer>
+</s:Group>

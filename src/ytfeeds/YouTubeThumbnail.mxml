@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- YouTubeThumbnail.mxml v0.1 Coded by dehash.com June 2008 -->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+horizontalAlign="center" width="125" height="125" 
+verticalScrollPolicy="off" horizontalScrollPolicy="off">
+
+	<mx:Script>
+	<![CDATA[
+		
+import flash.events.Event;
+	
+	private function imageClicked(e:Event):void {
+		trace("imageClicked " + data.urlID);
+		// Send the Movie ID to the parent document
+		parentDocument.selectedID = data.urlID;
+	}
+		
+	]]>
+</mx:Script>
+	<mx:Image  
+		width="100" height="67"
+		source="{data.thumb}" click="imageClicked(event)" />
+	<mx:Text width="100" text="{data.title}" color="0xf0f0f0" fontSize="11"  />
+</mx:VBox>

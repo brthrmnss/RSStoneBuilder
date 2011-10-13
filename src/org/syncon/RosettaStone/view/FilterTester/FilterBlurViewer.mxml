@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"   
+		 creationComplete="onInit(event)" xmlns:mx="library://ns.adobe.com/flex/mx"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.ColorPickerEvent;
+			import mx.events.DropdownEvent;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.TalkingClock.vo.FilterVO;
+			
+			import spark.filters.BlurFilter;
+			import spark.filters.GlowFilter;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const NEXT : String = 'next' ; 			
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			[Bindable] private var _filter:FilterVO=new FilterVO();
+			[Bindable] public var f :    BlurFilter = new BlurFilter(); 
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				this.addEventListener( FilterEditor.CHANGED_FILTER, this.onUpdateDisplay ) 
+			}
+			
+			
+			public function set filter (event:  FilterVO):void
+			{
+				this._filter = event; 
+				this.f = this._filter.filter as BlurFilter
+				updateDisplay(); 
+				/* this.stepperQuality.value = f.quality 	 */						
+			}
+ 
+ 			public function updateDisplay( ) : void
+			{
+				this.slider_blurX.value = f.blurX; 
+				this.stepperBlurX.value = f.blurX
+				this.lblValueBlurX.text=f.blurX.toFixed(1).toString()
+					
+				this.slider_blurY.value = f.blurY; 
+				this.stepperBlurY.value = f.blurY 
+				this.lblValueBlurY.text=f.blurY.toFixed(1).toString()
+					
+				this.slider_Quality.value = f.quality 			
+				this.lblValueQuality.text= f.quality.toFixed(1).toString()		
+					
+				
+
+			}
+			
+			protected function slider_blurX_changeHandler(event:Event):void
+			{
+				this.f.blurX = this.slider_blurX.value; 
+				this.lblValueBlurX.text = this.slider_blurX.value.toString();
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}
+			protected function slider_blurY_changeHandler(event:Event):void
+			{
+				this.f.blurY = this.slider_blurY.value; 
+				this.lblValueBlurY.text = this.slider_blurY.value.toString(); 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}	
+ 
+			protected function slider_Quality_changeHandler(event:Event):void
+			{
+				this.f.quality = this.slider_Quality.value; 
+				this.lblValueQuality.text = this.slider_Quality.value.toString(); 
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			}				
+			
+ 
+			protected function stepperAlpha_changeHandler(event:Event):void
+			{
+				this.dispatchEvent( new Event( FilterEditor.CHANGED_FILTER  )); 
+			//	this.updateDisplay()
+			}
+			
+			protected function onUpdateDisplay(event:Event):void
+			{
+				this.updateDisplay()
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	 
+	<s:HGroup>
+		<s:Label text="blurX" width="111"/>
+		<s:HSlider id="slider_blurX" minimum="0" maximum="255" change="slider_blurX_changeHandler(event)"
+				   
+				   width="150"
+				   />
+		<s:Label id="lblValueBlurX"   />	
+		<s:NumericStepper id="stepperBlurX" minimum="0" maximum="1000"  
+						  change="this.f.blurX = this.stepperBlurX.value; stepperAlpha_changeHandler(event);  "
+						  snapInterval="0"   />
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label text="blurY" width="111"/>
+		<s:HSlider id="slider_blurY" minimum="0" maximum="255" change="slider_blurY_changeHandler(event)"
+				   
+				   width="150"
+				   />
+		<s:Label id="lblValueBlurY" />	
+		<s:NumericStepper id="stepperBlurY" minimum="0" maximum="1000"
+						  change=" this.f.blurY = this.stepperBlurY.value; stepperAlpha_changeHandler(event); "
+						  snapInterval="0"   />
+	</s:HGroup>
+	 
+	<s:HGroup>
+		<s:Label text="Quality" width="111"/>
+		<s:HSlider id="slider_Quality" minimum="0" maximum="15" change="slider_Quality_changeHandler(event)"
+				   width="150"    />
+		<s:Label id="lblValueQuality" />	
+	</s:HGroup>
+	 
+	
+</s:Group>

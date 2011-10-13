@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"   
+		 creationComplete="onInit(event)" xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.core.UIComponent;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			static public const NEW_FILTER_STIRNG : String = 'NEW_FILTER_STIRNG' ; 		
+			static public const NEW_FILTER_JSON : String = 'NEW_FILTER_JSON' ; 	
+			static public const NEW_FILTER_JSON_ITEM : String = 'NEW_FILTER_JSON_ITEM' ; 	
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:String;
+			private var _fontFamilyG:String;
+			
+			public var creationComplete : Boolean = false; 
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+				//	 
+				this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+				this.timer.start() ;
+				//this.df.dateTimePattern="LL:NN:SS"
+				// this.format.timeStyle =    "LL:NN:SS"
+				if ( _fontFamilyS  != null  ) 
+				{
+					this.txtFronts(true, _fontFamilyS )
+				}
+				if ( _fontFamilyG != null  ) 
+				{
+					this.txtBackgrounds(true, _fontFamilyG )
+					
+				}			
+				else
+				{
+					if ( this._fontFamilyG8 != null ) 
+					{
+						this.txtBackgrounds(true, _fontFamilyG8 )
+						this.txtTimeBack.text = '88:88:88'
+						
+						this.txtDayBack.text = this.getDayString(null, true ) ;
+						this.txtAMPMBack.text = '**'
+						this.txtDateBack.text = '**l**l**'							
+					}
+					else
+					{
+						this.txtBackgrounds(false);//, _fontFamilyG8 )
+					}
+					
+				}
+				
+				this.drawFrontLines()
+				//	this.drawFilters(); 
+				
+				this.formatShowDate( this.modeShowDate,true ) 
+				this.setTextColor( this.textColor, true ) ;
+			}
+			
+			override public function set enabled(value:Boolean):void
+			{
+				super.enabled = value;
+				if ( value ) 
+				{
+					this.timer.start(); 
+				}
+				else
+				{
+					this.timer.stop(); 
+				}
+			}
+			
+			protected function onTime(event:TimerEvent):void
+			{
+				if ( this.enabled == false ) 
+					return; 
+				var d : Date = new Date();
+				//if ( this.txtTimeFront.text == '' || this.txtTimeFront.text == null ) 
+				this.txtTimeFront.text = this.formattedTime()
+				
+				this.txtDayFront.text = getDayString(new Date)
+				
+				this.txtAMPM.text = formatAMPM.format( new Date ) ; 
+				this.lastTimeTxt  = this.txtAMPM.text; 
+				
+				this.txtDate.text = formatDate.format( d ).replace('/', 'i').replace('/', 'i')
+				
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			public function set fontFamilyS(event:String):void
+			{
+				this._fontFamilyS = event; 
+				//this._fontFamilyG = 
+			}
+			
+			public function set  fontFamilyG(event:String):void
+			{
+				this._fontFamilyG = event; 
+			}		
+			public function set  fontFamilyG8(event:String):void
+			{
+				this._fontFamilyG8 = event; 
+			}		
+			
+			private var _filterString : String = null; 
+			private var _fontFamilyG8:String;
+			public function set filterString( s : String ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_STIRNG, s ) ) ; 
+				this._filterString = s; 
+			}
+			public var _filterJSON : Array = null; 
+			public var _filterItemsForLater: Array= [] ;
+			private var lastTimeTxt:String;
+			
+			public function set filterJSON( s :  Array ) : void{
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_JSON, s ) ) ; 
+				this._filterJSON = s; 
+			}			
+			public function   filterItem( s :  Array, item : Object ) : void{
+				
+				var  set : Array  =  [s, item]
+				
+				/* if ( this.creationComplete  == false ) 
+				{ */
+				this._filterItemsForLater.push( set ) 
+				/* 	return; 
+				} */
+				this.dispatchEvent( new CustomEvent( NEW_FILTER_JSON_ITEM,set  ) ) ; 
+				//this._filterJSON = s; 
+			}			
+			public function get initFilterString() : String
+			{
+				return this._filterString; 
+			}
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			private function getDayString(date:Date, allStrings:Boolean=false):String
+			{
+				var seperator :  String = '  '
+				var days : Array = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun' ] 
+				var dayTemp : Array = [] ; 
+				for each ( var day : String  in days ) 
+				{
+					dayTemp.push( day.toString().toUpperCase() ); 
+				}
+				days = dayTemp; 
+				
+				if ( allStrings   ) 
+				{
+					return days.join(seperator); 
+				}
+				var output : String = ''; 
+				var currentDay : String   = this.dayFormatter.format(date)
+				currentDay = currentDay.toUpperCase()
+				if ( currentDay.length > 3 ) 
+					currentDay = currentDay.slice( 0, 3 ) ; 
+				for each (   day in days ) 
+				{
+					if ( day != currentDay ) 
+						output += '   '
+					else
+						output += day; 
+					output += seperator; 
+				}
+				
+				// TODO Auto Generated method stub
+				return output//.slice( 0, output.length -1 )+'*';
+			}
+			
+			private function txtBackgrounds(visible:Boolean, _fontFamilyG:String=''):void
+			{
+				var txt : Array = [	this.txtTimeBack, this.txtDayBack, this.txtAMPMBack, this.txtDateBack  ]; 
+				for each ( var tf : Object in txt ) 
+				{
+					tf.visible = visible;
+					if ( _fontFamilyG != '' ) 
+						tf.setStyle('fontFamily', _fontFamilyG ) ; 	
+				}
+				
+			}
+			private function txtFronts(visible:Boolean, _fontFamily:String=''):void
+			{
+				var txt : Array = [this.txtTimeFront, this.txtDayFront, this.txtAMPM, this.txtDate]; 
+				for each ( var tf : Object in txt ) 
+				{
+					tf.visible = visible; 
+					if ( _fontFamily != '' ) 
+						tf.setStyle('fontFamily', _fontFamily ) ; 	
+				}
+				
+			}			
+			
+			private function drawFrontLines():void
+			{
+				//return; 
+				holderFrontBg// TODO Auto Generated method stub
+				var target :  UIComponent = this.holderLines;
+				var g : Graphics = target.graphics
+				
+				g.clear(); 
+				// red triangle, starting at point 0, 0
+				//g.beginFill(0xFF0000);
+				g.lineStyle(1, 0x000000,0.5);
+				
+				g.moveTo(0, 0);
+				for   ( var i : int = 0 ; i < target.height ; i = i + 3 )
+				{
+					g.moveTo(0, i);
+					g.lineTo(target.width, i);
+					g.lineTo(target.width, i+1);
+					g.lineTo(target.width, i+2);
+				}
+				
+			}
+			
+			protected function holderFrontBg_resizeHandler(event:ResizeEvent):void
+			{
+				drawFrontLines()
+			}
+			
+			public function drawFilters():void
+			{
+				for each  ( var set : Array in this._filterItemsForLater ) 
+				{
+					this.dispatchEvent( new CustomEvent( NEW_FILTER_JSON_ITEM,set  ) ) ; 
+				}
+				_filterItemsForLater = [];
+			}
+			
+			private var mode24Hours : Boolean = false; 
+			public function format24Hours(b : Boolean ) : void
+			{
+				if ( b == this.mode24Hours ) 
+					return 
+					this.mode24Hours = b; 
+				if ( b ) 
+				{
+					DateDisplay3.dateTimePattern = 'HH:mm:ss'
+					this.holderAMPM.height = 0; 	
+					this.holderAMPM.visible = false; 
+				}
+				else
+				{
+					DateDisplay3.dateTimePattern = 'hh:mm:ss'
+					this.holderAMPM.height = NaN; 
+					this.holderAMPM.visible = true; 
+				}
+			}
+			
+			
+			private var modeShowDate : Boolean = false; 
+			public function formatShowDate(b : Boolean, init : Boolean = false ) : void
+			{
+				if ( b == this.modeShowDate && init == false  ){
+					return ;}
+				this.modeShowDate = b; 
+				if ( b ) 
+				{
+					//DateDisplay3.dateTimePattern = 'hh:mm:ss'
+					this.holderDate.height = NaN; 
+					this.holderDate.visible = true; 
+				}
+				else
+				{
+					
+					//DateDisplay3.dateTimePattern = 'HH:mm:ss'
+					this.holderDate.height = 0; 	
+					this.holderDate.visible = false; 
+				}
+			}
+			
+			private var modeShowSeconds : Boolean = true; 
+			public function formatSeconds(b : Boolean, init : Boolean = false ) : void
+			{
+				if ( b == this.modeShowSeconds && init == false  ){
+					return ;}
+				this.modeShowSeconds = b; 
+				if ( b ) 
+				{
+					if ( this.mode24Hours ) 
+					{
+						DateDisplay3.dateTimePattern = 'HH:mm:ss'
+					}
+					else
+					{
+						DateDisplay3.dateTimePattern = 'hh:mm:ss'
+					}
+					this.txtTimeBack.text = '88:88:88'
+				}
+				else
+				{
+					if ( this.mode24Hours ) 
+					{
+						DateDisplay3.dateTimePattern = 'HH:mm'
+					}
+					else
+					{
+						DateDisplay3.dateTimePattern = 'hh:mm'
+					}
+					this.txtTimeBack.text = '88:88'
+				}
+			}			
+			
+			private var modeShowDayOfWeek : Boolean = true; 
+			public function formatShowDayOfWeek(b : Boolean, init : Boolean = false ) : void
+			{
+				if ( b == this.modeShowDayOfWeek && init == false  ){
+					return ;}
+				this.modeShowDayOfWeek = b; 
+				if ( b ) 
+				{
+					this.holderDay.height = NaN;  
+					this.holderDay.visible = true; 
+					this.holderDay.visible = true; 
+				}
+				else
+				{
+					
+					this.holderDay.height = 0; 	  
+					this.holderDay.visible = false; 
+					this.holderDay.visible = false; 
+				}
+			}
+			
+			
+			private var textColor :  uint = 0xA1FF1F ; 
+			public function setTextColor(textColor_ : uint, init : Boolean = false ) : void
+			{
+				if ( textColor_ == this.textColor && init == false  ){
+					return ;}
+				this.textColor = textColor_; 
+				
+				this.setStyle('color', this.textColor ) ; 
+				this.innerGradient.color = this.textColor 
+			}
+			
+			public function get textFontSize() : Number
+			{
+				return this.fontSize
+			}
+			private var fontSize :   Number = 0 ; 
+			public function setFontSize(fontSize_ : Number, init : Boolean = false ) : void
+			{
+				//	return;
+				if ( fontSize_ == this.fontSize && init == false  ){
+					return ;}
+				this.fontSize = fontSize_; 
+				var smallTxt : Array  = [  this.txtAMPMBack, 
+					this.txtAMPM ,this.txtDate,   this.txtDateBack  ]; 
+				var largeTxt : Array = [this.txtTimeFront, 	this.txtTimeBack];
+				var tinyTxt :  Array = [ this.txtDayBack, 	this.txtDayFront] 
+				var ratioLageToSmall : Number = 25/100
+				var ratioLargeToTiny : Number = 22/100
+				var smallFontSize : Number = ratioLageToSmall * this.fontSize; 
+				var tinyFontSize : Number = ratioLargeToTiny * this.fontSize
+				for each ( var o : Object in smallTxt ) 
+				{
+					o.setStyle('fontSize', smallFontSize ) 
+				}
+				for each (   o   in tinyTxt ) 
+				{
+					o.setStyle('fontSize', tinyFontSize ) 
+				}				
+				for each (   o in largeTxt ) 
+				{
+					//continue
+					o.setStyle('fontSize',this.fontSize ) 
+				}
+				/* this.setStyle('color', this.textColor ) ; 
+				this.innerGradient.color = this.textColor  */
+				//gap ...
+			}			
+			
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format"  dateStyle="none"   dateTimePattern="LL:NN:SS"/>
+		<!--	<s:DateTimeFormatter id="DateDisplay2" 
+		dateTimePattern="hh:mm a"/>-->
+		<s:DateTimeFormatter id="formatAMPM" 
+							 dateTimePattern="a"/>		
+		<s:DateTimeFormatter id="formatDate" 
+							 dateTimePattern="MM/dd/yy"/>		
+		<s:DateTimeFormatter id="dayFormatter" 
+							 dateTimePattern="E"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" 
+							 dateTimePattern="hh:mm:ss"/>
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+	</fx:Declarations>
+	<!--
+	<s:Rect  top="0" right="0" left="0" bottom="0">
+	<s:fill>
+	<s:SolidColor color="0" />
+	</s:fill>
+	<s:stroke>
+	<s:SolidColorStroke color="0xFFFFF" />
+	</s:stroke>
+	</s:Rect> 
+	-->
+	
+	
+	
+	<s:Group  horizontalCenter="0" verticalCenter="0"  >
+		<!--		<s:Rect  top="0" right="0" left="0" bottom="0">
+		<s:fill>
+		<s:SolidColor color="0" />
+		</s:fill>
+		<s:stroke>
+		<s:SolidColorStroke color="0xFFFFF" />
+		</s:stroke>
+		</s:Rect>
+		-->
+		
+		<s:Group id="holderFrontBg"  
+				 left="0" right="0" top="0"  bottom="0">
+			
+			<s:Rect  alpha="1" id="bgRadialGRadient" verticalCenter="0" horizontalCenter="0" width="70%" height="95%">
+				<s:fill>
+					<s:RadialGradient >
+						<s:GradientEntry  id="innerGradient" color="0xA2FF20" alpha="0.5"/>
+						<!--<s:GradientEntry color="0xA2FF20" alpha="0.5"/>
+						<s:GradientEntry color="0" />-->
+						<s:GradientEntry color="0" />
+						
+					</s:RadialGradient>
+				</s:fill>
+			</s:Rect>
+			
+		</s:Group>
+		<s:Group id="holderLines"   resize="holderFrontBg_resizeHandler(event)"
+				 left="0" right="0" top="0"  bottom="0">
+		</s:Group>
+		
+		
+		
+		
+		<s:VGroup gap="0" horizontalCenter="0" horizontalAlign="center">
+			<s:Group id="holderTopRow"  width="100%"   >
+				<s:Group id="holderDate"  width="100%"   >
+					<s:Label id="txtDateBack"     alpha="0.1"
+							 fontFamily="Digital2"   fontSize="25"  visible="true"
+							 />				
+					<s:Label id="txtDate"   
+							 fontFamily="Digital2"   fontSize="25"  visible="true"
+							 />
+				</s:Group>
+				
+				
+				
+				<s:Group id="holderAMPM"  width="100%"   >
+					<s:Label id="txtAMPMBack"    right="0" alpha="0.1"
+							 fontFamily="Digital2"   fontSize="25"  visible="true"
+							 />				
+					<s:Label id="txtAMPM"    right="0"
+							 fontFamily="Digital2"   fontSize="25"  visible="true"
+							 />
+				</s:Group>
+			</s:Group>
+			
+			<s:Spacer height="-10" />
+			<s:Group id="bgH" >
+				<!--	
+				<s:Rect  top="0" right="0" left="0" bottom="0">
+				<s:fill>
+				<s:SolidColor color="0" />
+				</s:fill>
+				<s:stroke>
+				<s:SolidColorStroke color="0xFFFFF" />
+				</s:stroke>
+				</s:Rect> 
+				-->
+				<s:Label id="txtTimeBack"     
+						 fontFamily="Digital2"   fontSize="100"  alpha="0.1"
+						 />
+				<s:Label id="txtTimeFront"   
+						 fontFamily="Digital2"   fontSize="100"  visible="true"
+						 />
+			</s:Group>
+			<s:Spacer height="10" />
+			<s:Group id="holderDay"       >
+				<!--	<s:Rect  top="0" right="0" left="0" bottom="0">
+				<s:fill>
+				<s:SolidColor color="0" />
+				</s:fill>
+				<s:stroke>
+				<s:SolidColorStroke color="0xFFFFF" />
+				</s:stroke>
+				</s:Rect>-->
+				<!--cannot center the text properly b/c labe will strip off trailing spaces 
+				so use 
+				backgroundColor="0xFF0000" to verify -->
+				<s:Label id="txtDayBack" 
+						 fontFamily="Digital2"   fontSize="15"  alpha="0.1"
+						 />
+				<s:Label id="txtDayFront"   
+						 
+						 fontFamily="Digital2"   fontSize="15"  visible="true"
+						 />
+			</s:Group>
+			
+		</s:VGroup>
+		
+		<!--<FilterTester:EditFilters id="ef_DayFrom" target="{this.txtDayFront}" />-->
+	</s:Group>
+	
+	<s:Group id="editors" >
+		<!--
+		<s:Button   id="btnEdit" label="e" width="20" top="10" left="10" click="onEdit(event)" />-->
+		<FilterTester:EditFilters id="ef_Day" target="{this.txtDayFront}" />
+		<FilterTester:EditFilters id="ef_AMPM" target="{this.txtAMPM}" />
+		<FilterTester:EditFilters id="ef_Time" target="{this.txtTimeFront}" />
+		<FilterTester:EditFilters id="ef_Date" target="{this.txtDate}" />
+		<FilterTester:EditFilters id="ef_DayBack" target="{this.txtDayBack}" />
+		<!--<FilterTester:EditFilters id="ef_Lettersd" target="{this.txtDayBack}" />-->
+	</s:Group>
+	
+</s:Group>

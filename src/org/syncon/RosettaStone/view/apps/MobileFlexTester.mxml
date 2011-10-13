@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:view="org.syncon.RosettaStone.view.*"
+		 xmlns:NightStand="org.syncon.NightStand.*"
+		 xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"
+		 xmlns:subview="org.syncon.RosettaStone.view.subview.*"
+		 xmlns:lite="views.lite.*"
+		 width="100%" height="100%" creationComplete="onInit(event)" xmlns:mobile="org.syncon.RosettaStone.view.mobile.*" xmlns:RosettaStone="org.syncon.RosettaStone.*">
+	<fx:Script>
+		<![CDATA[
+			import org.syncon.RosettaStone.view.mobile.HomeView;
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.ContextNightStand_ViewsSubContext;
+			import org.syncon.RosettaStone.controller.NavigateCommand;
+			import org.syncon.RosettaStone.model.NightStandConstants;
+			import org.syncon.TalkingClock.view.subview.DigitalLED.ClockView;
+			protected function onInit(event:FlexEvent):void
+			{
+				
+				var xx :   ContextNightStand_ViewsSubContext = new ContextNightStand_ViewsSubContext()
+				this.context.addSubContext( xx ) ;
+			/* 	var xxx :     ContextNightStand_PopupViewsSubContext = new ContextNightStand_PopupViewsSubContext()
+				this.context.addSubContext( xxx ) ; */
+				var newline : String = "\n"
+				var str : String = '{"visible":true,"params":[5,135,5,1,8,8,1,1,true,false,false],"name":"test 1","type":"drop","desc":"desc 1"}'+newline; 
+				str+= '{"visible":true,"params":[0,0.8,2,2,2,1,false,true],"name":"test 2","type":"glow","desc":"desc 2"}'+newline; 
+				str+= '{"visible":true,"params":[5,1,2],"name":"test 3","type":"blur","desc":"desc 3"}'+newline; 
+				var aro :  Array = [
+					'{"visible":true,"params":[5,135,16777215,1,8,8,1,1,false,true,false],"name":"test 1","type":"drop","desc":"desc 1"}',
+					'{"visible":true,"params":[16711680,1,2,2,1,2,false,true],"name":"test 2","type":"glow","desc":"desc 2"}',
+					'{"visible":true,"params":[5,1,2],"name":"test 3","type":"blur","desc":"desc 3"}'
+				]
+				str = aro.join('\n'); 
+				var rer : Array =	[{"desc":"desc 2","params":[16711680,1,2,2,1,2,false,true],"name":"test 2","type":"glow","visible":false,"aname":"test 2"},
+					{"desc":null,"params":[16777215,0.8633093525179856,6,6,4,1,false,false],"name":"new outline","type":"glow","visible":true,"aname":"new outline"},
+					{"desc":null,"params":[153,0.8633093525179856,6,6,4,1,false,false],"name":"new outline2","type":"glow","visible":true,"aname":"new outline2"},
+					{"desc":null,"params":[16777215,0.8633093525179856,6,6,4,1,false,false],"name":"new outline22","type":"glow","visible":true,"aname":"new outline22"},
+					{"desc":null,"params":[51,0.8633093525179856,6,6,4,1,false,false],"name":"new outline222","type":"glow","visible":true,"aname":"new outline222"},
+					{"desc":"desc 1","params":[5,135,6710886,1,8,8,1,1,false,false,false],"name":"test 1","type":"drop","visible":true,"aname":"test 1"},
+					{"desc":"desc 3","params":[5,1,2],"name":"test 3","type":"blur","visible":false,"aname":"test 3"}]
+				
+				NavigateCommand.nav = this.holder; 
+				var firstClass : HomeView
+				NightStandConstants.flex = true; 
+			}				//	 
+			
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<RosettaStone:ContextNightStand id="context" contextView="{this}"  />
+	</fx:Declarations>
+	
+	<lite:ViewNavigator id="holder" width="100%" height="100%" firstView="{HomeView}">
+	</lite:ViewNavigator>
+	<!--	<s:Group id="holder" width="100%" height="100%" >
+	<subview:ClockView />
+	</s:Group>--> 
+	
+<!--	<FilterTester:FilterStack  x="10" y="400"/>-->
+	<!--
+	<subview:SettingsViewMini  bottom="0"  height="300" width="100%"/>
+	<FilterTester:FilterStack  y="500" x="200"/> -->
+	
+	<mobile:BottomNavMenu  visible="false" bottom="0"/>
+</s:Group>

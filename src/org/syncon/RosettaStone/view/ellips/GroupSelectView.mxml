@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<controls:ScreenView xmlns:mx="http://www.adobe.com/2006/mxml"
+					 xmlns:controls="openplug.elips.controls.*"
+					 xmlns:alarm="org.syncon.TalkingClock.view.mobile.alarm.*"
+					 xmlns:screenClasses="openplug.elips.controls.screenClasses.*"
+					 xmlns:view="org.syncon.TalkingClock.view.mobile.view.*"
+					 creationComplete="onInit(event)" xmlns:view1="mvc.view.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.ThemeVO;
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			
+			import outside.PlatformGlobals;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const SETTINGS : String = 'settings'
+			static public const GO_BACK : String = 'goBack'; 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const RESUME : String = 'RESUME'; 
+			static public const INFO : String = 'INFO'; 
+			
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformListClickEvent( this.list, this.list1_itemClickHandler )  
+				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnResume, this.onResume ) ; 
+			}
+			
+			protected function list1_itemClickHandler(event: Event):void
+			{
+				var data : Object = NightStandConstants.PlatformGlobals.getItemClickEventData( event ) 
+				this.dispatchEvent( new CustomEvent(LIST_CHANGED, data  )  ) 
+			}
+			
+			public function onBack(event:Event=null) : void
+			{
+				this.dispatchEvent( new Event( GO_BACK ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			
+			protected function onSettings():void
+			{
+				this.dispatchEvent( new Event( SETTINGS ) ) ; 
+			}
+			
+			protected function onInfo():void
+			{
+				this.dispatchEvent( new Event( INFO ) ) ; 
+			}
+			protected function onResume(event:Event):void
+			{
+				this.dispatchEvent( new Event( RESUME ) ) ; 
+			}
+			
+		]]>
+	</mx:Script>
+	<view1:NavigationBar id="bar" label="Select Unit" fontSizeS="26" fxLeft="{this.onBack}"
+						 leftLabel="Back"/>
+	<controls:List id="list" top="70" bottom="160" width="100%" height="100%"
+				   itemRenderer="org.syncon.RosettaStone.view.ellips.itemrenderers.GroupSelectItemRenderer"
+				   rowHeight="70" styleName="lstStyle"/>
+	<!--
+	<view:OpenPlugButton id="btnResume" bottom="100" label="Resume" horizontalCenter="0"
+						 iconS="assets/buttons/63-runner.png"/>
+	-->
+</controls:ScreenView>

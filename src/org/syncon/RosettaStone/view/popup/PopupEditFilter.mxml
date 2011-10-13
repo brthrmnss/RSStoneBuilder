@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<popup:PopupBase xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					  xmlns:s="library://ns.adobe.com/flex/spark" 
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  xmlns:comps="org.syncon.comps.*" 
+					  creationComplete="onInit()" 
+					  implements="org.syncon.popups.view.IPopup" 
+					  xmlns:popup="org.syncon.evernote.basic.view.popup.*" xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"					  
+					  >
+
+	<fx:Script>
+		<![CDATA[
+			import sss.Shelpers.Shelpers.other.TweenerHelpers;
+			
+			static public var LOGIN : String = 'login'; 
+			static public var REGISTER : String = 'register'
+			static public var FORGOT_PASSWORD : String = 'password' 
+			
+			protected function onLogin(event:MouseEvent):void
+			{
+				/* if ( this.txtPassword.text.length < 4 ) 
+					return; 
+				 */
+				this.dispatchEvent( new Event( LOGIN ) ) ; 
+				// TODO Auto-generated method stub
+			}
+			
+			import org.syncon.popups.view.IPopup;
+			
+			import sss.Shelpers.Shelpers.ui.PopupCode;
+			
+			override public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				this.popupCode.center()
+			}
+			/* 
+			override public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupLogin = new PopupLogin ()
+				popup._popupCode =     PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+				 */		
+			
+			override public  function create(app:Object)  : IPopup
+			{
+				var popup :  PopupLogin = new PopupLogin ()
+				popup.popupCode =     PopupCode.Create( popup ,app ) 
+				return popup			
+			} 
+			
+			override public function show(  )  : void
+			{
+				TweenerHelpers.removeTweens( this );
+				this.popupCode.open( false, false ) 
+			}
+ /* 
+			public function open( a : Boolean = false  )  : void
+			{
+				this.popupCode.open( false, false ) 
+			}			
+		  */
+			override public function hide( ) : void
+			{
+				//var ee : TweenerHelpers
+				TweenerHelpers.removeTweens( this );
+				this.popupCode.showing; 
+				this.popupCode.close() 
+					super.hide()
+				this.popupCode.showing
+				
+			}
+ 
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( PopupLogin.REGISTER) ) 
+			}
+
+
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( PopupLogin.FORGOT_PASSWORD) ) 
+			}
+			
+			public function set status ( s : String )  : void
+			{
+				this.txtStatus.text = s; 
+			}
+			
+			public function loginOk() : void
+			{
+				this.status = 'Login ok ... loading ...' 
+				setTimeout( this.hide, 2500 ) 
+			}
+			
+
+		]]>
+	</fx:Script>
+
+		
+	<s:Rect width="100%" height="100%" radiusX="8" radiusY="8">
+		<s:fill>
+			<s:SolidColor color="0xEDF6F7" />
+		</s:fill>	
+	</s:Rect>	 	
+	
+	
+	
+ <s:VGroup gap="-1"  paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10" >
+	  
+	 <FilterTester:FilterEditor id="editor" />
+	 
+		
+
+ </s:VGroup>
+
+	
+</popup:PopupBase>

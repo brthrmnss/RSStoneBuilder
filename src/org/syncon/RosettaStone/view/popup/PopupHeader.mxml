@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup  xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   paddingTop="0" paddingBottom="10"
+		   width="100%"
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   creationComplete="onInit()"  
+		   >
+	
+	<fx:Script>
+		<![CDATA[
+			private var _lbl : String = '' ;
+			public var bold : Boolean = true; 
+			public var _show_line : Boolean = true; 
+			public function onInit() : void 
+			{
+				this.lblText.text = _lbl
+				this.padding = _padding
+					
+				this.linex.visible = this._show_line; 
+				
+				if ( bold == false ) 
+					this.lblText.setStyle( 'fontWeight', 'normal' ) 
+				var fontSize : Number = this.lblText.getStyle('fontSize' )
+				this.lblText.setStyle('fontSize', fontSize*1.8 )
+				this.lblText.setStyle('paddingLeft',  fontSize * .8 )
+				this.lblText.setStyle('paddingTop',  fontSize * .4 )
+				//this.paddingLeft = this.paddingBottom = this.paddingTop = fontSize * .8
+			}
+			public function set label (lbl:String):void
+			{
+				if ( this.lblText != null ) 
+					this.lblText.text = lbl
+				_lbl = lbl
+			}
+			public function get label() : String
+			{
+				return this._lbl; 
+			}
+			//[Bindable] public var padding : int  = 10;
+			[Bindable] private var _padding : int  = 10;
+			public function set padding (_padding_: int):void
+			{
+				if ( this.lblText != null ) 
+				{
+					this.lblText.x = _padding_
+					//this.linex.width =  this.width - _padding_*2						
+				}
+				_padding = _padding_
+				
+			}		
+			
+			public function set showLine (_show_line_:  Boolean):void
+			{
+				if ( this.linex != null ) 
+				{
+					this.linex.visible = _show_line_; 
+				}
+				_show_line = _show_line_
+			}				
+		]]>
+	</fx:Script>
+	
+	<s:Label id="lblText"  color="0xFFFFFF"  text="Popup Name"  fontWeight="normal" />
+	
+	<s:Line id="linex"  width="100%" horizontalCenter="0" bottom="0">
+		<s:stroke>
+			<s:SolidColorStroke color="#d2d2d2" />
+		</s:stroke>		
+	</s:Line>	 	 
+	
+</s:VGroup>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- YTFeedComponent.mxml v0.1 Coded by dehash.com June 2008 -->
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		creationComplete="init()" >
+ 
+	
+	<fx:Script>
+		<![CDATA[
+			
+			/********** IMPORTS **********/
+			import ytfeeds.SimpleFeedGrabberExample;
+			import mx.events.ItemClickEvent;
+			import mx.events.FlexEvent;
+			import mx.core.Application;
+			import mx.collections.ArrayList;
+			
+			/********** VARIABLES **********/
+			[Bindable]
+			private var simpleFeedGrabberExample:SimpleFeedGrabberExample;
+			[Bindable]
+			private var FEED_TYPE_ARRAY:Array = [
+				{label:SimpleFeedGrabberExample.LOAD_MOST_VIEWED, data:0},
+				{label:SimpleFeedGrabberExample.LOAD_TOP_RATED, data:1},
+				{label:SimpleFeedGrabberExample.LOAD_RECENTLY_FEATURED, data:2},
+				{label:SimpleFeedGrabberExample.LOAD_SEARCH, data:3}
+			];
+			
+			private var _selectedID:String = "";
+			
+			/********** INIT **********/
+			public function init():void {
+				trace('init');
+				searchTerms.addEventListener(FlexEvent.ENTER, doSearch);
+				simpleFeedGrabberExample = new SimpleFeedGrabberExample();
+				simpleFeedGrabberExample.loadMostViewed();
+			}
+			
+			/********** TAB BUTTON PRESSED **********/
+			private function tabChangeEvt(event:ItemClickEvent):void {
+				var cat:String = event.label;
+				if(cat!=SimpleFeedGrabberExample.LOAD_SEARCH){
+					simpleFeedGrabberExample[cat]();
+				}else{
+					simpleFeedGrabberExample.loadSearch(searchTerms.text);
+				}
+			}	 
+			
+			private function tabChangeEvt2(event:ItemClickEvent):void {
+				var cat:String = event.label;
+				if(cat!=SimpleFeedGrabberExample.LOAD_SEARCH){
+					simpleFeedGrabberExample[cat]();
+				}else{
+					simpleFeedGrabberExample.loadSearch(searchTerms.text);
+				}
+			}	 
+			
+			/********** DO SEARCH **********/
+			private function doSearch (event:Event):void {
+				tabbar.selectedIndex = 3;
+				simpleFeedGrabberExample.loadSearch(searchTerms.text);
+			}
+			
+			/********** GET SELECTED ID **********/
+			[Bindable]
+			public function get selectedID():String {
+				return _selectedID;
+			}
+			
+			/********** SET SELECTED ID **********/
+			public function set selectedID(id:String):void {
+				_selectedID = id;
+				//===--- quick hack to simplfy integration with otoh player
+				try {Application.application.video.text = id;}catch (e:Error){}
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:Box width="540" height="400" >
+		<mx:Panel width="100%" height="100%" title="YouTube Feeds + Search v0.1" backgroundAlpha="0" >
+			 
+			<mx:TabBar id="tabbar" dataProvider="{FEED_TYPE_ARRAY}" itemClick="tabChangeEvt(event);"  />
+			 <!--
+			<s:TabBar  dataProvider="{ new  ArrayList(FEED_TYPE_ARRAY)}"  change="tabChangeEvt2(event);" />
+			-->
+			<mx:HBox>
+				<s:TextInput id="searchTerms" text="Search" maxChars="30" restrict="A-Z a-z 012345689"/> 
+				<mx:Text text=" ID: {selectedID}"/>
+			</mx:HBox>
+			<mx:TileList  width="100%" height="100%"
+						  dataProvider="{simpleFeedGrabberExample.ytVideoDetailsArrayCollection}" itemRenderer="ytfeeds.YouTubeThumbnail" />
+		</mx:Panel>
+		
+	</mx:Box>
+</s:Group>

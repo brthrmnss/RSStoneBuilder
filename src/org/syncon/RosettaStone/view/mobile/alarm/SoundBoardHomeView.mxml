@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			xmlns:view="org.syncon2.utils.mobile.view.*" 
+			xmlns:view1="org.syncon.RosettaStone.view.*" menuKeyPressed="view1_menuKeyPressedHandler(event)"
+			actionBarVisible="false" creationComplete="onInit(event)" destructionPolicy="auto"
+			title="Alarms">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.AirVGroupVO;
+			import org.syncon.RosettaStone.vo.AlarmVO;
+			
+			import spark.events.IndexChangeEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const ADD_ALARM : String = 'SEND' 
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const RELAYOUT : String = 'RELAYOUT'; 	
+			static public const INQUIRE : String = 'Inrueiq' 
+			static public const CHANGE_BUTTON : String = 'CHANGE_BUTTON' 				
+			static public const LOAD_PORT : String = 'LOAD_PORt' 				
+			
+			private var ignoreNextClick:Boolean;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.addEventListener( 'changeAlarm', this.onChange, false, 0, true ) ; 
+				//this.list.addEventListener(Event.CHANGE, this.onChange, false, 0, true ) ; 
+				//this.list.dataGroup.addEventListener(Event.CHANGE, this.onChange, false, 0, true ) ;
+				AirVGroupVO.em( this.txtTitle, 1.4 )
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onAdd() : void
+			{
+				this.dispatchEvent( new Event( ADD_ALARM ) ) 
+			}
+			
+			protected function listChangeHandler(event:IndexChangeEvent, wait : Boolean = true ):void
+			{
+				if ( this.ignoreNextClick ) 
+				{
+					this.ignoreNextClick = true; 
+					return
+				}
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+					var item :     Object = this['list'].dataProvider.getItemAt( index )  as Object; 
+				//trace('change sent'); 
+				this.dispatchEvent( new   CustomEvent( LIST_CHANGED, item , false ) ) ; 
+			}  
+			
+			protected function onChange(event:Event):void
+			{
+				trace('changed'); 
+				this.ignoreNextClick = true; 
+			}
+			
+			protected function onRelayout(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.dispatchEvent( new   Event( RELAYOUT  ) ) ; 
+				
+			}
+			
+			protected function list_creationCompleteHandler(event:FlexEvent):void
+			{
+				this.listFormat.rowHeight = 100; 
+				this.listFormat.columnWidth = this.parentApplication.width/3.3
+			}
+			
+			protected function view1_menuKeyPressedHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.viewMenuItems
+			}
+			
+			protected function onClickImage(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.dispatchEvent( new   Event( INQUIRE  ) ) ; 
+				
+			}
+			
+			protected function button_changeHandler(event:IndexChangeEvent):void
+			{
+				var index:int = event.newIndex;
+				if ( index > -1 ) 
+				{
+					var item :     Object = this['button'].dataProvider.getItemAt( index )  as Object; 
+					this.dispatchEvent( new    CustomEvent( CHANGE_BUTTON, item  ) ) ;
+				}
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new   Event( LOAD_PORT  ) ) ; 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button id="btnGoBack" label="Back" click="this.onBack()"/>
+	</views:navigationContent>
+	
+	<s:Scroller id="scroller" visible="false" top="120" bottom="70" width="100%"
+				hasFocusableChildren="true" measuredSizeIncludesScrollBars="false" 
+				minViewportInset="1">
+		
+		<s:Group id="holder" width="100%" height="100%">
+			<s:layout>
+				<s:TileLayout   verticalGap="10" paddingLeft="10" horizontalAlign="center"/>
+			</s:layout>
+			
+			<s:filters>
+				<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="4.0" blurY="4.0" color="#000000"
+									distance="4.0" hideObject="false" inner="false" knockout="false"
+									quality="2" strength="1"/> 
+			</s:filters>
+		</s:Group>
+		
+	</s:Scroller>
+	
+	<s:VGroup  id="holderList" top="100" bottom="80" width="100%" gap="20" horizontalAlign="center" paddingBottom="10"
+			  paddingLeft="0" paddingRight="0" paddingTop="20">
+		<s:List id="list" width="100%" height="100%" 
+				borderVisible="false" buttonMode="true"
+				change="listChangeHandler(event)" contentBackgroundAlpha="0"
+				contentBackgroundColor="#FFFFFF" creationComplete="list_creationCompleteHandler(event)"
+				itemRenderer="org.syncon.RosettaStone.view.mobile.alarm.SB_SoundRenderer"
+				useHandCursor="true">
+			<s:layout>
+				<s:TileLayout paddingLeft="10" paddingRight="10" horizontalGap="10"  paddingTop="10"
+							  columnWidth="100" rowHeight="100"  id="listFormat"
+							  verticalGap="10" columnAlign="justifyUsingWidth"/>
+			</s:layout> 
+		</s:List>
+	</s:VGroup>
+	
+	<!--
+	<s:Rect x="0" y="0" width="100" height="10">
+	<s:fill>
+	<s:SolidColor color="#F06A0B"/>
+	</s:fill>
+	</s:Rect>
+	
+	<s:Label x="271" y="37" color="#464646" fontSize="32" fontStyle="italic" fontWeight="bold"
+	text="Main Menu2"/>
+	
+	-->
+	<s:Group  width="100%" height="120">
+		
+		<s:Rect x="0" y="0" width="100%" height="120">
+			<s:fill>
+				<!--<s:SolidColor color="#0" id="colorHeader"/>-->
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry id="colorHeader1" />
+					<s:GradientEntry  id="colorHeader2" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		
+		<s:Button label="Menu"  top="10" bottom="10"
+				  
+				  right="10" verticalCenter="0" click="{this.parentDocument.viewMenuOpen=true}"/>
+		
+		<s:VGroup x="120" y="20">
+			<s:Label id="txtTitle"  color="0xFFFFFF" fontWeight="bold"/>
+			<s:Label id="txtSubTitle"  color="0xFFFFFF"/>
+			
+			<s:filters>
+				<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="2" blurY="2" color="#000000"
+									distance="3.0" hideObject="false" inner="false" knockout="false"
+									quality="2" strength="1"/> 
+			</s:filters>
+		</s:VGroup>
+		
+		<s:Image x="10" verticalCenter="0" width="100" height="110" id="image" click="onClickImage(event)" >
+			<s:filters>
+				<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="2" blurY="2" color="#000000"
+									distance="3.0" hideObject="false" inner="false" knockout="false"
+									quality="2" strength="1"/> 
+			</s:filters>
+		</s:Image>
+		
+		<s:filters>
+			<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="2" blurY="2" color="#000000"
+								distance="3.0" hideObject="false" inner="false" knockout="false"
+								quality="2" strength="1"/> 
+		</s:filters>
+	</s:Group>
+	<!--	<s:Button x="271" y="37" label="lfffff" click="onRelayout(event)"/>
+	-->
+	
+	<s:Label text="{Capabilities.isDebugger}"  visible="false" verticalCenter="0" horizontalCenter="0" />
+	<s:Scroller id="scroller2"    bottom="70" width="100%"
+				height="{this.button.height + 16}"
+				hasFocusableChildren="true" measuredSizeIncludesScrollBars="false" 
+				minViewportInset="1">
+		
+		<s:Group  >
+			<s:ButtonBar  x="10" id="button"   labelField="name"  change="button_changeHandler(event)">
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:String>Button1</fx:String>
+					</s:ArrayList>
+				</s:dataProvider>
+				
+			</s:ButtonBar>
+			
+			<s:filters>
+				<s:DropShadowFilter alpha="0.3" angle="45.0" blurX="2" blurY="2" color="#000000"
+									distance="3.0" hideObject="false" inner="false" knockout="false"
+									quality="2" strength="1"/> 
+			</s:filters>
+		</s:Group>
+		
+	</s:Scroller>
+	
+<!--
+	<s:Group  width="100%" height="100" >
+		<s:Button click="button1_clickHandler(event)" />
+	</s:Group>
+	-->
+</views:View>

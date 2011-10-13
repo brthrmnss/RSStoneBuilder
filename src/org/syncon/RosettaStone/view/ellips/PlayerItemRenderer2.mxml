@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="onInit(event)"
+	height="100%" xmlns:mob="openplug.elips.controls.*"
+	>
+	
+	<mx:Script> 
+		<![CDATA[ 
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			import org.syncon.RosettaStone.vo.LessonItemVO;
+			import org.syncon.TalkingClock.model.NightStandConstants; 
+			
+			static public const MOVE_UP : String = 'MOVE_UP.f'; 
+			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
+			static public const DELETE : String = 'DELETE.f'; //export before delete 
+			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
+			static public const COPY_FILTER : String = 'COPY_FILTER';
+			public static var width:Number;
+			public static var height:Number;
+			
+			//public var help : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
+			[Bindable] public var filter :    LessonItemVO = new LessonItemVO()
+			override public function set data(value:Object):void { 
+				super.data = value; 
+				//this.help.listenForObj(value,LessonItemVO.UPDATED, this.updateItemRenderer )
+				filter = value as LessonItemVO
+				//this.help.disableIfNull( value, new LessonItemVO, 'filter' )  
+				this.updateItemRenderer()
+				filter.itemRenderer= this; 
+				/* 	
+				super.data = value; 
+				if (value== null)  
+				{
+				this.filter.removeEventListener( LessonItemVO.UPDATED, this.updateItemRenderer ) 
+				return; 
+				}
+				if ( this.filter != null ) 
+				{
+				this.filter.removeEventListener( LessonItemVO.UPDATED, this.updateItemRenderer ) 
+				}
+				
+				filter = value as LessonItemVO
+				filter.itemRenderer= this; 
+				this.filter.addEventListener( LessonItemVO.UPDATED, this.updateItemRenderer , false, 0, true) 	
+				this.updateItemRenderer() */
+			} 
+			/**
+			 * Resize damn thing
+			 * */
+			public function setup() : void
+			{
+				this.updateItemRenderer(); 
+			}
+			
+			public function updateItemRenderer(e:Event=null)  : void
+			{
+				/* 		if ( e.currentTarget
+				this.filter;  */
+				txtLbl.text = this.filter.name.toString()
+				
+				/* 	this.lblCount.text = this.notebook.noteCount.toString();
+				if ( this.notebook.name.toLowerCase() == 'all notebooks' ) 
+				this.txtLbl.setStyle('fontStye', 'italic' ) 
+				else
+				this.txtLbl.setStyle('fontStyle', 'normal' )  */
+				this.src.source = this.filter.sourceImg; 
+				//trace('height', this.height, this.holderInnerRect.height ) ; 
+				trace('PlayerItemRenderer', this.src.source ) ; 
+				/* 	if (  ) //if (  NightStandConstants.flex == false)
+				{ */
+				/* this.width = PlayerItemRenderer.width; 
+				this.height = PlayerItemRenderer.height; 					
+				  */
+				this.src.width =  this.width-20-5; 
+				
+				this.txtLbl.width = this.width - 20; 
+				/* if ( this.selected == false && this.currentState == 'selected' ) 
+					this.currentState = ''  */
+				
+				this.bgSelection.width = this.holderDown.width = this.width; 
+				
+				 this.holderDown.height = this.height; 
+				return;
+			}
+			protected function onInit(event:FlexEvent):void
+			{
+				/* if ( NightStandConstants.flex == false ) 
+				{ */
+				// TODO Auto-generated method stub
+				//this.width = this.parentApplication.width -20
+				txtLbl.setStyle('fontSize', this.txtLbl.getStyle('fontSize')*2 ) ;
+				/* 	} */
+				if ( org.syncon.TalkingClock.model.NightStandConstants.PlatformGlobals.ELIPS ) 
+				{
+					this.holderDown.addEventListener( TouchEvent.TOUCH_BEGIN, this.onTouchBegin ) 
+					this.holderDown.addEventListener( TouchEvent.TOUCH_END, this.onTouchEnd) 
+				}
+
+			}
+			
+			
+			
+			protected function onUp():void
+			{
+				this.dispatchEvent( new CustomEvent( MOVE_UP, this.filter ) ) ; 
+			}
+			protected function onDown():void
+			{
+				this.dispatchEvent( new CustomEvent( MOVE_DOWN, this.filter ) ) ; 
+			}
+			protected function onDelete():void
+			{
+				this.dispatchEvent( new CustomEvent( DELETE, this.filter ) ) ; 
+			}			
+			
+			protected function onCopy():void
+			{
+				this.dispatchEvent( new CustomEvent( COPY_FILTER, this.filter ) ) ; 
+			}		
+			
+			public function set selected( b : Boolean ) : void
+			{
+				this.bgSelection.visible = b; 
+				this.bgSelection2.visible = b; 				
+			}
+			
+			
+			override public function set width ( b :  Number ) : void
+			{
+				super.width = b; 
+			}
+			protected function onTouchBegin(event:Event):void
+			{
+				this.holderDown.alpha = 0.6
+			}
+			
+			protected function onTouchEnd(event:Event):void
+			{
+				this.holderDown.alpha = 0.0
+			}
+			
+		]]> 
+	</mx:Script> 
+	
+	
+	<mx:Canvas id="holderBg"
+			   styleName="bgBackground"
+			   alpha="0.3" width="100%" height="100%"  >
+	</mx:Canvas>
+	
+	<mx:Canvas id="holderDown" alpha="0" width="100%" height="100%"  backgroundColor="0xFAFAFA"  >
+	</mx:Canvas>
+	
+	<mx:VBox paddingLeft="10" paddingTop="10">
+<!--		
+		
+		<mx:Canvas id="holderLabel" width="100%" height="30"  backgroundColor="0xFAFAFA"  >
+			<mob:Text id="txtLbl" color="0"  fontSize="18"  x="10" y="10" />
+		</mx:Canvas>
+		
+		-->
+		
+		<mx:Canvas id="holderImage"  >
+			<mx:Image id="src"    y="0" x="0"  alpha="1" 
+					 /> 
+			<!--<mx:Label text="ASDFASDFAS" />-->
+		</mx:Canvas> 
+		<mob:Text id="txtLbl" color="0"  fontSize="14"  x="0" y="10" /> 
+	</mx:VBox>
+	
+	
+	<mx:Canvas id="bgSelection"  
+			    alpha="0.8"
+			   visible="false"   width="100%" height="12"  backgroundColor="0xA12E33"  >
+	</mx:Canvas>
+	<mx:Canvas id="bgSelection2" 
+			   alpha="0.8" visible="false"    bottom="0" width="100%" height="12"  backgroundColor="0xA12E33"  >
+	</mx:Canvas>
+</mx:Canvas>

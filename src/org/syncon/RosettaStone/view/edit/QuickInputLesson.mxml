@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%" creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon2.utils.view.SearchOnEnter;
+			
+			import spark.events.TextOperationEvent;
+			static public var INPUT_CHANGED : String = 'INPUT_CHANGED' ;
+			public var  s : SearchOnEnter;// = new SearchOnEnter()
+			public var rawInputString:String;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.s = new SearchOnEnter(this.txtInput, this.txtInput_changeHandler2, this.txtInput )
+			}			 
+			protected function txtInput_changeHandler2(event:TextOperationEvent=null):void
+			{
+				var txt :  String = this.txtInput.text; 
+				this.dispatchEvent( new Event( INPUT_CHANGED ) ) ; 
+			}
+			protected function txtInput_changeHandler(event:TextOperationEvent=null):void
+			{
+				//var txt :  String = this.txtInput.text; 
+			//	this.dispatchEvent( new Event( INPUT_CHANGED ) ) ; 
+			}
+			
+	/* 		public function onChanged(e: TextEvent) : void
+			{
+				//var dbg : Object = System.
+				//trace(e.text)
+				this.rawInputString = e.text; 
+			} 		
+			 */
+			
+			public function onCopy(e:Event): void{
+				trace(); 
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout  />
+	</s:layout>	
+	<s:Label text="QuickInput" />
+	<s:HGroup>
+		<s:TextArea id="txtInput"   text="boat tree girl boy"      copy="{this.onCopy(event)}"/>
+		<s:CheckBox id="chkSaveAfter" selected="true" label="Save After" />
+	</s:HGroup>
+	
+</s:Group>

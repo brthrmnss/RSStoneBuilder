@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:view="fedres.biegebook.view.*"
+		 creationComplete="onInit(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var EDIT_DATE : String = 'editDate'  ; 
+			static public var REFRESH_DATES : String = 'refreshDates'  ; 			
+			static public var DELETE_DATE : String = 'deleteDate'  ; 
+			static public var ADD_DATE : String = 'addDate'  ; 
+			static public var SAVE_FILE : String = 'SaveFile'  ; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+			}
+			
+			protected function changeDistrict(event:MouseEvent, dir : int):void
+			{
+				//this.dispatchEvent( new CustomEvent( DistrictSelector.CHANGE_DISTRICT, dir, false ) ) 
+			}
+			
+			protected function list_changeHandler(event: IndexChangeEvent):void
+			{
+				
+				this.list.selectedIndex
+					this.list.selectedItem
+				this.dispatchEvent( new CustomEvent( EDIT_DATE,  
+					this.list.dataProvider.getItemAt(event.newIndex)  ) )
+			}
+			
+			protected function btnSave_clickHandler(event:MouseEvent):void
+			{
+				
+				this.dispatchEvent( new CustomEvent( SAVE_FILE, null, false ) )			
+			}
+			
+			
+			protected function btnAdd_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( ADD_DATE, null, false ) )				
+			}
+			
+			protected function btnRefresh_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new CustomEvent( REFRESH_DATES, null, false ) )				
+			}			
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<s:Label styleName="txtSectionHeader" text="Item Sets"/>
+	
+	<s:HGroup verticalAlign="bottom">
+	
+		<s:Button label="Create New Date" buttonMode="true" click="btnAdd_clickHandler(event)"
+				  toolTip="Add a new Date" useHandCursor="true"/>
+		<s:Button label="Refresh" buttonMode="true" click="btnRefresh_clickHandler(event)"
+				  toolTip="Refresh Date XML File" useHandCursor="true"/>
+		
+	</s:HGroup>
+	<!--<view:HDividerLine/>-->
+	<!--<s:Label text="To edit a report, select a date below:"/>
+	-->
+	<s:List id="list" width="100%" height="80%" borderVisible="false"
+			change="list_changeHandler(event)" contentBackgroundAlpha="0"
+			itemRenderer="org.syncon.RosettaStone.view.edit.ItemSetsItemRenderer">
+		<s:layout>
+			<s:VerticalLayout gap="0" paddingBottom="0" paddingLeft="0" paddingRight="0"/>
+		</s:layout>
+	</s:List>
+	
+	
+	<s:Button label="Save" id="btnSave" 
+			  useHandCursor="true" buttonMode="true"
+			  click="btnSave_clickHandler(event)" />
+</s:Group>

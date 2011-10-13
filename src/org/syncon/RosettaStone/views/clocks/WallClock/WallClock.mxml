@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:local="*"
+		 creationComplete="onInit(event)" xmlns:clocks="org.syncon.TalkingClock.view.clocks.*" xmlns:components="org.syncon.TalkingClock.view.clocks.components.*" xmlns:views="org.syncon.RosettaStone.views.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			public var timer_delayedChange : Timer = new Timer(1000, 1 )  ;
+			private var _fontFamilyS:String;
+			public var clocks : Array = [] ; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				
+				this.clocks = [this.clock3, this.clock4, this.clock5]
+				if ( this._clockList == null )
+				{
+					var clocksS : Array = []  ; 
+					var c : ClockVO = new ClockVO()
+						c.name = 'Baltimore'
+							c.offsetHours = -4 ; 
+					clocksS.push( c ) 
+					  c   = new ClockVO()
+					c.name = 'Hong Kong'
+					c.offsetHours = 8
+					clocksS.push( c ) 
+					  c    = new ClockVO()
+					c.name = 'San Francisco '
+					c.offsetHours = -8 ; 
+					clocksS.push( c ) 						
+					this.clockList = clocksS
+				}
+				//	 
+				this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+				this.timer.start() ;
+				
+				if ( _fontFamilyS  != null  ) 
+				{
+					this.txtFronts(true, _fontFamilyS )
+				}
+				
+			}
+			public function set fontFamilyS(event:String):void
+			{
+				this._fontFamilyS = event; 
+				//this._fontFamilyG = 
+			}
+			
+			protected function onTime(event:TimerEvent):void
+			{
+				var hours : String =this.DateDisplay2.format( new Date ) 
+				var mins : String = this.DateDisplay3.format( new Date ) 
+				var secs : String = this.DateDisplay4.format( new Date ) 
+				
+					for each ( var clock : Clock in this.clocks ) 
+					{
+						clock.updateTime2(); 
+					}
+					//this.clock3.updateTime2(); 
+				var dur : Number = 500
+			/* 	this.digitHour.text = hours; 
+				this.digitMin.text =mins */
+				//this.digitSec.text = secs; 
+				
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			
+			override public function set enabled(value:Boolean):void
+			{
+				super.enabled = value;
+				if ( value ) 
+				{
+					this.timer.start(); 
+				}
+				else
+				{
+					this.timer.stop(); 
+				}
+			}
+			
+			private function txtFronts(visible:Boolean, _fontFamily:String=''):void
+			{
+			/* 	var txt : Array = [this.Sep] //, this.digitHour, this.digitMin ]//, this.txtDate];
+				txt = txt.concat( this.digitHour.getAreas() )
+				txt = txt.concat( this.digitMin.getAreas() )	 */	
+				var txt : Array= []
+				for each ( var tf : Object in txt ) 
+				{
+					tf.visible = visible; 
+					/* if ( tf == this.txtDayFront )
+						continue;  */
+					if ( _fontFamily != '' ) 
+						tf.setStyle('fontFamily', _fontFamily ) ; 	
+				}
+				
+			}						
+			
+			public function get textFontSize() : Number
+			{
+				return this.fontSize
+			}
+			private var fontSize :   Number = 0 ; 
+			private var _clockList:Object;
+			public function setFontSize(fontSize_ : Number, init : Boolean = false ) : void
+			{
+				//	return;
+		/* 		if ( fontSize_ == this.fontSize && init == false  ){
+					return ;}
+				this.fontSize = fontSize_; 
+				var smallTxt : Array  = [  this.txtAMPMBack, 
+					this.txtAMPM ,this.txtDate,   this.txtDateBack  ]; 
+				var largeTxt : Array = [this.txtTimeFront, 	this.txtTimeBack];
+				var tinyTxt :  Array = [ this.txtDayBack, 	this.txtDayFront] 
+				var ratioLageToSmall : Number = 25/100
+				var ratioLargeToTiny : Number = 22/100
+				var smallFontSize : Number = ratioLageToSmall * this.fontSize; 
+				var tinyFontSize : Number = ratioLargeToTiny * this.fontSize
+				for each ( var o : Object in smallTxt ) 
+				{
+					o.setStyle('fontSize', smallFontSize ) 
+				}
+				for each (   o   in tinyTxt ) 
+				{
+					o.setStyle('fontSize', tinyFontSize ) 
+				}				
+				for each (   o in largeTxt ) 
+				{
+					//continue
+					o.setStyle('fontSize',this.fontSize ) 
+				} */
+		 
+			}	
+			
+			public function set clockList ( s :   Array ) : void
+			{
+				//var clocks : Array = 
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format" dateStyle="none" dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" dateTimePattern="hh"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" dateTimePattern="mm"/>
+		<s:DateTimeFormatter id="DateDisplay4" dateTimePattern="ss"/>		
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+		
+	</fx:Declarations>
+<!--	<s:VGroup gap="0">
+		<s:Image source="darkwood.jpg"  />
+		<s:Image source="darkwood.jpg"  />
+	</s:VGroup>-->
+	<s:HGroup y="160" gap="80" x="30"  >
+			<views:Clock id="clock3" top="200"
+							  label="San Franscisco" offsetHours="-3"
+							  left="100" skinClass="org.syncon.TalkingClock.view.clocks.skins.ClockSkin3" />
+		<!--	<s:Button label="{(clock3.isRunning ? 'STOP' : 'START')}" right="5" bottom="5" height="40" cornerRadius="8"
+					  click="(clock3.isRunning ? clock3.stopClock() : clock3.startClock())" />-->
+		
+			<views:Clock id="clock4" top="200" left="100" skinClass="org.syncon.TalkingClock.view.clocks.skins.ClockSkin3"
+							  label="Baltimore" offsetHours="-0"
+							  />
+		
+		<views:Clock id="clock5" top="200" left="100" skinClass="org.syncon.TalkingClock.view.clocks.skins.ClockSkin3"
+						  label="Baltimore" offsetHours="-0"
+						  />
+		<!--	<s:Button label="{(clock4.isRunning ? 'STOP' : 'START')}" right="5" bottom="5" height="40" cornerRadius="8"
+					  click="(clock4.isRunning ? clock4.stopClock() : clock4.startClock())" />-->
+		
+	</s:HGroup>
+	
+	
+	<!--<s:Button id="btnEdit" left="10" top="10" width="20" label="e" click="onEdit(event)"/>-->
+</s:Group>

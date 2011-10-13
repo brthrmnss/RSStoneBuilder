@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			xmlns:view="org.syncon2.utils.mobile.view.*"
+			creationComplete="onInit(event)" destructionPolicy="auto" title="Info">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const SEND : String = 'SEND' 
+			protected function onInit(event:FlexEvent):void
+			{
+		
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onSend() : void
+			{
+				this.dispatchEvent( new Event( SEND ) ) 
+			}
+		]]>
+	</fx:Script>
+	
+	<views:navigationContent>
+		<s:Button label="Back" click="this.onBack()"/>
+	</views:navigationContent>
+	<s:Scroller id="scroller" top="0" bottom="80" width="100%" hasFocusableChildren="true"
+				measuredSizeIncludesScrollBars="false" minViewportInset="1">
+		<s:VGroup width="100%" height="100%" gap="20" horizontalAlign="center" paddingBottom="20"
+				  paddingLeft="10" paddingRight="10" paddingTop="20">
+			
+			<mobile:TextAreaLabel2 text="Nothing to Say..."/>
+			<mobile:TextAreaLabel2 text="Problems? Requests? send and email to:"/>
+			<mobile:TextAreaLabel2 selectable="true" text="info.sync.con@gmail.com"/>
+			 <s:Button label="Send Message Now" click="onSend()"/>
+		</s:VGroup>
+	</s:Scroller>
+	<!--
+	<mobile:TextAreaLabel id="txtLoading" visible="true" width="100%" text="Loading..."
+						  textAlign="center" verticalCenter="-40"/>
+	<s:VGroup id="txtError" visible="false" horizontalAlign="center" horizontalCenter="-40"
+			  verticalCenter="0">
+		<mobile:TextAreaLabel width="100%" text="Failed loading devotions. Retry later"
+							  textAlign="center"/>
+		<s:HGroup horizontalAlign="center">
+			
+			<s:Button label="Go Back" click="onBack()"/>
+			<s:Button label="Retry" click="onTryAgain()" />
+			
+		</s:HGroup>
+	</s:VGroup>
+	-->
+</views:View>

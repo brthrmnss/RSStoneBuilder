@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			xmlns:view="org.syncon2.utils.mobile.view.*" actionBarVisible="false" 
+			creationComplete="onInit(event)" destructionPolicy="auto"  >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const SEND : String = 'SEND' 
+			protected function onInit(event:FlexEvent):void
+			{
+		
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onSend() : void
+			{
+				this.dispatchEvent( new Event( SEND ) ) 
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0">
+		<s:fill>
+			<s:SolidColor color="0x262425"/>
+		</s:fill>
+	</s:Rect>
+	 
+			<mobile:TextAreaLabel2 text="Loading..."  textAlign="center"
+								    color="0xFFFFFF" fontWeight="bold"
+								   verticalCenter="0"  horizontalCenter="0"/>
+ 
+</views:View>

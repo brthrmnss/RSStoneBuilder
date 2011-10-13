@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  implements="org.syncon.RosettaStone.view.ellips.IAutomateMediator"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="400" height="500" creationComplete="onInit(event)" xmlns:edit="org.syncon.RosettaStone.view.edit.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.model.CustomEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			public var creationComplete : Boolean = false; 
+			
+			static public var NEXT : String = 'CLICK_ITEM'  ; 
+			static public var RESTART : String = 'RESTART---'  ; 
+			static public var NEXT_SET : String = 'NEXT_SET---'  ; 			
+			static public var DONE : String = 'DONE---'  ; 		
+			
+			public var autoStart : Boolean = false; 
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				this.creationComplete = true; 
+			}			 
+			
+			protected function onRestart(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( RESTART) ) ; 
+			}
+			
+			protected function onNext(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( NEXT) ) ; 
+			}
+			
+			protected function onNextSet(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( NEXT_SET) ) ; 
+			}
+			
+			protected function onDone(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( DONE) ) ; 
+			}			
+			protected function onHide(event:MouseEvent):void
+			{
+				this.visible = false; 
+			}		
+			
+			private var _active : Boolean = true; 
+
+			public function get active():Boolean
+			{
+				return _active;
+			}
+
+			public function set active(value:Boolean):void
+			{
+				_active = value;
+			}
+
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<s:Label text="Automate" />
+	
+	<s:HGroup>
+		<s:Label  id="txtLesson" text="" width="110"/>
+		
+		
+		<s:HGroup gap="2" >
+			<s:Label text="Item" />
+			<s:Label id="txtCurrentItem" />
+			<s:Label text="/" />
+			<s:Label id="txtItemCount" />
+		</s:HGroup>
+		
+		<s:HGroup gap="2" >
+			<s:Label text="Sets" />
+			<s:Label id="txtCurrentSet" />
+			<s:Label text="/" />
+			<s:Label id="txtSetCount" />
+		</s:HGroup>
+		
+
+		<!--
+		<s:HGroup gap="2" >
+			<s:Label text="Sets" />
+			<s:Label id="txtCurrentSetIndex" />
+			<s:Label text="/" />
+			<s:Label id="txtCurrentSetCount" />
+		</s:HGroup>
+		-->
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Button label="Restart"  click="onRestart(event)" />
+		<s:Button label="Next" click="onNext(event)" />
+		<s:Button label="Next Set" click="onNextSet(event)" />
+		<s:Button label="Done" click="onDone(event)" />
+		<s:Button label="Hide" click="onHide(event)" />
+	</s:HGroup>
+	
+</s:Group>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:apps="org.syncon.RosettaStone.view.apps.*"
+			   width="1700" height="850"
+			   initialize="application1_initializeHandler(event)">
+	<!--
+	width="1700" height="850"
+	width="480" height="800"
+	-->
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.syncon.RosettaStone.controller.NavigateCommand;
+			import org.syncon.RosettaStone.model.NightStandConstants;
+			import org.syncon.RosettaStone.model.Places;
+			import org.syncon2.utils.file.LoadConfig_Flex;
+			
+			protected function application1_initializeHandler(event:FlexEvent):void
+			{
+				NightStandConstants.flex = true;
+				NightStandConstants.FileLoader = new LoadConfig_Flex()
+				NightStandConstants.ResourcesDir = 'assets' + '/'// why is this  aproblem
+				
+				var dbg : Array = [	LoadConfig_Flex.getDir('/d/g'),
+					LoadConfig_Flex.getDir('/d/g/'),LoadConfig_Flex.getDir('/d/g.json')
+				] 
+				
+				
+				this.addEventListener(MouseEvent.CLICK, this.onClick ) ; 
+				return;
+			}
+			
+			protected function onClick(event:MouseEvent):void
+			{
+				var dbg : Array = [ event.currentTarget, event.target] // TODO Auto-generated method stub
+				return
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<!-- width="1350" height="450"
+	width="900" height="850"
+	width="480" height="800"
+	--> 
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<!-- fonts are loaded in on base app -->
+	<fx:Style source="assets/styles/font.css"/> 
+	<fx:Style source="assets/styles/Main.css"/> 
+	<!--
+	<apps:FlexBaseTester />
+	-->
+	<!--
+	<apps:FlexWebHelpersTester />
+	-->
+	<!--<apps:FlexBaseTester/>-->
+	<!--<apps:RS_MobileAppAprox />-->
+	<!--
+	<s:Scroller  width="100%" height="100%"     >
+	<apps:FlexBaseTester/>
+	</s:Scroller>
+	-->
+<!--	<apps:RS_MobileAppAprox />-->
+<!-- <apps:YoutubeTester />
+	-->
+	<apps:RSTests />
+	<!--
+	<s:Scroller  width="100%" height="100%"     >
+		<apps:FlexBaseTester/>
+	</s:Scroller>
+	-->
+</s:Application>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rs:PopupBase 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="onInit()" styleName="bgBackground"
+	height="100%" xmlns:mob="openplug.elips.controls.*" xmlns:view="org.syncon.TalkingClock.view.mobile.view.*" xmlns:rs="org.syncon.RosettaStone.view.ellips.rs.*" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*"
+	>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			
+			import org.syncon.RosettaStone.vo.LessonResultVO;
+			import org.syncon.RosettaStone.vo.LessonVO;
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			static public const LIST_CHANGED : String = 'listChanged'; 	
+			static public const OK : String = 'save'; 	
+			static public const CANCEL : String = 'cancel'; 	
+			static public const SETUP : String = 'setup'; 	
+			
+			static public const REPEAT : String = 'REPEAT'; 	
+			static public const NEXT_LESSON : String = 'NEXT_LESSON'; 	
+			static public const GO_HOME : String = 'GO_HOME'; 	
+			
+			public function onInit() : void 
+			{
+				this.creationComplete = true; 
+				
+				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
+				
+				//this.popupCode.center()
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnRepeat, this.onRepeat ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnNext, this.onNext ) ; 
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnHome, this.noHome ) ; 
+				
+			}
+			
+			
+			protected function onSave(event:Event=null):void
+			{
+				this.dispatchEvent( new Event( OK) ) 
+			}
+			
+			protected function onCancel(event:Event=null):void
+			{
+				this.dispatchEvent( new Event( CANCEL ) ) 
+			}
+			
+			
+			public var args : Array = [] ; 
+			private var fxDone:Function;
+			public var lesson : LessonVO
+			public function done( goTo : UIComponent,  recipe : LessonResultVO, lesson : LessonVO,  fxDone : Function = null ) : void
+			{
+				
+				//this.popupCode.moveToComponent( goTo, 'tl', false ) ; 
+				//this.width =  this.parentApplication.width*.8
+				//this.height =  this.parentApplication.height*.8
+				this.dispatchEvent( new Event (SETUP   )) 
+				this.show()
+				this.lesson = lesson; 
+				this.fxDone = fxDone; 
+				this.args = [goTo, recipe, fxDone]
+				this.txtCorrect.text = (recipe.percentCorrect()*100).toString() //+ ' ' + '%'
+				if ( isNaN( recipe.percentCorrect()  )  ) 
+					this.txtCorrect.text = '' 
+			}
+			
+			protected function onRepeat(event:Event=null):void
+			{
+				this.dispatchEvent( new Event( REPEAT ) ) 
+			}
+			
+			protected function onNext(event:Event=null):void
+			{
+				this.dispatchEvent( new Event( NEXT_LESSON ) )  
+			}
+			
+			protected function noHome(event:Event=null):void
+			{
+				this.dispatchEvent( new Event( GO_HOME ) ) 
+			}			
+			
+		]]>
+	</mx:Script>
+	
+	<!--
+	<popup:PopupBg alpha="0.56"/>-->
+	<mx:Canvas width="100%" height="100%" > 
+		
+		<mx:VBox paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10" >
+			<mob:Label    fontSize="24" color="0xFFFFFF" text="Lesson Complete"/>
+			<mob:Label  fontSize="24" color="0xFFFFFF" id="txtLessonName" text=""/>
+			<mx:HBox>
+				<mob:Label  id="txtCorrect" fontSize="24" />
+				<mob:Label text="%"  />
+				
+			</mx:HBox>
+			<!--<mx:HGroup>
+			<mobile:TextAreaLabel2 id="txtCorrect" />
+			<mx:Label  text="correct" />
+			</s:HGroup>-->
+			<mx:VBox>
+				<ellips:OpenPlugButton  iconS="assets/buttons/reload.png"  labelS="Repeat Lesson"
+									  id="btnRepeat"   bottom="10" horizontalCenter="0"/>
+				<ellips:OpenPlugButton  iconS="assets/buttons/arrowright.png"  labelS="Go to Next Lesson"
+									  id="btnNext"   bottom="10" horizontalCenter="0"/>
+				<ellips:OpenPlugButton  iconS="assets/buttons/home.png" labelS="Home Screen" 
+									  id="btnHome"   bottom="10" horizontalCenter="0"/>
+			</mx:VBox>
+			
+		</mx:VBox>
+		
+	</mx:Canvas>
+	
+</rs:PopupBase>

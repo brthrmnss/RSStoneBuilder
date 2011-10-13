@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:Local="Local.*"
+			xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
+			xmlns:views="views.*"
+			xmlns:view="org.syncon2.utils.mobile.view.*" actionBarVisible="false" 
+			creationComplete="onInit(event)" destructionPolicy="auto" xmlns:edit="org.syncon.RosettaStone.view.edit.*"  >
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			/**
+			 * This screen lauches configs ... user can never see it b/c other screens do not include a back button 
+			 * 
+			 * */
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const CHANGED_FORM : String = 'settingsChanged';
+			static public const SEND : String = 'SEND' 
+			static public const HOME : String = 'HOME' 
+			static public const INFO : String = 'INFO' 				
+			
+			protected function onInit(event:FlexEvent):void
+			{
+		
+			}
+			
+			public function onBack() : void
+			{
+				this.dispatchEvent( new Event( GO_BACK  ) ) ; 
+			}
+			
+			public function onTryAgain() : void
+			{
+				this.dispatchEvent( new Event( TRY_AGAIN ) ) ; 
+			}
+			
+			public function  onSend() : void
+			{
+				this.dispatchEvent( new Event( SEND ) ) 
+			}
+			public function  onHome() : void
+			{
+				this.dispatchEvent( new Event( HOME ) ) 
+			}			
+			public function  onInfo() : void
+			{
+				this.dispatchEvent( new Event( INFO ) ) 
+			}
+			
+			protected function group1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+		]]>
+	</fx:Script>
+<!--	<views:navigationContent>
+		<s:Button label="Back" click="this.onBack()"/>
+	</views:navigationContent> -->
+	<views:actionContent>
+		<s:Button label="HOME"  click="onHome()" />
+	</views:actionContent>
+	<s:Rect left="0" right="0" top="0" bottom="0">
+		<s:fill>
+			<s:SolidColor color="0x262425"/>
+		</s:fill>
+	</s:Rect>
+	 
+	<s:VGroup width="100%" y="80">
+		
+		<edit:Player id="tester" name="Tester" width="100%" height="100%" />
+		<edit:PlayerAutomate  autoStart="true" />
+	</s:VGroup>
+	
+	<s:Group width="100%" click="group1_clickHandler(event)">
+		<s:Rect left="0" right="0" top="0" bottom="0" alpha="0.6">
+			<s:fill>
+				<s:SolidColor color="0x262425"/>
+			</s:fill>
+		</s:Rect>
+	
+	<s:HGroup  right="10" top="10" >
+		<s:Button  icon="assets/buttons/lightbulb.png"  click="onInfo()" />
+		<s:Button  icon="assets/buttons/home.png"  click="onHome()"  right="10" top="10"/>
+	</s:HGroup>
+	</s:Group>
+</views:View>

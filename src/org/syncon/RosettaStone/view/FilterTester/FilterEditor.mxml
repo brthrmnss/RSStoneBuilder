@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		  
+		 xmlns:Local="Local.*"    contentBackgroundColor="0xFFFFFF"
+		 creationComplete="onInit(event)" xmlns:view="org.syncon.RosettaStone.view.*" xmlns:FilterTester="org.syncon.RosettaStone.view.FilterTester.*"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const CLOSE : String = 'CLOSE.f'; 
+			static public const UPDATED_FILTER : String = 'UPDATE_FILTER' ; 			
+			static public const UPDATE_NAME : String = 'UPDATE_NAME'
+			static public const CHANGED_FILTER : String = 'UPDATEd_NFilter'
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			private var _fontFamilyS:Object;
+			private var _fontFamilyG:String;
+			protected function onInit(event:FlexEvent):void
+			{
+				this.addEventListener( CHANGED_FILTER, this.onChangedFilter )
+			}
+			
+			protected function txtQuery2_changeHandler(event:TextOperationEvent):void
+			{
+				this.dispatchEvent( new Event( UPDATE_NAME  )); 
+			}
+			
+			protected function onChangedFilter(event:Event):void
+			{
+				this.dispatchEvent( new Event(UPDATED_FILTER) ) ; //CHANGED_FILTER
+			}
+			protected function onClose(event:Event=null):void
+			{
+				this.dispatchEvent( new Event(CLOSE) ) ; 
+			}
+						
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="glow"/>
+		<s:State name="blur"/>
+		<s:State name="shadow"/>		
+	</s:states>
+	
+	<s:Rect width="100%" height="100%" radiusX="0" radiusY="0">
+		<s:fill>
+			<s:SolidColor color="0xEDF6F7" />
+		</s:fill>	
+	</s:Rect>	 	
+	
+	 <s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+		 
+
+	
+	<s:TextArea   width="100%"     borderVisible="false"
+				 alpha="0.3" height="20"  
+				verticalCenter="0" horizontalCenter="0"
+				contentBackgroundAlpha="0.0" editable="false" selectable="false"
+				text="Name"/>
+	
+	<s:TextArea id="txtFilterName"  width="200" height="20" change="txtQuery2_changeHandler(event)"/>
+		 <s:TextArea   width="100%"     borderVisible="false"
+					   alpha="0.3" height="20"  
+					   verticalCenter="0" horizontalCenter="0"
+					   contentBackgroundAlpha="0.0" editable="false" selectable="false"
+					   text="Desc"/>
+		 
+		 <s:TextArea id="txtFilterDesc"  width="200" height="20" change="txtQuery2_changeHandler(event)"/>
+	
+	<FilterTester:FilterGlowViewer id="filterGlow" includeIn="glow" />
+	<FilterTester:FilterBlurViewer id="filterBlur"  includeIn="blur" />
+	<FilterTester:FilterDropShadowViewer id="filterShadow"  includeIn="shadow" />
+	 </s:VGroup>
+	<s:Button label="x" click="onClose()"  right="10" width="30" top="10"/>
+</s:Group>

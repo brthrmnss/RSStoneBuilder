@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:Local="Local.*"
+		 xmlns:local="*"
+		 creationComplete="onInit(event)" xmlns:clocks="org.syncon.TalkingClock.view.clocks.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeStyle;
+			import flash.globalization.LocaleID;
+			
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			
+			
+			static public const TRY_AGAIN : String = 'tryAgain' ; 
+			static public const GO_BACK : String = 'goBack'; 
+			static public const EDIT : String = 'EDITEDIT' ; 			
+			
+			public var timer : Timer = new Timer(1000, 0 )  ;
+			public var timer_delayedChange : Timer = new Timer(1000, 1 )  ;
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				//	 
+				this.timer.addEventListener(TimerEvent.TIMER, this.onTime, false, 0, true ); 
+				this.timer.start() ;
+			}
+			
+			
+			protected function onTime(event:TimerEvent):void
+			{
+				var hours : String =this.DateDisplay2.format( new Date ) 
+				var mins : String = this.DateDisplay3.format( new Date ) 
+				var secs : String = this.DateDisplay4.format( new Date ) 
+				
+				var dur : Number = 500
+				this.digitHour.text = hours; 
+				this.digitMin.text =mins
+				this.digitSec.text = secs; 
+				
+			}
+			
+			public function formattedTime() : String
+			{
+				var ee : LocaleID
+				return this.DateDisplay3.format( new Date ) ; 
+			}
+			//private var df:DateTimeFormatter = new DateTimeFormatter( LocaleID.DEFAULT, DateTimeStyle.CUSTOM, DateTimeStyle.CUSTOM);
+			
+			
+			protected function onEdit(event:MouseEvent):void
+			{
+				this.dispatchEvent( new Event( EDIT ) ) ; 
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:DateTimeFormatter id="format" dateStyle="none" dateTimePattern="LL:NN:SS"/>
+		<s:DateTimeFormatter id="DateDisplay2" dateTimePattern="hh"/>
+		
+		<s:DateTimeFormatter id="DateDisplay3" dateTimePattern="mm"/>
+		<s:DateTimeFormatter id="DateDisplay4" dateTimePattern="ss"/>		
+		<!--	http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/globalization/DateTimeFormatter.html#setDateTimePattern%28%29
+		-->	
+		
+	</fx:Declarations>
+	
+	
+	<s:HGroup>
+		
+		<clocks:FlipClockDigit id="digitHour"/> 
+		<s:Label id="Sep"   alpha="1" horizontalCenter="0" text=":"
+				 verticalCenter="0"/>
+		<!--
+		<s:Label id="Sep2" width="30" height="61" alpha="0.3" horizontalCenter="0" text=":"
+				 verticalCenter="0"/>
+		-->
+		<clocks:FlipClockDigit id="digitMin"/>
+		
+		
+		<s:Label id="Sep3" width="30" height="61" alpha="0.3" horizontalCenter="0" text=":"
+				 verticalCenter="0"/>
+		
+		<clocks:FlipClockDigit id="digitSec"/>
+	</s:HGroup>
+	
+	
+	<s:Button left="10" top="10" width="20" label="e" click="onEdit(event)"/>
+</s:Group>
