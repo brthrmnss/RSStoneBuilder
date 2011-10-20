@@ -4,6 +4,8 @@ package  org.syncon.RosettaStone.view.ellips
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
+	import mx.collections.ArrayCollection;
+	
 	import org.robotlegs.mvcs.Mediator;
 	import org.syncon.RosettaStone.controller.AutomateEvent;
 	import org.syncon.RosettaStone.controller.AutomateUIEvent;
@@ -19,6 +21,7 @@ package  org.syncon.RosettaStone.view.ellips
 	import org.syncon.RosettaStone.vo.LessonVO;
 	import org.syncon.popups.controller.HidePopupEvent;
 	import org.syncon.popups.controller.ShowPopupEvent;
+	import org.syncon2.utils.ArrayHelpers;
 	import org.syncon2.utils.ArrayListMoveableHelper;
 	import org.syncon2.utils.data.GoThroughEach;
 	
@@ -49,6 +52,12 @@ package  org.syncon.RosettaStone.view.ellips
 		public var option_MasteryMode : Boolean = false;
 		public var option_ShowAnswerFeedback : Boolean = true; 
 		public var option_showPromptText : Boolean = true; 
+		
+		/**
+		 * highlight text when introducing .... this looks strange as some don't fit it area 
+		 * 
+		 * */
+		public var option_showPromptWhenIntroducingItem : Boolean = false; 
 		
 		override public function onRegister():void
 		{
@@ -84,6 +93,8 @@ package  org.syncon.RosettaStone.view.ellips
 			
 			eventMap.mapListener(eventDispatcher, AutomateEvent.UPDATE_SETTINGS, 
 				this.onUpdateSettings  );		
+			eventMap.mapListener(eventDispatcher, AutomateEvent.NEXT_SET, 
+				this.onNextSet_Automate  );		
 			
 			AutomateUIEvent
 			
@@ -109,14 +120,15 @@ package  org.syncon.RosettaStone.view.ellips
 			else
 			{
 				if ( this.restartOnNextActive ) 
-					this.onRestart(null); 
+					this.onRestart(null, true); 
 			}
 		}
 		
 		private function stopEverything():void
 		{
 			// TODO Auto Generated method stub
-			
+			this.gIntroduce.end(false); 
+			this.model.stopSound(); 
 		}
 		
 		//probably want overrides for the adove .
@@ -203,22 +215,35 @@ package  org.syncon.RosettaStone.view.ellips
 		 * */
 		private function onStartLesson(e: AutomateEvent): void
 		{
-			this.model.currentLesson = e.lesson; 
-			this.currentLesson = this.model.currentLesson ;
+			if ( e.lesson != null ) 
+			{
+				this.model.currentLesson = e.lesson; 
+				this.currentLesson = this.model.currentLesson ;
+			}
 			this.onRestart(null) 
 		}	
 		
 		public function onPauseLesson(e:Object):void{
-			this.gIntroduce.end()
+			//this.gIntroduce.end()
+			//this.model.fxCallAfterSoundCompletePlaying = null; 
+			this.model.stopSound(); 
+			this.stopEverything()
 		}
 		/**
 		 * on resume, if not started, start it up, if active, then reintroduce the current set 
 		 * ... perhabs we should have a 'paused' flag ? 
 		 * */
-		public function onResumeLesson(e:Object):void{
+		public function onResumeLesson(e:AutomateEvent):void{
 			if ( this.model.automating ) 
 			{
-				onNextSet( this.currentLessonSet ) ; 
+				/*	if ( e.lessonType == this.lessonType ) 
+				{*/
+				onNextSet( this.currentLessonSet ) ;
+				/*	}
+				else
+				{
+				this.onRestart()
+				}*/
 			}
 			else
 			{
@@ -241,6 +266,15 @@ package  org.syncon.RosettaStone.view.ellips
 				this[prop]  = e.lesson[prop]; 
 			}
 			
+			if ( e.lesson.name == this.lastExecutionType ) 
+			{
+				this.onResumeLesson(null);
+			}
+			else
+			{
+				this.lastExecutionType = e.lesson.name; 
+				this.onRestart()
+			}
 		}
 		
 		
@@ -370,8 +404,18 @@ package  org.syncon.RosettaStone.view.ellips
 			_receipt = value;
 		}
 		
+		/**
+		 * Called from previous automate 
+		 * */
+		public function onNextSet_Automate(e:Event):void
+		{
+			this.onSkipToNextSet()
+		}
 		
-		protected function onRestart(event:Event=null):void
+		/**
+		 * fromActivation indicates this was a '2nd loading' ... do not attempt to change settings 
+		 * */
+		protected function onRestart(event:Event=null, fromActivation : Boolean = false):void
 		{
 			if ( this.ui.active == false ) 
 			{
@@ -383,8 +427,34 @@ package  org.syncon.RosettaStone.view.ellips
 			/*if ( this.currentLesson.sets.length == 0 ) 
 			return; */
 			
+			/*if ( this.model.randomizeLessonSetOrder ) 
+			o.items = new ArrayCollection( ArrayHelpers.doIt(  o.items.toArray() ) ) ; */
+			
+			if ( this.currentLesson.randomize_lesson  || this.model.randomizeLesson ) 
+			{
+				//ArrayHelpers.
+				var items : Array = this.currentLesson.items; 
+				items =  ArrayHelpers.doIt(items)
+				items =  ArrayHelpers.doIt(items)
+				items =  ArrayHelpers.doIt(items)
+				var count : int = 0 ; 
+				var set_ : LessonSetVO = new LessonSetVO()
+				this.currentLesson.sets.removeAll(); 
+				for each ( var i : LessonItemVO in items ) 
+				{
+					count++
+						set_.items.addItem( i ) 
+					if ( count == 4 ) 
+					{
+						this.currentLesson.addSet( set_ ) 
+						set_ = new LessonSetVO()
+						count = 0 
+					}
+				}
+				//o.items = new ArrayCollection( ArrayHelpers.doIt(  o.items.toArray() ) ) ; 
+			}
 			//new function copy settings ( it is here so we can upadte them quickly from lessonvo ) 
-			if ( this.currentLesson != null ) 
+			if ( this.currentLesson != null && fromActivation == false ) 
 			{
 				option_introduceItems = this.currentLesson.option_introduceItems
 				option_PlaySoundWhenWrongOneClicked = this.currentLesson.option_PlaySoundWhenWrongOneClicked
@@ -406,8 +476,17 @@ package  org.syncon.RosettaStone.view.ellips
 		public function onNextSet(o : LessonSetVO ) : void
 		{
 			this.endIntroductions()
+			if ( this.model.randomizeSetOrder ) 
+				o.items = new ArrayCollection( ArrayHelpers.doIt(  o.items.toArray() ) ) ; 
 			
 			this.currentLessonSet = o ;
+			
+			//you call this 3x times ... really ...?
+			if ( this.option_showPromptOnItemRender  == false ) 
+			{
+				this.hideCurrentSetPrompts()
+			}
+			
 			this.model.currentLessonSet = this.currentLessonSet
 			this.dispatch( new RSModelEvent (
 				RSModelEvent.AUTOMATE_CLEAR 	) ) ; 
@@ -440,6 +519,12 @@ package  org.syncon.RosettaStone.view.ellips
 		private var lastItemIntroduced:LessonItemVO;
 		private var lastUserChoice:LessonItemVO;
 		private var restartOnNextActive:Boolean;
+		/**
+		 * We need to have an automate VO which stores all the settings 
+		 * and a 'name' for this setting, so learn and test are differnt ad will restart when the mode 
+		 * is changed. ...
+		 * */
+		private var lastExecutionType:String;
 		public function onTimer_DelayIntroducingSetItems_Complete(e:TimerEvent):void
 		{
 			this.introduceItems( this.nextFxDone, false ) ; 
@@ -499,9 +584,12 @@ package  org.syncon.RosettaStone.view.ellips
 			//this.model.playSound2( item.sourceSound , 1, null , onIntroduceNextItem) ; 
 			
 			this.model.currentHighlightedItem = item; 
-			item.promptShow(); 
-			if ( this.lastItemIntroduced != null ) 
-				this.lastItemIntroduced.promptHide()
+			if ( this.option_showPromptWhenIntroducingItem ) 
+			{
+				item.promptShow(); 
+				if ( this.lastItemIntroduced != null ) 
+					this.lastItemIntroduced.promptHide()
+			}
 			this.lastItemIntroduced = item; 
 			
 			/*this.model.playLessonItem( item, onIntroduceNextItem) ; */
@@ -526,7 +614,6 @@ package  org.syncon.RosettaStone.view.ellips
 			if ( this.option_showPromptOnItemRender  == false ) 
 			{
 				this.hideCurrentSetPrompts()
-				
 			}
 			//trace('done introducing'); 
 			if ( this.fxDoneIntroducingItems != null ) 
@@ -648,6 +735,7 @@ package  org.syncon.RosettaStone.view.ellips
 		{
 			this.g.end(); 
 			this.endIntroductions()
+			this.stopEverything(); 
 		}
 		
 		private function endIntroductions():void

@@ -80,6 +80,8 @@ package  org.syncon.RosettaStone.view.edit
 			}
 			else
 				dp = new ArrayCollection(); 
+			
+			
 			this.ui.list1.dataProvider = dp
 			//this.ui.btnSave.enabled = false; 
 		}		
@@ -146,8 +148,6 @@ package  org.syncon.RosettaStone.view.edit
 			this.ui.list1.dataProvider = od as IList;
 			return; 
 		}	
-		
-		
-		
+
 	}
 }

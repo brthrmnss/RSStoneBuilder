@@ -19,8 +19,20 @@
 	<mx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
+			
+			import openplug.elips.device.Capabilities;
+			import openplug.elips.services.SystemAPI;
+			
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			import org.syncon2.utils.mobile.ads.Smaato.SmaatoProvider;
+			
+			import outside.PlatformGlobals;
 			//public var adMob : AdMob; 
 			private var showAds:Boolean = true;
+			/**
+			 * true if on my phone
+			 * */
+			private var myPhone:Boolean;
 			
 			protected function onInitliaize(event:FlexEvent):void
 			{
@@ -37,13 +49,130 @@
 			
 			protected function onInit():void
 			{
-			}				 
+				//this.ss = new SmaatoProvider()
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.img, this.onClickImg ) ; 
+				NightStandConstants.PlatformGlobals.fxMediate( this ) ; 
+				
+				//this.loadAds()
+				//th emeidate will call this when ready with config 
+			}
+			/**
+			 * inits the ads, called by mediator 
+			 * */
+			public function loadAds() : void
+			{
+				this.myPhone = NightStandConstants.personalMachine
+				var bbbbb : Object =  openplug.elips.device.Capabilities.getDeviceCapabilities()
+				var bb : String = openplug.elips.device.Capabilities.getDeviceCapabilities().os.name
+				var onC : Boolean = NightStandConstants.PlatformGlobals.onComputer; 
+				if ( this.myPhone == false && onC == false ) 
+				{
+					this.inTestingMode(); 
+				}
+				else
+				{
+					NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.adBg, this.onAdAddifInDebug ) ; 
+					if ( onC == false ) 
+						this.inTestingMode(false); 
+				}
+			}		
+			private function inTestingMode(loadReal :  Boolean = true    ):void
+			{
+				//URLRequestDefaults
+				SmaatoProvider.DEVICE = ''; // URLRequestDefaults.userAgent;
+				/* ss  = new SmaatoProvider( 0, 0, 60, false, true )  
+				ss.addEventListener( Event.CHANGE, onSmaatoProviderChanged, false, 0, true); */
+				if ( loadReal  ) 
+				{
+					ss  = new SmaatoProvider( 923846506, 65744800, 60*5, false, true )  
+					ss.ownid =  SystemAPI.getDeviceUID()
+					
+					ss.addEventListener( Event.CHANGE, onSmaatoProviderChanged, false, 0, true);
+				}
+				else
+				{
+					ss  = new SmaatoProvider( 0, 0, 60*5, false, true )  
+					
+					ss.addEventListener( Event.CHANGE, onSmaatoProviderChanged, false, 0, true);
+				}
+				// TODO Auto Generated method stub
+				
+			}
+			
+			[Bindable] public var ss : SmaatoProvider; 
+			private function onClickImg(e:Event):void
+			{
+				// TODO Auto Generated method stub
+				this.ss.onSmaatoAdClicked(null)	
+			}
+			
+			public function onSmaatoProviderChanged(evt:Event):void
+			{
+				// Optional handler triggered when the banner is updated.
+				// Can be used for moving the banner around
+				/* 
+				trace("sm.variables.devip = " + sm.variables.devip);
+				_debugTxt.text = evt.target.ipProvider.listNetworkInfo(false) + "\n\n" + sm.data;
+				_debugTxt.appendText("\n\nGeolocation.isSupported = " + Geolocation.isSupported );
+				
+				if ( (Geolocation.isSupported) && (sm.geo) )
+				{
+				_debugTxt.appendText( "\nmuted = " + sm.geo.muted +
+				"\ngps = " + sm.variables.gps );
+				}
+				
+				trace(_debugTxt.text);
+				*/
+				
+				// Reposition the ad (to the bottom of the sreen)
+				with(evt.target)
+				{
+					//img.y = this.stage.stageHeight - contentLoaderInfo.height;
+					//	img.x = (this.stage.stageWidth - contentLoaderInfo.width) * 0.5;
+					//img.source = this.ss.data; 
+					try 
+					{
+						//this.ss.content
+						
+						img.source = this.ss.content
+						img.height = this.ss.content.height; 
+						img.width = this.ss.content.width;  
+					}
+					catch ( e : Error  ) 
+					{
+						
+					}
+					/* img.height = this.ss.content.height; 
+					img.width = this.ss.content.width;  */
+					/* 
+					if ( NightStandConstants.PlatformGlobals.onComputer == false ) 
+					{
+					img.width = this.width;
+					//img.height = 80;
+					//img.height = this.height; 
+					}
+					*/
+				}
+				
+			}
+			
+			private function onAdAddifInDebug(e:Event):void
+			{
+				if ( this.myPhone ) 
+				{
+					trace('onAdAddifInDebug' , 'trying to load ad' ) ; 
+					this.inTestingMode()
+					//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.adBg, this.onAdAddifInDebug ) ; 	
+				}
+				// TODO Auto Generated method stub
+				
+			}
 			
 		]]>
 	</mx:Script>
 	
 	
-	<mx:ViewStack id="holder" width="100%" height="{this.height-80}"
+	<mx:ViewStack id="holder" width="100%" top="0" bottom="80"
 				  initialize="holder_initializeHandler(event)">
 		<alarm:QuizBoardHomeView id="home" width="100%" height="100%"/>
 		<alarm:QuizBoardListView id="list" width="100%" height="100%"/>
@@ -100,7 +229,7 @@
 	
 	-->
 	
-	<mx:Canvas bottom="0" width="100%" height="80" backgroundColor="0x000000">
-		
+	<mx:Canvas  id="adBg" bottom="0" width="100%" height="80" backgroundColor="0x000000">
+		<mob:Image id="img" bottom="0" horizontalCenter="0"/>
 	</mx:Canvas>
 </mx:Canvas>

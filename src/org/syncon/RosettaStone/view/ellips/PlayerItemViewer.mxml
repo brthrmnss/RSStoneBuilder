@@ -85,7 +85,7 @@
 	<mx:HBox minHeight="80" verticalAlign="top" paddingLeft="10">
 		<!--<controls:Image source="assets/buttons/play.png"/>
 		<controls:Button id="btnPlay" width="64" height="64" label="Play"/>-->
-		<ellips:OpenPlugButton   iconS="assets/buttons/play.png" labelS="Play"   id="btnPlay"/>
+		<ellips:OpenPlugButton   iconS="assets/buttons/Play.png" labelS=""   id="btnPlay"/>
 		<controls:Text id="txtPrompt" width="300" color="0" fontSize="14"/>
 		<!--<s:Image  source="assets/buttons/Metro-Listen-Blue-64.png"   />-->
 	</mx:HBox>

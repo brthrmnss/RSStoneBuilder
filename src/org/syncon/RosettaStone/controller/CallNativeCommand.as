@@ -12,7 +12,11 @@ package org.syncon.RosettaStone.controller
 	 * Will encapuslate all native calls 
 	 * */
 	public class CallNativeCommand extends Command
-	{
+	{/*
+		air.org
+		*/
+		static public var PACKAGE_NAME :  String = ''; 
+		static public var APP_NAME : String = ''; 
 		[Inject] public var model:RSModel;
 		[Inject] public var event:CallNativeCommandTriggerEvent;
  		
@@ -48,7 +52,7 @@ package org.syncon.RosettaStone.controller
 				case CallNativeCommandTriggerEvent.RATE:
 				{
 					var a  : AndroidExtensions_OpenPlug = new AndroidExtensions_OpenPlug(); 
-					a.rateApp(this.model.config.package_name); 
+					a.rateApp( PACKAGE_NAME); 
 					break;
 				}
 				case CallNativeCommandTriggerEvent.MORE:
@@ -68,8 +72,8 @@ package org.syncon.RosettaStone.controller
 				{
 					//var appname : String = "air.org.syncon.ODBViewer"
 					a  = new AndroidExtensions_OpenPlug(); 
-					a.shareApp(   "Sound Board", "Check out this app "+"http://market.android.com/details?id="+this.model.config.package_name,
-						"Tell a friend about "+this.model.config.name  );//+ ' '  +  this.model.config.subtitle); //com.example.yourpackagename" ); 
+					a.shareApp(   APP_NAME, "Check out this app "+"http://market.android.com/details?id="+PACKAGE_NAME,
+						"Tell a friend about "+APP_NAME  );//+ ' '  +  this.model.config.subtitle); //com.example.yourpackagename" ); 
 					break;
 				}					
 				case CallNativeCommandTriggerEvent.ABOUT:
@@ -102,7 +106,7 @@ package org.syncon.RosettaStone.controller
 			var urlString:String = "mailto:";
 			urlString += 'info.sync.con@gmail.com'
 			urlString += "?subject="
-			urlString += 'Problem With "' + this.model.config.name + '"'
+			urlString += 'Problem With "' + APP_NAME + '"'
 			navigateToURL(new URLRequest(urlString));
 		}
 		

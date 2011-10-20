@@ -110,7 +110,8 @@ package  org.syncon.RosettaStone.view.ellips
 		{
 			/*this.dispatch( SwitchScreensTriggerEvent.GoBack() )
 			this.dispatch( SwitchScreensTriggerEvent.GoTo( SwitchScreensTriggerEvent.PLAYER_VIEW2 ) ) ; */
-			this.modelMobile.goToPlayer(1) 
+			//this.modelMobile.goToPlayer(1) 
+			this.dispatch( SwitchScreensTriggerEvent.GoBack() )
 			this.dispatch( new AutomateEvent(AutomateEvent.RESUME_LESSON, null ) ) ; 
 		}		
 		

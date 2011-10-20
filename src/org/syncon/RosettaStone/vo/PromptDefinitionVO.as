@@ -79,10 +79,7 @@ package  org.syncon.RosettaStone.vo
 		 * */
 		public var id : int = 0 ; 
 		
-		public var required_prompt : Boolean = false; 
-		public var required_image : Boolean = false; 
-		public var required_sound : Boolean = false; 
-		public var required_other : Boolean = false;
+		public var required : Boolean = false; 
 		/*
 		public var prompt : String; 
 		public var image : String; 
@@ -100,10 +97,8 @@ package  org.syncon.RosettaStone.vo
 			this.sound = input.sound; 
 			this.other = input.other; 
 			*/
-			this.required_prompt = input.required_prompt; 
-			this.required_image = input.required_image; 
-			this.required_sound = input.required_sound; 
-			this.required_other = input.required_other; 
+			this.type = input.type; 
+			this.required = input.required; 
 		}
 		
 		public function export() :  Object
@@ -118,11 +113,8 @@ package  org.syncon.RosettaStone.vo
 			output.sound = this.sound; 
 			output.other = this.other; 
 			*/
-			output.required_prompt = this.required_prompt; 
-			output.required_image = this.required_image; 
-			output.required_sound = this.required_sound; 
-			output.required_other = this.required_other; 			
-			
+			output.type = this.type; 
+			output.required = this.required; 
 			return  output 
 		}			
 		

@@ -67,7 +67,18 @@ package  org.syncon.RosettaStone.vo
 		
 		public var option_MasteryMode : Boolean = false; 
 		
-		public var prompts : ArrayCollection = new ArrayCollection()
+		private var prompts : ArrayCollection = new ArrayCollection()
+		
+		public function getPrompts():ArrayCollection
+		{
+			return prompts;
+		}
+		/*
+		public function set prompts(value:ArrayCollection):void
+		{
+		_prompts = value;
+		}
+		*/
 		//public var prompts : Array = [] 
 		/*public var promptSounds : Array = [] 
 		public var promptImages : Array = [] 
@@ -120,6 +131,8 @@ package  org.syncon.RosettaStone.vo
 		}
 		private var lastExportPreview :String ; 
 		public var retrievedContentsOnce:Boolean;
+		public var randomize_lesson:Boolean;
+		
 		public function previewExport() : void
 		{
 			var exportStr : String = this.export(); 
@@ -218,6 +231,8 @@ package  org.syncon.RosettaStone.vo
 			this.option_introduceItems  = input.option_introduceItems
 			this.option_oneShotAnswerAttemps  = input.option_oneShotAnswerAttemps
 			this.option_PlaySoundWhenWrongOneClicked  = input.option_PlaySoundWhenWrongOneClicked
+			
+			this.randomize_lesson = input.randomize_lesson; 
 			/*	
 			this.promptImages = PromptVO.importArray(input.promptImages);  
 			this.promptSounds = PromptVO.importArray(input.promptSounds);  
@@ -278,6 +293,8 @@ package  org.syncon.RosettaStone.vo
 			output.option_PlaySoundWhenWrongOneClicked  = this.option_PlaySoundWhenWrongOneClicked
 			
 			output.prompts = PromptDefinitionVO.exportArray(this.prompts.toArray()); 
+			
+			output.randomize_lesson = this.randomize_lesson; 
 			/*
 			output.promptImages = PromptVO.exportArray(this.promptImages);  
 			output.promptSounds = PromptVO.exportArray(this.promptSounds);  
@@ -322,6 +339,56 @@ package  org.syncon.RosettaStone.vo
 				}
 			}
 			return  items
+		}
+		
+		
+		public function addPrompt(def:PromptDefinitionVO):void
+		{
+			def.id = this.getNextPromptDefId()
+			this.prompts.addItem( def ) 
+		}
+		
+		public function findPromptByName( name : String ) :  PromptDefinitionVO
+		{
+			for each ( var p : PromptDefinitionVO in this.prompts ) 
+			{
+				if ( p.name == name ) 
+				{
+					return p ; 
+				}
+			}
+			return null;
+		}
+		public function getAllMedia(   ) :  Array
+		{
+			var arr : Array = [] ; 
+			for each ( var item :LessonItemVO in this.items ) 
+			{
+				if ( notNull( item.pic ) ) arr.push( item.pic );
+				if ( notNull( item.sound ) ) arr.push( item.sound );
+				
+				for each ( var prompt :  PromptVO in item.prompts ) 
+				{
+					if ( prompt.def.isText == false ) 
+						if ( notNull( prompt.data ) ) arr.push( prompt.data );
+				}
+			}
+			return arr;
+		}
+		
+		private function notNull(pic:String):Boolean
+		{
+			if ( pic != '' && pic != null ) return true ; 
+			
+			return false;
+		}
+		
+		/**
+		 * Is there something i must add? 
+		 * */
+		public function addSet( s : LessonSetVO ) : void
+		{
+			this.sets.addItem( s ) ; 
 		}
 		
 		

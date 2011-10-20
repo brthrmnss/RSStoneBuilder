@@ -163,6 +163,12 @@ package  org.syncon.RosettaStone.view.ellips
 				this.onGoBack(); 
 				return
 			}
+			else  if ( o == SETTINGS ) 
+			{
+				this.onGoBack(); 
+				this.dispatch( SwitchScreensTriggerEvent.GoTo(SwitchScreensTriggerEvent.settings)  ) 
+				return
+			}
 			else
 			{
 				if ( this.ui.fxAction != null ) 

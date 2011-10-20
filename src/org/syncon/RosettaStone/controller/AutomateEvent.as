@@ -7,11 +7,14 @@ package   org.syncon.RosettaStone.controller
 	
 	public class AutomateEvent extends Event
 	{
-		public static const START_LESSON:String = 'startLesson';
-		public static const NEXT_LESSON:String = 'NEXT_LESSON';
 		
 		public var lesson : LessonVO;
 		public var confirmed : Boolean = false;
+		
+		public static const START_LESSON:String = 'startLesson';
+		public static const NEXT_SET:String = 'NEXT_SET';
+		public static const NEXT_LESSON:String = 'NEXT_LESSON';
+
 		public static var PAUSE_LESSON:String= 'PAUSE_LESSON';
 		public static const RESUME_LESSON:String = 'RESUME_LESSON';
 		/**

@@ -14,6 +14,7 @@
 			import org.syncon.RosettaStone.controller.ConfigCommand;
 			import org.syncon.TalkingClock.model.NightStandConstants;
 			import org.syncon.popups.controller.default_commands.ShowAlertMessageCommand2;
+			import org.syncon2.utils.data.GoThroughEach;
 			import org.syncon2.utils.file.FileAir2_Air;
 			import org.syncon2.utils.file.LoadFiles_Air;
 			import org.syncon2.utils.openplug.PlatformGlobals_OpenPlug;
@@ -25,7 +26,7 @@
 			protected function onInitilze(event:FlexEvent):void
 			{
 				/* PopupModel.fxGetApp = this.getApp */
-				
+				GoThroughEach.PauseFirstAndLast = true
 				NightStandConstants.flex = false; 
 				NightStandConstants.PlaySound = new PlaySound_OpenPlug(); 
 				//LoadConfig_Flex.baseFolder = 'G:/My Documents/work/mobile3/SoundboardFlex/bin-debug/'
@@ -43,6 +44,7 @@
 				if ( File.applicationDirectory.nativePath.indexOf('G:') == 0 )
 				{
 					Context.debugging = true;
+					PlatformGlobals_OpenPlug.onComputer_ = true; 
 				}
 				
 				//return
@@ -72,7 +74,7 @@
 				} 
 				*/
 				//}
-				
+				this.getMyPhoneSetting(); 
 			}
 			
 			public var mediateUI  : Function; 
@@ -91,6 +93,16 @@
 			public function reInit() : void
 			{
 				this.onInitilze( null ) 
+			}
+			
+			private function getMyPhoneSetting():void
+			{
+				import openplug.elips.services.SystemAPI;
+				//Alert.show( openplug.elips.services.SystemAPI.getDeviceUID(), 'id' ) ; 
+				trace( 'device id', openplug.elips.services.SystemAPI.getDeviceUID() )
+				if ( openplug.elips.services.SystemAPI.getDeviceUID().toLowerCase() == 'a10000136c5e48' ) 
+					NightStandConstants.personalMachine = true; 
+				'A10000136C5E48'
 			}
 			
 		]]>

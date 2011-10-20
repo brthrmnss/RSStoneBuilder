@@ -7,7 +7,7 @@ package org.syncon.RosettaStone.controller.IO
  
 	public class SaveLessonTriggerEvent extends Event
 	{
-		public static const LOAD_SOUNDS:String = 'SaveLessonTriggerEvent...';
+		public static const SAVE_LESSON:String = 'SaveLessonTriggerEvent...';
 		public var lesson : LessonVO;
 		public var subdir :  String;
 		

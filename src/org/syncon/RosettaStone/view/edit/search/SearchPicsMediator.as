@@ -194,7 +194,7 @@ package  org.syncon.RosettaStone.view.edit.search
 			}
 			else
 			{
-				this.currentLessonItem.currentPrompt.image =  e.toString();
+				this.currentLessonItem.currentPrompt.data =  e.toString();
 				this.currentLessonItem.currentPrompt.image_attribution = s.copyright_link;
 				this.currentLessonItem.currentPrompt.image_author = s.copyright_author;
 				this.currentLessonItem.update()

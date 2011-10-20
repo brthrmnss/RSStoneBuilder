@@ -37,7 +37,8 @@ package org.syncon.RosettaStone.view.ellips
 			this.ev.addEv( PlayerView.CURRICLUM, this.onCurriculumn )
 			this.ev.addEv( PlayerView.SETTINGS, this.onSettings ) 
 			this.ev.addEv( PlayerView.MENU, this.onMenu ) 
-				
+			this.ev.addEv( PlayerView.NEXT_SET, this.onNextSet ) 
+			
 			eventMap.mapListener(eventDispatcher,RSModelEvent.AUTOMATING_CHANGED , 
 				this.onAutomationChanged);				
 			eventMap.mapListener(eventDispatcher,RSModelEvent.CURRENT_LESSON_CHANGED , 
@@ -51,6 +52,11 @@ package org.syncon.RosettaStone.view.ellips
 				
 			this.ui.menuProvider2 =MobileMenuConfigVO.create( ['Settings', 'Home', 'Credits', 'Curriculum' ], this.onMenuOptions ) 
 	 
+		}
+		
+		private function onNextSet(e:Event):void
+		{
+			this.dispatch( new AutomateEvent(AutomateEvent.NEXT_SET, null ) )
 		}
 		static public const Settings : String = 'Settings';
 		static public const Home : String = 'Home';  

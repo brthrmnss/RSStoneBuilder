@@ -47,7 +47,7 @@ package org.syncon.RosettaStone
 			this.commandMap.mapEvent( LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN, LoadLessonPlanCommand );
 			this.commandMap.mapEvent( LoadLessonTriggerEvent.LOAD_SOUNDS, LoadLessonCommand );
 			this.commandMap.mapEvent( SaveLessonPlanTriggerEvent.LOAD_SOUNDS, SaveLessonPlanCommand );
-			this.commandMap.mapEvent( SaveLessonTriggerEvent.LOAD_SOUNDS, SaveLessonCommand );
+			this.commandMap.mapEvent( SaveLessonTriggerEvent.SAVE_LESSON, SaveLessonCommand );
 			
 			this.commandMap.mapEvent( CreateDefaultDataTriggerEvent.CREATE, CreateDefaultDataCommand );
 			this.commandMap.mapEvent( ConvertStringToItemSetCommandTriggerEvent.CONVER_STRING, ConvertStringToItemSetCommand );

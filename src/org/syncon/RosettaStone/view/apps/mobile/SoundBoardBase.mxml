@@ -175,8 +175,7 @@
 				org.syncon.RosettaStone.model.NightStandConstants.ResourcesDir = 'assets/'
 				org.syncon.RosettaStone.model.NightStandConstants.FileLoader = org.syncon.TalkingClock.model.NightStandConstants.FileLoader
 				var rsContext : Context_RSPlayer = new Context_RSPlayer();
-				if ( this._quizMode ) 
-					rsContext.loadUnitsFolder = false; 
+					rsContext.quizBoardMode = this._quizMode; 
 				this.context.addSubContext( rsContext ) ; 
 				rsContext.fxGettingStarted = onGettingStarted
 				//this.changeView(SwitchScreensTriggerEvent.SELECT_PACKAGE)
@@ -204,7 +203,7 @@
 				{
 					_holder = holderParent;
 				}
-				if ( _holder[this.currentScreen] != null ) 
+				if ( _holder.hasOwnProperty(this.currentScreen) &&  _holder[this.currentScreen] != null ) 
 				{
 					if ( _holder[this.currentScreen].hasOwnProperty('menuProvider2') ) 
 						arrOfMenuItems = _holder[this.currentScreen]['menuProvider2']

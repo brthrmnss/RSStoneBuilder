@@ -35,6 +35,8 @@
 			}
 			public function hide( ) : void
 			{
+				if ( this.visible == false ) 
+					return; 
 				//this.popupCode.close()
 			 	this.visible = false; 
 				//this.alpha = 0.2

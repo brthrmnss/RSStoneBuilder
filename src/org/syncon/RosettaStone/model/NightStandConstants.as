@@ -1,7 +1,7 @@
 package org.syncon.RosettaStone.model
 {
 	import org.syncon2.utils.file.ILoadConfig;
-	import org.syncon2.utils.file.ServerMultimedia;
+	import org.syncon2.utils.file.IServerMultimedia;
 
 	public class NightStandConstants  
 	{
@@ -18,7 +18,7 @@ package org.syncon.RosettaStone.model
 		public static var holdWidgetLoading:Boolean;
 		public static var EXIT_SETTINGS_MODE:String='gogo';
 		public static var FileLoader:ILoadConfig;
-		public static var Server2:ServerMultimedia=new ServerMultimedia;
+		public static var Server2:IServerMultimedia;//=new ServerMultimedia;
 		
 		//public static var urlReq:Object;
 		public static var fxGenerateUrlReq: Function;

@@ -1,5 +1,5 @@
 @namespace s "library://ns.adobe.com/flex/spark";
-
+@namespace mx "library://ns.adobe.com/flex/mx";
 /*@font-face { 
 	src: url("../assets/MyriadWebPro.ttf"); 
 	fontFamily: myFontFamily; 
@@ -71,4 +71,13 @@ s|global
 s|Label
 {
 	fontFamily: myFontFamily;
+}
+
+mx|ToolTip,mx|Label, mx|FormItemLabel {
+	backgroundAlpha: 1.0;
+	backgroundColor: black;
+	color: white;
+	cornerRadius: 0;
+	fontSize: 12;
+	fontFamily: myFontFamily2; 
 }

@@ -65,7 +65,7 @@
 	</mx:Script>
 	<view1:NavigationBar id="header" label="Select Unit" fontSizeS="26" fxLeft="{this.onBack}"
 						 leftLabel="Back"/>
-	<controls:List id="list" top="70" bottom="160" width="100%" height="100%"
+	<controls:List id="list" top="70" bottom="0" width="100%" height="100%"
 				   itemRenderer="org.syncon.RosettaStone.view.ellips.itemrenderers.CurriculumSelectItemRenderer"
 				   rowHeight="70" styleName="lstStyle"/>
 	<!--

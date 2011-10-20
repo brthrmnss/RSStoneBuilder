@@ -508,7 +508,7 @@ package org.syncon.RosettaStone.view.edit
 				this.onNextItem();
 				return; 
 			}
-			this.model.playLessonItem( this.model.currentLessonItem ) ; 
+			this.model.( this.model.currentLessonItem ) ; 
 			//this.model.playSound2( this.model.currentLessonItem.sourceSound ) ; 
 		}
 		

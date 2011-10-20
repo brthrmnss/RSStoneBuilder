@@ -5,8 +5,6 @@ package org.syncon.RosettaStone.vo
 	
 	import mx.collections.ArrayCollection;
 	
-	import org.syncon.RosettaStone.view.edit.lesson.ItemBulkRenderer;
-	
 	
 	[RemoteClass]
 	public class LessonItemVO extends EventDispatcher
@@ -64,9 +62,9 @@ package org.syncon.RosettaStone.vo
 		}
 		
 		static public var UPDATED : String = 'lessonitemupdated';
-		static public const PROMPT_VISIBILITY_CHANGED : String = 'PROMPT_VISIBILITY_CHANGED'; 
-		static public const PROMPT_IMAGE_CHANGED : String = 'PROMPT_IMAGE_CHANGED'; 
-		static public const PROMPT_TEXT_CHANGED : String = 'PROMPT_TEXT_CHANGED'; 
+		static public const TEXT_DISPLAY_VISIBILITY_CHANGED : String = 'PROMPT_VISIBILITY_CHANGED'; 
+		static public const DISPLAY_IMAGE_CHANGED : String = 'PROMPT_IMAGE_CHANGED'; 
+		static public const DISPLAY_TEXT_CHANGED : String = 'PROMPT_TEXT_CHANGED'; 
 		static public const CURRENT_PROMPT_CHANGED : String = 'PROMPT_TEXT_CHANGED'; 
 		
 		private var _folder:String ='';
@@ -132,40 +130,24 @@ package org.syncon.RosettaStone.vo
 		public function promptShow():void
 		{
 			this.showPrompt = true; 
-			this.dispatchEvent( new Event( PROMPT_VISIBILITY_CHANGED ) ) ; 
+			this.dispatchEvent( new Event( TEXT_DISPLAY_VISIBILITY_CHANGED ) ) ; 
 		}
 		
 		public function promptHide():void
 		{
 			this.showPrompt = false; 
-			this.dispatchEvent( new Event( PROMPT_VISIBILITY_CHANGED ) ) ; 
+			this.dispatchEvent( new Event( TEXT_DISPLAY_VISIBILITY_CHANGED ) ) ; 
 		}
 		
-		public function promptImageToUse(s:String):void
-		{
-			this.activePromptImage = s; 
-			this.dispatchEvent( new Event( PROMPT_IMAGE_CHANGED ) ) ; 
-		}
-		
-		public function promptTextToUse(s:String):void
-		{
-			this.activePromptText = s; 
-			this.dispatchEvent( new Event( PROMPT_TEXT_CHANGED ) ) ; 
-		}
 		
 		/***
 		 * append gets you the image ulr, false get you just the image
 		 * */
-		public function getPromptImage( promptName : String = null, appendFolder : Boolean =true ):String 
+		public function getPromptData( promptName : String = null, appendFolder : Boolean =true ):String 
 		{
 			if ( promptName == null && this.currentPrompt != null ) 
 				promptName = this.currentPrompt.name					
-			if ( promptName == null ) 
-				promptName = this.activePromptImage
-			if ( promptName == '' || promptName == null ) 
-				return this.pic
-			//this.dispatchEvent( new Event( PROMPT_IMAGE_CHANGED ) ) ; 
-			var txt : String = this.getPrompt( promptName , 'image' ) 
+			var txt : String = this.getPrompt( promptName  ) 
 			if ( txt == '' ||txt == null ) 
 				return ''; 
 			if ( appendFolder ) 
@@ -173,49 +155,11 @@ package org.syncon.RosettaStone.vo
 			return txt
 		}
 		
-		public function getPromptText( promptName : String = null):String 
-		{
-			if ( promptName == null && this.currentPrompt != null ) 
-				promptName = this.currentPrompt.name		
-			if ( promptName == null ) 
-				promptName = this.activePromptText
-			if ( promptName == '' || promptName == null ) 
-				return this.name
-			var txt : String = this.getPrompt( promptName , 'prompt' ) 
-			return txt
-		}
-		
-		public function getPromptSound( promptName : String = null, appendFolder : Boolean =true):String 
-		{
-			if ( promptName == null && this.currentPrompt != null ) 
-				promptName = this.currentPrompt.name		
-			if ( promptName == null ) 
-				promptName = this.activePromptSound
-			if ( promptName == '' || promptName == null ) 
-				return this.sound
-			var txt : String = this.getPrompt( promptName, 'sound' ) 
-			if ( txt == '' ) 
-				return ''; 
-			if ( appendFolder ) 
-				return this.folder+'/'+txt; 
-			return txt
-		}
-		public function getPromptOther( promptName : String = null, appendFolder : Boolean =true):String 
-		{
-			if ( promptName == null && this.currentPrompt != null ) 
-				promptName = this.currentPrompt.name		
-			var txt : String = this.getPrompt( promptName, 'other' ) 
-			if ( txt == '' ) 
-				return ''; 
-			if ( appendFolder ) 
-				return this.folder+'/'+txt; 
-			return txt
-		}
 		
 		/**
 		 * goes through all prompts to find a match 
 		 * */
-		private function getPrompt(promptName:String, param1:String): String
+		private function getPrompt(promptName:String ): String
 		{
 			var found : PromptVO; 
 			for ( var i : int = 0 ; i < this.prompts.length; i++ )
@@ -228,7 +172,7 @@ package org.syncon.RosettaStone.vo
 			}
 			if ( found == null ) 
 				return null; 
-			return found[param1] 
+			return found.data
 		}
 		
 		
@@ -288,12 +232,6 @@ package org.syncon.RosettaStone.vo
 		/*	public var promptImages : Array = [] 
 		public var promptText : Array = [] */
 		public var showPrompt:Boolean=true;
-		[Deprecated] public var activePromptText:String;
-		/**
-		 * Use currentPromtp Instead 
-		 * */
-		[Deprecated('do not both with this, this is a player setting not local on')] public var activePromptImage:String;
-		public var activePromptSound:String;		
 		
 		/**
 		 * more of an editor thing
@@ -304,5 +242,21 @@ package org.syncon.RosettaStone.vo
 		public var image_author:String;
 		public var image_attribution:String;
 		public var editSelected:Boolean;
+		
+		/***
+		 * return text to display , updates item renderers
+		 * */
+		public function getDisplayImage() : String
+		{
+			return ''
+		}
+		
+		/***
+		 * return text to display 
+		 * */
+		public function getDisplayText() : String
+		{
+			return ''
+		}		
 	}
 }

@@ -43,8 +43,8 @@ package org.syncon.RosettaStone
 			//mediatorMap.mapView( PlayerAutomate, PlayerAutomateMediator )
 			
 			mediatorMap.mapView( PlayerAutomate, PlayerAutomateMediator )
-				
-				
+			
+			
 			this.mediatorMap.mapView( PackageSelectView, PackageSelectViewMediator )
 			this.mediatorMap.mapView( GroupSelectView, GroupSelectViewMediator )
 			this.mediatorMap.mapView( LessonSelectView, LessonSelectViewMediator )
@@ -63,13 +63,16 @@ package org.syncon.RosettaStone
 			mediatorMap.mapView( ExitView , ExitViewMediator ) 	
 			mediatorMap.mapView( PackageCurriculumView , PackageCurriculumViewMediator ) 
 			
+			mediatorMap.mapView( PackageCurriculumView , PackageCurriculumViewMediator ) 
+			
 			mediatorMap.mapView( GettingStartedView , GettingStartedViewMediator ) 	
 			mediatorMap.mapView( SettingsView , SettingsViewMediator ) 	
 			mediatorMap.mapView( PopupMenuActionView , PopupMenuActionViewMediator ) 
 			this.commandMap.mapEvent( CallNativeCommandTriggerEvent.PROCESS,  CallNativeCommand ); 
 			
 			this.commandMap.mapEvent(   PlayLessonItemCommandTriggerEvent.PLAY_LESSON_ITEM, PlayLessonItemCommand );
-			 
+			
+			this.commandMap.mapEvent( InitQuizBoardCommandTriggerEvent.INIT_QUIZBOARD, InitQuizBoardCommand )  ; 
 			
 			//commandMap.mapEvent(CreatePopupEvent.REGISTER_AND_CREATE_POPUP, CreatePopupCommand2, CreatePopupEvent);		
 			commandMap.mapEvent(CreatePopupEvent.REGISTER_EXISTING_POPUP, CreatePopupCommand2, CreatePopupEvent);
@@ -92,12 +95,12 @@ package org.syncon.RosettaStone
 			
 			this.commandMap.mapEvent( LoadUnitsCommandTriggerEvent.LOAD_UNITS, LoadUnitsCommand );
 			this.commandMap.mapEvent( LoadUnitCommandTriggerEvent.LOAD_UNIT, LoadUnitCommand );
-			this.commandMap.mapEvent( SaveUnitCommandTriggerEvent.SAVE_UNIT, SaveUnitCommand );
+			//this.commandMap.mapEvent( SaveUnitCommandTriggerEvent.SAVE_UNIT, SaveUnitCommand );
 			
 			this.commandMap.mapEvent( LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN, LoadLessonPlanCommand );
 			this.commandMap.mapEvent( LoadLessonTriggerEvent.LOAD_SOUNDS, LoadLessonCommand );
-			this.commandMap.mapEvent( SaveLessonPlanTriggerEvent.LOAD_SOUNDS, SaveLessonPlanCommand );
-			this.commandMap.mapEvent( SaveLessonTriggerEvent.LOAD_SOUNDS, SaveLessonCommand );
+			//this.commandMap.mapEvent( SaveLessonPlanTriggerEvent.LOAD_SOUNDS, SaveLessonPlanCommand );
+			//this.commandMap.mapEvent( SaveLessonTriggerEvent.SAVE_LESSON, SaveLessonCommand );
 			
 			//this._this.eventMap.addEventListener( NightStandModelEvent.GETTING_STARTED_NOT_SHOWN, this.onGettingStarted ) ; 
 			this._this.contextView.addEventListener( RSModelEvent.GETTING_STARTED_NOT_SHOWN, this.onGettingStarted ) ; 
@@ -113,6 +116,7 @@ package org.syncon.RosettaStone
 		
 		protected function onGettingStarted(event:Event):void
 		{
+			return;
 			if ( fxGettingStarted != null ) 
 				fxGettingStarted()
 		}
@@ -134,12 +138,18 @@ package org.syncon.RosettaStone
 			this.dispatchEvent( new ConfigCommandTriggerEvent(
 				ConfigCommandTriggerEvent.LOAD_CONFIG) );
 			
-			if ( loadUnitsFolder ) 
-			this.dispatchEvent( new LoadUnitsCommandTriggerEvent(
-				LoadUnitsCommandTriggerEvent.LOAD_UNITS, '', false ) ) ;
+			if ( quizBoardMode == false ) 
+			{
+				this.dispatchEvent( new LoadUnitsCommandTriggerEvent(
+					LoadUnitsCommandTriggerEvent.LOAD_UNITS, '', false ) ) ;
+			}
+			else
+			{
+				this.dispatchEvent( new InitQuizBoardCommandTriggerEvent(
+					InitQuizBoardCommandTriggerEvent.INIT_QUIZBOARD ) ) 
+				
+			}
 			
-			this.dispatchEvent( new LoadRSUnitIntoRSCommandTriggerEvent(
-				LoadRSUnitIntoRSCommandTriggerEvent.IMPORT,'Dogs' ) ) ;
 			return; 
 		}
 		
@@ -163,6 +173,7 @@ package org.syncon.RosettaStone
 		/***
 		 * Flag, if true, load all the units 
 		 * */
-		public var loadUnitsFolder:Boolean=true;
+		/*public var loadUnitsFolder:Boolean=true;*/
+		public var quizBoardMode : Boolean = false; 
 	}
 }

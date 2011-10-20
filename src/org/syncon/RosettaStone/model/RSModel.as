@@ -29,8 +29,9 @@ package org.syncon.RosettaStone.model
 			PlaySound.playSound2( url, times, x, fxDone ); 
 		}
 		
-		public function stopSound():void{
+		public function stopSound(clearFx:Boolean=true):void{
 			PlaySound.stopSound();//( s, times ); 
+			if ( clearFx) PlaySound.fxCallAfterSoundCompletePlaying = null
 		} 
 		public function set fxCallAfterSoundCompletePlaying( fx : Function):void{
 			PlaySound.fxCallAfterSoundCompletePlaying = fx //( s, times ); 
@@ -95,11 +96,30 @@ package org.syncon.RosettaStone.model
 			if ( value == true ) 
 				this.dispatch( new RSModelEvent( RSModelEvent.LOADED_LAST_LESSON ) ) 
 		}
+		private var timerDelayPlayingLessonItem : Timer = new Timer(50, 1 );
 		
-		public function playLessonItem(i : LessonItemVO, fxDone : Function = null, soundUrl : String = null  ) : void
+		public function playLessonItem(i : LessonItemVO, fxDone : Function = null, soundUrl : String = null, delayed : Boolean = false  ) : void
 		{
+			if ( setupTimer == false ) 
+			{
+				setupTimer = true 
+				timerDelayPlayingLessonItem.addEventListener(TimerEvent.TIMER, this.onDelayedTimer ) 
+			}
+			if ( delayed == false ) 
+			{
+				oldParams = [i, fxDone, soundUrl]
+				this.timerDelayPlayingLessonItem.stop()
+				this.timerDelayPlayingLessonItem.start(); 
+				return ;
+			}
 			this.dispatch( new PlayLessonItemCommandTriggerEvent( 
 				PlayLessonItemCommandTriggerEvent.PLAY_LESSON_ITEM, i, fxDone, null, soundUrl   ) ) 
+		}
+		private var oldParams : Array = [] 
+		private function onDelayedTimer( e : TimerEvent ) : void
+		{
+			this.timerDelayPlayingLessonItem.stop()
+			this.playLessonItem( oldParams[0], oldParams[1], oldParams[2], true ) 
 		}
 		
 		public var sounds: ArrayCollection = new ArrayCollection();
@@ -262,7 +282,7 @@ package org.syncon.RosettaStone.model
 		}
 		public function saveLesson() : void
 		{
-			this.dispatch( new SaveLessonTriggerEvent(SaveLessonTriggerEvent.LOAD_SOUNDS, 
+			this.dispatch( new SaveLessonTriggerEvent(SaveLessonTriggerEvent.SAVE_LESSON, 
 				this.currentLesson , this.currentLessonPlan.getSubDir() ) ) ; 
 		}
 		public function collect() : void
@@ -421,10 +441,22 @@ package org.syncon.RosettaStone.model
 				ShowAlertMessageTriggerEvent.SHOW_ALERT_POPUP, 
 				str, title  )  )  
 		}
+		
+		/**
+		 * 
+		 * Will prevent Go to Next Lesson From showing
+		 * it's a quizboard thing ....
+		 * */
+		public var dontShowNextLesson:Boolean;
+		
 		public var setTimeoutTimer_Fx  : Function; 
 		public var setTimeoutTimer : Timer = new Timer(500, 1)
 		public var setTimeoutTimer_Args : Array = []; 
 		//can this compile in ellipse? 
+		private var setupTimer:Boolean;
+		public var randomizeSetOrder:Boolean=true;
+		public var randomizeLesson:Boolean=true;
+
 		public function setTimeout( delay : Number, fx : Function,  params : Array ) : void
 		{
 			setTimeoutTimer.addEventListener(TimerEvent.TIMER, this.onCount, false, 0, true ) ; 

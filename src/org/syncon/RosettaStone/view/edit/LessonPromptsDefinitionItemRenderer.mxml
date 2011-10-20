@@ -2,12 +2,15 @@
 <s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx"  
-				height="60"
+				height="60"  creationComplete="onInit(event)"
 				autoDrawBackground="false">
 	
 	
 	<fx:Script> 
 		<![CDATA[ 
+			import mx.events.FlexEvent;
+			import mx.events.ItemClickEvent;
+			
 			import org.syncon.RosettaStone.model.CustomEvent;
 			import org.syncon.RosettaStone.vo.ItemRendererHelpers;
 			import org.syncon.RosettaStone.vo.LessonGroupVO;
@@ -18,6 +21,8 @@
 			static public const DELETE : String = 'DELETE.f'; //export before delete 
 			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
 			static public const COPY_FILTER : String = 'COPY_FILTER';
+			
+			public var creationComplete: Boolean = false; 
 			
 			public var help : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
 			[Bindable] public var prompt :  PromptDefinitionVO = new PromptDefinitionVO()
@@ -32,12 +37,17 @@
 			
 			public function updateItemRenderer(e:Event=null)  : void
 			{
+				if ( this.creationComplete == false )  
+					return; 
 				this.txtName.text = this.prompt.name.toString()
 				this.txtDesc.text = this.prompt.desc.toString()
-					this.txtId.text = this.prompt.id.toString() 
-			//		this.txtTerm.text = this.prompt.searchTerm; 
+				this.txtId.text = this.prompt.id.toString() 
+				//		this.txtTerm.text = this.prompt.searchTerm; 
 				if (this.selected == false && this.currentState == 'selected' )
 					this.currentState = ''; 
+				
+				
+				this.cardtype.selectedValue = this.prompt.type; 
 				
 				setFields(); 
 			}
@@ -62,31 +72,62 @@
 			
 			private function setFields() : void
 			{
-				this.chk_PromptRequired.selected = this.prompt.required_prompt 
-				this.chk_ImagetRequired.selected = this.prompt.required_image 
-				this.chk_SoundtRequired.selected = this.prompt.required_sound 
-				this.chk_TxtRequired.selected = this.prompt.required_other 
+				this.chk_PromptRequired.selected = this.prompt.required 
 			}
 			
 			protected function ch_Visible_changeHandler(event:Event):void
 			{
 				// TODO Auto-generated method stub
-				this.prompt.required_prompt = this.chk_PromptRequired.selected; 
-				this.prompt.required_image = this.chk_ImagetRequired.selected; 
-				this.prompt.required_sound = this.chk_SoundtRequired.selected; 
-				this.prompt.required_other = this.chk_TxtRequired.selected; 
+				this.prompt.required = this.chk_PromptRequired.selected; 
 				this.prompt.updated(); 
+			}
+			
+			
+			
+			
+			protected function cardtype_itemClickHandler(event:ItemClickEvent):void
+			{
+				/* 	if ( event.currentTarget == this.radioAudio ) 
+				var t : String = PromptDefinitionVO.SOUND; 
+				if ( event.currentTarget == this.radioText ) 
+				t  = PromptDefinitionVO.TEXT; 
+				if ( event.currentTarget == this.radioMovie ) 
+				t = PromptDefinitionVO.MOVIE; 
+				if ( event.currentTarget == this.radioPic ) 
+				t  = PromptDefinitionVO.PIC;  */
+				/* 	if ( event.currentTarget == this.radioAudio ) 
+				var t : String = PromptDefinitionVO.SOUND; 		 */		
+				this.prompt.type = this.cardtype.selectedValue.toString(); 
+				this.prompt.updated(); 
+				
+			}
+			
+			protected function onInit(event:FlexEvent):void
+			{
+				var radios : Array = [this.radioAudio,this.radioText ,this.radioMovie  , this.radioPic]
+				var types : Array = [  PromptDefinitionVO.SOUND,  PromptDefinitionVO.TEXT,  PromptDefinitionVO.MOVIE, 
+					PromptDefinitionVO.PIC ] 
+				
+				for ( var i : int = 0 ; i < radios.length; i++ )
+				{
+					var r : RadioButton = radios[i] as RadioButton
+					r.value = types[i]
+				}
+				
+				this.cardtype.selectedValue = this.cardtype.selectedValue
+				
+				this.creationComplete = true; 
+				this.updateItemRenderer(null)
 			}
 			
 		]]> 
 	</fx:Script> 
 	
 	<fx:Declarations>
-		<s:Sine id="sineIn" easeInFraction="0.3" />
-	</fx:Declarations>	
-	<!--	<s:layout>
-	<s:HorizontalLayout gap="3"/>
-	</s:layout>-->
+		<s:RadioButtonGroup id="cardtype"  itemClick="cardtype_itemClickHandler(event)"
+							/>
+	</fx:Declarations>
+	
 	<s:states> 
 		<s:State name="normal"/> 
 		<s:State name="hovered"/> 
@@ -97,13 +138,13 @@
 	<s:transitions>
 		
 		<s:Transition toState="*" >
-			<s:Fade targets="{[this.bgRect]}"   easer="{sineIn}"
+			<s:Fade targets="{[this.bgRect]}"    
 					duration="350" />
 		</s:Transition>
 		
 		
 		<s:Transition toState="*" >
-			<s:AnimateColor targets="{[this.txtName, this.txtDesc ]}"   easer="{this.sineIn}"
+			<s:AnimateColor targets="{[this.txtName, this.txtDesc ]}"   
 							duration="350" />
 		</s:Transition>		
 		
@@ -126,16 +167,31 @@
 			<s:Label id="txtId" width="25" />
 			<s:TextInput id="txtName" color="0"    verticalCenter="0"  
 						 change="{this.prompt.name = this.txtName.text}"
-						 useHandCursor="true" width="160"   prompt="Name"
+						 useHandCursor="true" width="140"   prompt="Name"
 						 buttonMode="true" x="5"
 						 fontSize="12" />
 			
-			<s:CheckBox id="chk_PromptRequired" label="P" change="ch_Visible_changeHandler(event)" />
-			<s:CheckBox id="chk_ImagetRequired" label="Img" change="ch_Visible_changeHandler(event)" />
-			<s:CheckBox id="chk_SoundtRequired" label="Snd" change="ch_Visible_changeHandler(event)" />
-			<s:CheckBox id="chk_TxtRequired" label="O" change="ch_Visible_changeHandler(event)" />
-			
-			
+			<s:CheckBox id="chk_PromptRequired" label="R" toolTip="Required" change="ch_Visible_changeHandler(event)" />
+			<s:RadioButton group="{cardtype}" 
+						   id="radioText" 
+						   value="AmEx" 
+						   label="Txt" 
+						   />
+			<s:RadioButton group="{cardtype}" 
+						   id="radioPic" 
+						   value="Pic" 
+						   label="Pic" 
+						   />
+			<s:RadioButton group="{cardtype}" 
+						   id="radioMovie" 
+						   value="AmEx" 
+						   label="Mov" 
+						   />
+			<s:RadioButton group="{cardtype}" 
+						   id="radioAudio" 
+						   value="AmEx" 
+						   label="Au" 
+						   />			
 		</s:HGroup>
 		
 		<s:HGroup verticalAlign="middle">
@@ -151,12 +207,12 @@
 		</s:HGroup>
 		<!--
 		<s:HGroup verticalAlign="middle">
-			<s:TextArea id="txtTerm" color="0"     width="160" height="30" verticalCenter="0"
-						useHandCursor="true"    prompt="Description" 
-						change="{this.prompt.searchTerm = this.txtTerm.text}"
-						buttonMode="true" textAlign="left"
-						fontSize="12"   /> 
+		<s:TextArea id="txtTerm" color="0"     width="160" height="30" verticalCenter="0"
+		useHandCursor="true"    prompt="Description" 
+		change="{this.prompt.searchTerm = this.txtTerm.text}"
+		buttonMode="true" textAlign="left"
+		fontSize="12"   /> 
 		</s:HGroup>
 		
--->	</s:VGroup>
+	-->	</s:VGroup>
 </s:ItemRenderer>

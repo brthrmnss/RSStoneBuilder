@@ -29,11 +29,11 @@
 			protected function onInit(event:FlexEvent):void
 			{
 				NightStandConstants.PlatformGlobals.fxMediate( this  ) ; 
-				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.decrVolume, this.decrSoundVolume ) ; 
-				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.incrRemote, this.incrSoundVolume ) ; 
+				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.decrVolume, this.decrSoundVolume ) ; 
+				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.incrRemote, this.incrSoundVolume ) ; 
 				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.txtLogoTagLine, this.onDebug ) ; 		
 				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnChangeOs, this.onChangeOS ) 
-				
+				 NightStandConstants.PlatformGlobals.addChkboxClickEvent( this.chkMasteryMode, this.onChecked ) 
 			}
 			override public function set visible( b : Boolean ) : void{
 				super.visible = b; 
@@ -90,7 +90,18 @@
 				// TODO Auto-generated method stub
 				this.dispatchEvent(  new Event( CHANGE_OS ) ) ; 
 			}
+			protected function onChecked(event:Event):void
+			{
+				var selected : Boolean = NightStandConstants.PlatformGlobals.chkboxSelected( this.chkMasteryMode  ) 
+				this.dispatchEvent(  new Event( CHANGE_OS ) ) ; 
+			}			
 			
+			protected function onChange(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+ 
 		]]>
 	</mx:Script>
 	
@@ -98,23 +109,28 @@
 						 leftLabel="Back"/>
 	<mx:VBox paddingLeft="10" y="80" width="100%">
 		
-		<controls:Label text="Volume"/>
-		<!-- insert crazy volume control />
-		-->
+		<!--<controls:Label text="Volume"/>
+	 
 		<mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle">
 			<controls:Image id="decrVolume" height="64" scaleContent="true"
 							source="assets/buttons/Sound_Volume_Minus.png"/>
 			<controls:Text id="volumeTextSound" width="100" height="34" text="xx%" textAlign="center"/>
 			<controls:Image id="incrRemote" height="64" scaleContent="true"
 							source="assets/buttons/Sound_Volume_Plus.png"/>
-		<!--	<controls:Image id="incrRsemote" height="64" scaleContent="true"
-							source="assets/buttons/lightbulb.png"/>-->
+	 
 			
-		</mx:HBox>		
+		</mx:HBox>		-->
 		
+		<controls:Label text="Mastery Mode" fontWeight="bold"/>
+		
+		<controls:CheckBox   id="chkMasteryMode"   />
+		<controls:Text  width="100%" text="In Mastery Mode, a lesson will not finish unit you have answered all the questions right at least once" />
+		
+		<mx:Canvas width="100%" height="1"  backgroundColor="0"/>
+		<ellips:OpenPlugButton labelS="Change OS Volume"   id="btnChangeOs"/>
 		<controls:Text  width="100%" text="If volume is not loud enough, click 'Change OS Volume' and Go to 'Volume' and adjust 'Media'" />
 		<!--<controls:Button label="Change OS Volume"  fontSize="14"  id="btnChangeOs"/>-->
-		<ellips:OpenPlugButton labelS="Change OS Volume"   id="btnChangeOs"/>
+		
 	</mx:VBox>
 	
 	

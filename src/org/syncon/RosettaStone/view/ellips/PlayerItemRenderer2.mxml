@@ -11,7 +11,8 @@
 			
 			import org.syncon.RosettaStone.model.CustomEvent;
 			import org.syncon.RosettaStone.vo.LessonItemVO;
-			import org.syncon.TalkingClock.model.NightStandConstants; 
+			import org.syncon.TalkingClock.model.NightStandConstants;
+			import org.syncon2.utils.itemRenderer.ItemRendererHelpers; 
 			
 			static public const MOVE_UP : String = 'MOVE_UP.f'; 
 			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
@@ -21,11 +22,11 @@
 			public static var width:Number;
 			public static var height:Number;
 			
-			//public var help : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
+			public var help : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
 			[Bindable] public var filter :    LessonItemVO = new LessonItemVO()
 			override public function set data(value:Object):void { 
 				super.data = value; 
-				//this.help.listenForObj(value,LessonItemVO.UPDATED, this.updateItemRenderer )
+				 this.help.listenForObj(value,LessonItemVO.TEXT_DISPLAY_VISIBILITY_CHANGED, this.updateItemRenderer )
 				filter = value as LessonItemVO
 				//this.help.disableIfNull( value, new LessonItemVO, 'filter' )  
 				this.updateItemRenderer()
@@ -60,7 +61,7 @@
 				/* 		if ( e.currentTarget
 				this.filter;  */
 				txtLbl.text = this.filter.name.toString()
-				
+				this.txtLbl.visible = this.filter.showPrompt;
 				/* 	this.lblCount.text = this.notebook.noteCount.toString();
 				if ( this.notebook.name.toLowerCase() == 'all notebooks' ) 
 				this.txtLbl.setStyle('fontStye', 'italic' ) 
@@ -124,13 +125,14 @@
 			public function set selected( b : Boolean ) : void
 			{
 				this.bgSelection.visible = b; 
-				this.bgSelection2.visible = b; 				
+				//this.bgSelection2.visible = b; 				
 			}
 			
 			
 			override public function set width ( b :  Number ) : void
 			{
 				super.width = b; 
+				this.src.maxHeight = b*.65
 			}
 			protected function onTouchBegin(event:Event):void
 			{

@@ -26,6 +26,9 @@ package  org.syncon.RosettaStone.controller.Import
 		public var fxResult : Function;
 		public var item:LessonItemVO;
 		public var save:Boolean;
+		/*
+		only req'd when not sendinga prompt ... prompts have no choice
+		*/
 		public var action:String;
 		/**
 		 * overide prompt name 

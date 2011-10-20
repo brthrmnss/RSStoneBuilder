@@ -29,9 +29,11 @@
 			override public function set data(value:Object):void { 
 				super.data = value; 
 				this.help.listenForObj(value,LessonItemVO.UPDATED, this.updateItemRenderer )
-				this.help1.listenForObj(value,LessonItemVO.PROMPT_IMAGE_CHANGED, this.onPromptImageChanged )
-				this.help2.listenForObj(value,LessonItemVO.PROMPT_TEXT_CHANGED, this.onPromptTextChanged )
-				this.help3.listenForObj(value,LessonItemVO.PROMPT_VISIBILITY_CHANGED, this.onPromptVisiblityChanged )
+				//? where were these used?
+				 this.help1.listenForObj(value,LessonItemVO.DISPLAY_IMAGE_CHANGED, this.onPromptImageChanged )
+				this.help2.listenForObj(value,LessonItemVO.DISPLAY_TEXT_CHANGED, this.onPromptTextChanged ) 
+				//used to hide/show prompt, not related to PromptVO, should rename 
+				this.help3.listenForObj(value,LessonItemVO.TEXT_DISPLAY_VISIBILITY_CHANGED, this.onPromptVisiblityChanged )
 				
 				item = value as LessonItemVO
 				this.help.disableIfNull( value, new LessonItemVO, 'item' ) 
@@ -125,12 +127,12 @@
 			
 			private function onPromptImageChanged(e:Event=null):void
 			{
-				this.txtLbl.text = this.item.getPromptImage(); 
+				this.txtLbl.text = this.item.getDisplayImage(); 
 			}
 			
 			private function onPromptTextChanged(e:Event=null):void
 			{
-				this.txtLbl.text = this.item.getPromptText(); 
+				this.txtLbl.text = this.item.getDisplayText(); 
 			}
 			
 			private function onPromptVisiblityChanged(e:Event=null):void

@@ -43,40 +43,47 @@ package org.syncon.RosettaStone.view.ellips
 			eventMap.mapListener(eventDispatcher, RSModelEvent.DEBUG_MODE_CHANGED, 
 				this.onDebugModeChanged);	
 			this.onDebugModeChanged( null ) 		
-				
-				
-			this.ev.addEv( SettingsView.SOUND_DOWN, this.onSoundDown ) 
-			this.ev.addEv( SettingsView.SOUND_UP, this.onSoundUp ) 
+			
+			
+			
+			
 			
 			this.ev.addEv( SettingsView.CHANGE_OS, this.onChangeOS ) 
-				
 			
-			this.ui.volumeTextSound.text="50%";
-			volumeSound = 50;
+			//this.initSound()
+		}
+		/*
+		public function initSound() : void
+		{
+		this.ui.volumeTextSound.text="50%";
+		volumeSound = 50;
+		this.ev.addEv( SettingsView.SOUND_DOWN, this.onSoundDown ) 
+		this.ev.addEv( SettingsView.SOUND_UP, this.onSoundUp )
 		}
 		private var volumeSound:int; 
 		private function onSoundDown(e:Event):void
 		{
-			if(volumeSound>0)
-			{
-				volumeSound -= 10;
-				//SystemAPI.setVolumeSoundFile(soundID, volumeSound);
-				NightStandConstants.PlaySound.setVolume( volumeSound ) ; 
-				this.ui.volumeTextSound.text = ""+volumeSound+"%";
-				this.model.config.volume = this.volumeSound; 
-			}
+		if(volumeSound>0)
+		{
+		volumeSound -= 10;
+		//SystemAPI.setVolumeSoundFile(soundID, volumeSound);
+		NightStandConstants.PlaySound.setVolume( volumeSound ) ; 
+		this.ui.volumeTextSound.text = ""+volumeSound+"%";
+		this.model.config.volume = this.volumeSound; 
+		}
 		}
 		
 		private function onSoundUp(e:Event):void
 		{
-			if(volumeSound<100)
-			{
-				volumeSound += 10;
-				NightStandConstants.PlaySound.setVolume( volumeSound ) ; 
-				this.ui.volumeTextSound.text = ""+volumeSound+"%";
-				this.model.config.volume = this.volumeSound; 
-			}
+		if(volumeSound<100)
+		{
+		volumeSound += 10;
+		NightStandConstants.PlaySound.setVolume( volumeSound ) ; 
+		this.ui.volumeTextSound.text = ""+volumeSound+"%";
+		this.model.config.volume = this.volumeSound; 
 		}
+		}
+		*/
 		private function onChangeOS(e:Event):void
 		{
 			var ee : AndroidExtensions_OpenPlug2 = new AndroidExtensions_OpenPlug2()
@@ -98,7 +105,7 @@ package org.syncon.RosettaStone.view.ellips
 			/*
 			this.dispatch( SwitchScreensTriggerEvent.GoBack() )
 			var e :  SwitchScreensTriggerEvent =SwitchScreensTriggerEvent.GoTo(
-				SwitchScreensTriggerEvent.PLAYER_VIEW ) 
+			SwitchScreensTriggerEvent.PLAYER_VIEW ) 
 			this.dispatch( e ) */
 			//this.model.currentLesson = this.model.
 			this.modelMobile.goToPlayer( 1 ) ; 
@@ -111,10 +118,10 @@ package org.syncon.RosettaStone.view.ellips
 		private function onBack(param0:Object):void
 		{
 			this.dispatch( SwitchScreensTriggerEvent.GoBack() )
- 
+			
 		}
 		
- 
+		
 		
 		
 	}

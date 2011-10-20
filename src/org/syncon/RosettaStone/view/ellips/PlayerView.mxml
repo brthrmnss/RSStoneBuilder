@@ -2,6 +2,7 @@
 <controls:ScreenView xmlns:mx="http://www.adobe.com/2006/mxml"
 					 xmlns:mobile="org.syncon.RosettaStone.view.mobile.*"
 					 xmlns:views="views.*"
+					   horizontalScrollPolicy="off"
 					 xmlns:controls="openplug.elips.controls.*"
 					 xmlns:view="org.syncon.TalkingClock.view.mobile.view.*"
 					 creationComplete="onInit(event)" xmlns:ellips="org.syncon.RosettaStone.view.ellips.*">
@@ -23,6 +24,7 @@
 			static public const INFO : String = 'INFO' 		
 			static public const SETTINGS : String = 'SETTINGS' 		
 			static public const MENU : String = 'MENU';
+			static public const NEXT_SET : String = 'NEXT_SET';
 			
 			public var menuProvider2:MobileMenuConfigVO;
 			protected function onInit(event:FlexEvent):void
@@ -35,7 +37,9 @@
 				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnInfo, this.onInfo ) ; 
 				 */
 				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnMenu, this.onMenu ) ;				
-				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnBack, this.onBack ) ;				
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnBack, this.onBack ) ;		
+				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnNextSet, this.onNextSet ) ;		
+				
 			}
 			
 			[Bindable] public var autoStart : Boolean = false; 
@@ -87,6 +91,11 @@
 			{
 				this.dispatchEvent( new Event( MENU ) ) 
 			}
+			private function onNextSet(e:Event):void
+			{
+				this.dispatchEvent( new Event( NEXT_SET ) ) 
+			}
+			
 			
 		]]>
 	</mx:Script>
@@ -98,18 +107,20 @@
 	
 	
 	<mx:Canvas width="100%">
-		<mx:Canvas width="100%" height="100%" alpha="0.6" backgroundColor="0x262425">
+	<!--	<mx:Canvas width="100%" height="100%" alpha="0.6" backgroundColor="0x262425">
 		</mx:Canvas>
-		
+		-->
 	
+		<mx:HBox left="10" top="8"  verticalAlign="middle" >
+			<ellips:OpenPlugButton   iconS="assets/buttons/arrowleft.png"   left="10" top="8"  id="btnBack"/>
+			<controls:Label id="txtLessonInfo"   fontSize="24" width="100%"
+							color="0xFFFFFF"   textAlign="center" fontWeight="bold"
+							verticalCenter="0"/>
+		</mx:HBox>
 		
-		<controls:Label id="txtLessonInfo"   fontSize="24" width="100%"
-						 color="0xFFFFFF"   textAlign="center"
-						verticalCenter="0"/>
 		
-		<ellips:OpenPlugButton   iconS="assets/buttons/arrowleft.png"   left="10" top="10"  id="btnBack"/>
 		
-		<mx:HBox right="10" top="10" horizontalAlign="center">
+		<mx:HBox right="10" top="8" horizontalAlign="center">
 			
 			<!--	<controls:Image source="assets/buttons/lightbulb.png"/>
 			<controls:Button />-->
@@ -119,6 +130,7 @@
 			<ellips:OpenPlugButton   iconS="assets/buttons/lightbulb.png"    id="btnInfo"/>
 			<ellips:OpenPlugButton   iconS="assets/buttons/arrowleft.png"    id="btnCurriculum"/>
 			-->
+			<ellips:OpenPlugButton   iconS="assets/buttons/arrowright.png"    id="btnNextSet"/>
 			<ellips:OpenPlugButton   iconS="assets/buttons/20-gear2.png"    id="btnMenu"/>
 		</mx:HBox>
 		

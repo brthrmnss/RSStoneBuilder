@@ -79,7 +79,7 @@ package org.syncon.RosettaStone.controller.IO
 				/*this.dispatch( new CreateDefaultDataTriggerEvent(
 				CreateDefaultDataTriggerEvent.CREATE, config ) ) ;*/
 				//save this 
-				this.dispatch( new SaveLessonTriggerEvent(SaveLessonTriggerEvent.LOAD_SOUNDS, 
+				this.dispatch( new SaveLessonTriggerEvent(SaveLessonTriggerEvent.SAVE_LESSON, 
 					lesson , this.model.currentLessonPlan.getSubDir() ) ) ; 
 			}
 			lesson.retrievedContentsOnce = true; 

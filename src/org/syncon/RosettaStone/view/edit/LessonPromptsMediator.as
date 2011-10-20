@@ -70,8 +70,7 @@ package org.syncon.RosettaStone.view.edit
 		{
 			var d :  PromptDefinitionVO = new PromptDefinitionVO()
 			d.name = 'New'
-			d.id = this.currentLesson.getNextPromptDefId(); 
-			this.model.currentLesson.prompts.addItem( d ) ; 
+			this.model.currentLesson.addPrompt( d ) ; 
 			
 			//this.dispatch(  new CreateDefaultDataTriggerEvent(CreateDefaultDataTriggerEvent.CREATE, d) ) 
 			
@@ -94,7 +93,7 @@ package org.syncon.RosettaStone.view.edit
 			this.currentLesson = lesson; 
 			if ( lesson != null ) 
 			{
-				var dp : ArrayCollection =lesson.prompts 
+				var dp : ArrayCollection =lesson.getPrompts() 
 			}
 			else
 				dp = new ArrayCollection(); 			

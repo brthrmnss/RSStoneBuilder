@@ -1,7 +1,7 @@
 package org.syncon.RosettaStone.test.suites
 {
-	import org.syncon.RosettaStone.test.cases.TestEvernoteService;
-	import org.syncon.evernote.test.cases.TestEvernoteServiceNotesV2;	
+	import org.syncon.RosettaStone.test.cases.TestUpdateManyLessonItems;
+		
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class EvernoteTestSuite
@@ -11,6 +11,6 @@ package org.syncon.RosettaStone.test.suites
 		public var testGalleryLabel:TestGalleryLabelMediation;
 		public var testGalleryViewMediation:TestGalleryViewMediation;*/
 		//public var testGalleryModel:TestEvernoteService;
-		public var testEvernoteBasics:TestEvernoteServiceNotesV2;		
+		public var testEvernoteBasics:TestUpdateManyLessonItems;		
 	}
 }

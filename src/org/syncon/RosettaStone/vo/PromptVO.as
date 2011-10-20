@@ -30,10 +30,7 @@ package  org.syncon.RosettaStone.vo
 		public var required_sound : Boolean = false; 
 		public var required_other : Boolean = false;
 		*/
-		public var prompt : String; 
-		public var image : String; 
-		public var sound : String; 
-		public var other : String; 
+		public var data : String; 
 		public var parent_id:int;
 		//public var image_copyright:Object;
 		
@@ -45,10 +42,7 @@ package  org.syncon.RosettaStone.vo
 			this.name = input.name; 
 			this.parent_id = input.parent_id; 
 			
-			this.prompt = input.prompt; 
-			this.image = input.image; 
-			this.sound = input.sound; 
-			this.other = input.other; 
+			this.data = input.data; 
 			
 			this.image_attribution = input.image_attribution
 			this.image_author = input.image_author
@@ -64,14 +58,11 @@ package  org.syncon.RosettaStone.vo
 			output.name = this.name; 
 			output.parent_id = this.parent_id; 
 			
-			output.prompt = this.prompt; 
-			output.image = this.image; 
-			output.sound = this.sound; 
-			output.other = this.other; 
+			output.data = this.data; 
 			
 			output.image_attribution = this.image_attribution
 			output.image_author = this.image_author
-				
+			
 			/*output.required_prompt = this.required_prompt; 
 			output.required_image = this.required_image; 
 			output.required_sound = this.required_sound; 
@@ -113,18 +104,9 @@ package  org.syncon.RosettaStone.vo
 			for  ( var i : int = 0 ; i < outputItems.length; i++ )
 			{
 				var p : PromptVO =  outputItems[i] as  PromptVO
-				if ( p.image == null || p.image == '' ) 
+				if ( p.data == null || p.data == '' ) 
 				{
-					if ( p.prompt == null || p.prompt == '' ) 
-					{
-						if ( p.sound == null || p.sound == '' ) 
-						{
-							if ( p.other == null || p.other == '' ) 
-							{
-								continue 
-							}
-						}
-					}
+					continue 
 				}
 				items.push( p.export()) ; 
 			}

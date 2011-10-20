@@ -88,6 +88,9 @@ package  org.syncon.RosettaStone.view.ellips
 			{
 				dp = new ArrayCollection(); 
 			}
+			
+			
+			
 			this.ui.list['dataProvider'] = dp
 			//this.ui.btnSave.enabled = false; 
 		}		
@@ -157,7 +160,7 @@ package  org.syncon.RosettaStone.view.ellips
 			return; 
 		}	
 		
-		
+
 		
 	}
 }
