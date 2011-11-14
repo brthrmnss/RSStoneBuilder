@@ -18,9 +18,10 @@ package  org.syncon.RosettaStone.controller.Import
 		public static const PIC:String = 'PIC-UPDATE_ITEM.';
 		
 		
-		
-		
-		
+		/**
+		 * -1 means random 
+		 * */
+		public var resultSelection : int = 0 ; 
 		
 		public var input : String;
 		public var fxResult : Function;
@@ -41,7 +42,7 @@ package  org.syncon.RosettaStone.controller.Import
 		public var data:Object;
 		public function UpdateLessonItemCommandTriggerEvent(type:String   , input : String, ls : LessonItemVO, 
 																  fxR : Function, action : String, save : Boolean = true , query : String = null , 
-																  queryPost : String = null) 
+																  queryPost : String = null, resultSelection : int = 0 ) 
 		{	
 			this.input = input
 			this.fxResult = fxR
@@ -51,7 +52,7 @@ package  org.syncon.RosettaStone.controller.Import
 			
 			this.query = query; 
 			this.queryPost = queryPost; 
-			
+			this.resultSelection = resultSelection; 
 			super(type, true);
 		}
 		

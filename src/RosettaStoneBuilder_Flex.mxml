@@ -15,13 +15,14 @@
 			
 			import org.syncon.RosettaStone.model.NightStandConstants;
 			import org.syncon2.utils.file.LoadConfig_Flex;
+			import org.syncon2.utils.file.ServerMultimedia;
 			
 			protected function application1_initializeHandler(event:FlexEvent):void
 			{
 				NightStandConstants.flex = true;
 				NightStandConstants.FileLoader = new LoadConfig_Flex()
 				NightStandConstants.ResourcesDir = 'assets' + '/'// why is this  aproblem
-				
+				NightStandConstants.Server2 = new ServerMultimedia(); //IServerMultimedia
 				var dbg : Array = [	LoadConfig_Flex.getDir('/d/g'),
 					LoadConfig_Flex.getDir('/d/g/'),LoadConfig_Flex.getDir('/d/g.json')
 				] 
@@ -68,11 +69,11 @@
 <!--	<apps:RS_MobileAppAprox />-->
 <!-- <apps:YoutubeTester />
 	-->
-	<apps:RSTests />
-	 	<apps:RSFlexUnitTests /> 
-	 <!--
+<!--	<apps:RSTests />
+	 	<apps:RSFlexUnitTests /> -->
+ 
 	<s:Scroller  width="100%" height="100%"     >
 		<apps:FlexBaseTester/>
 	</s:Scroller>
-	 -->
+ 
 </s:Application>

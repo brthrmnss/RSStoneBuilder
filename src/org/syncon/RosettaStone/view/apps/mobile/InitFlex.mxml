@@ -25,6 +25,16 @@
 			import org.syncon2.utils.sound.PlaySound_Flex;
 			
 			
+			
+			public function set baseFolder( str : String ) : void
+			{
+				_baseFolder = str
+				LoadConfig_Flex.baseFolder = _baseFolder 
+				ConfigCommand.CONFIG_LOCATION = _baseFolder;
+			}
+			private var _baseFolder : String; //won' wrok if you don' set it 
+			//'G:/My Documents/work/mobile3/SoundboardFlex/bin-debug/assets/'
+			
 			protected function onInitilze(event:FlexEvent):void
 			{
 				
@@ -46,8 +56,8 @@
 					
 				NightStandConstants.loadFolder = 'jjudy'
 				NightStandConstants.FileLoader = new  LoadConfig_Flex(); 
-				LoadConfig_Flex.baseFolder = 'G:/My Documents/work/mobile3/SoundboardFlex/bin-debug/assets/'
-				ConfigCommand.CONFIG_LOCATION =  'G:/My Documents/work/mobile3/SoundboardFlex/bin-debug/assets/'
+				LoadConfig_Flex.baseFolder = _baseFolder 
+				ConfigCommand.CONFIG_LOCATION = _baseFolder;// 'G:/My Documents/work/mobile3/SoundboardFlex/bin-debug/assets/'
 			}
 			
 			public var mediateUI  : Function; 

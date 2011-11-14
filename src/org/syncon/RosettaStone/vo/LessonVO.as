@@ -28,7 +28,23 @@ package  org.syncon.RosettaStone.vo
 		static public const EXPORT_STRING_CHANGED : String = 'EXPORT_STRING_CHANGED';
 		
 		
-		[Transient]  public var baseFolder : String = ''; 
+		[Transient]  private var _baseFolder : String = '';
+		[Transient]
+		/**
+		 * set when loading in items the first time 
+		 * */
+		public function get baseFolder():String
+		{
+			return _baseFolder;
+		}
+		
+		/**
+		 * @private
+		 */
+		public function set baseFolder(value:String):void
+		{
+			_baseFolder = value;
+		}
 		public var url : String = ''; 
 		
 		private var _test:Boolean=false;
@@ -132,6 +148,7 @@ package  org.syncon.RosettaStone.vo
 		private var lastExportPreview :String ; 
 		public var retrievedContentsOnce:Boolean;
 		public var randomize_lesson:Boolean;
+		public var currentPromptDef:PromptDefinitionVO;
 		
 		public function previewExport() : void
 		{

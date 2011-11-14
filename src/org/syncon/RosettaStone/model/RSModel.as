@@ -143,6 +143,17 @@ package org.syncon.RosettaStone.model
 		public function get currentPromptDefinition(): PromptDefinitionVO 	{ return _currentPromptDefinition; }
 		public function set currentPromptDefinition(value:PromptDefinitionVO):void { 
 			_currentPromptDefinition = value;
+			
+			this.currentLesson.currentPromptDef = value; 
+			//is this an ok assumption to make that it is here?
+			for each ( var item : LessonItemVO in this.currentLesson.items ) 
+			{
+				item.setPromptDefinition( this.currentPromptDefinition, true, this.currentLesson.clonePrompts  )
+				item.currentPrompt 
+			}
+			
+			
+			
 			//	if ( value != null ) 
 			//			value.folder = NightStandConstants.ResourcesDir+this.lessonDir()
 			this.dispatch( new RSModelEvent( RSModelEvent.CURRENT_PROMPT_DEFINITION_CHANGED, value ) ) 

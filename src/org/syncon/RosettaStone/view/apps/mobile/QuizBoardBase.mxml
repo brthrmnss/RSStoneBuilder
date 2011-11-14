@@ -42,6 +42,7 @@
 		]]>
 	</mx:Script>
 	<mobile1:InitFlex id="initFlex" goToScreen2="{this.base.changeView}"
+					    baseFolder="G:/My Documents/work/mobile3/SoundboardFlex/bin-debug/assets"
 					  mediateUI="{this.base.context.mapMediator}"/>
 	<mobile1:SoundBoardBase id="base" holder="{this.quizboardstuff.holder}" 
 							 holderParent="{this.quizboardstuff}"

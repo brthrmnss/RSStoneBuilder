@@ -151,7 +151,7 @@ package org.syncon.RosettaStone.vo
 			if ( txt == '' ||txt == null ) 
 				return ''; 
 			if ( appendFolder ) 
-				return this.folder+'/'+txt; 
+				return this.folder+'/'+txt;  
 			return txt
 		}
 		

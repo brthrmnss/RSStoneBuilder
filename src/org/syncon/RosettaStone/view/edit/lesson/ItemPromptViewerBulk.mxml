@@ -140,7 +140,7 @@
 			}
 			protected function onPlay_Other(event:MouseEvent):void
 			{
-				this.dispatchEvent( new CustomEvent( PLAY, [this.item,this.item.getPromptData()]  ) ) ; 
+				this.dispatchEvent( new CustomEvent( PLAY, [this.item,this.item.getPromptData(null, false)]  ) ) ; 
 			}
 			
 			private function includeUI(src:UIComponent):void

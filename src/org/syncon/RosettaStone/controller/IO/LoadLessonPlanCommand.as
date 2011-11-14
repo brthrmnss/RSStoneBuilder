@@ -18,7 +18,7 @@ package org.syncon.RosettaStone.controller.IO
 		public var injections  : Array = ['model', RSModel] 
 		override public function execute():void
 		{
-			if ( event.type == LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN ) 
+			if ( event.type  == LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN ) 
 			{
 				if ( event.group.url == '' ) 
 					event.group.url = "config.json"

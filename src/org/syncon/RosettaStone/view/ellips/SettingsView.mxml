@@ -33,7 +33,7 @@
 				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.incrRemote, this.incrSoundVolume ) ; 
 				//NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.txtLogoTagLine, this.onDebug ) ; 		
 				NightStandConstants.PlatformGlobals.addPlatformClickEvent( this.btnChangeOs, this.onChangeOS ) 
-				 NightStandConstants.PlatformGlobals.addChkboxClickEvent( this.chkMasteryMode, this.onChecked ) 
+				// NightStandConstants.PlatformGlobals.addChkboxClickEvent( this.chkMasteryMode, this.onChecked ) 
 			}
 			override public function set visible( b : Boolean ) : void{
 				super.visible = b; 
@@ -90,12 +90,12 @@
 				// TODO Auto-generated method stub
 				this.dispatchEvent(  new Event( CHANGE_OS ) ) ; 
 			}
-			protected function onChecked(event:Event):void
+	/* 		protected function onChecked(event:Event):void
 			{
 				var selected : Boolean = NightStandConstants.PlatformGlobals.chkboxSelected( this.chkMasteryMode  ) 
 				this.dispatchEvent(  new Event( CHANGE_OS ) ) ; 
 			}			
-			
+			 */
 			protected function onChange(event:Event):void
 			{
 				// TODO Auto-generated method stub
@@ -120,12 +120,12 @@
 	 
 			
 		</mx:HBox>		-->
-		
+		<!--
 		<controls:Label text="Mastery Mode" fontWeight="bold"/>
 		
 		<controls:CheckBox   id="chkMasteryMode"   />
 		<controls:Text  width="100%" text="In Mastery Mode, a lesson will not finish unit you have answered all the questions right at least once" />
-		
+		-->
 		<mx:Canvas width="100%" height="1"  backgroundColor="0"/>
 		<ellips:OpenPlugButton labelS="Change OS Volume"   id="btnChangeOs"/>
 		<controls:Text  width="100%" text="If volume is not loud enough, click 'Change OS Volume' and Go to 'Volume' and adjust 'Media'" />

@@ -7,17 +7,18 @@
 	
 	<fx:Script> 
 		<![CDATA[ 
-			import org.syncon2.utils.itemRenderer.ItemRendererHelpers_PositionControls;
-			import org.syncon2.utils.itemRenderer.ItemRendererHelpers;
 			import org.syncon.RosettaStone.model.CustomEvent;
 			import org.syncon.RosettaStone.vo.LessonItemVO;
 			import org.syncon.RosettaStone.vo.LessonVO;
+			import org.syncon2.utils.itemRenderer.ItemRendererHelpers;
+			import org.syncon2.utils.itemRenderer.ItemRendererHelpers_PositionControls;
 			static public const MOVE_UP : String = 'MOVE_UP.f'; 
 			static public const MOVE_DOWN : String = 'MOVE_DOWN.f' ; 
 			static public const DELETE : String = 'DELETE.f'; //export before delete 
 			static public const CHANGED_FILTER_FROM_RENDERER : String = 'CHANGED_FILTER';
 			static public const COPY_FILTER : String = 'COPY_FILTER';
 			static public const PLAY_ITEM : String = 'PLAY_ITEM';
+			static public const IGNORE : String = 'IGNORE';
 			
 			private var help : ItemRendererHelpers = new ItemRendererHelpers(this ) ; 
 			private var help2 : ItemRendererHelpers_PositionControls = new ItemRendererHelpers_PositionControls(this ) ; 
@@ -62,6 +63,7 @@
 			protected function onDelete():void
 			{
 				this.dispatchEvent( new CustomEvent( DELETE, this.item ) ) ; 
+				this.ignoreMe(); 
 			}			
 			
 			protected function onCopy():void
@@ -98,6 +100,11 @@
 			{
 				// TODO Auto-generated method stub
 				this.item.editSelected = this.chk_boxSelected.selected; 
+				this.ignoreMe() 
+			}
+			public function ignoreMe() : void
+			{
+				this.dispatchEvent( new CustomEvent( IGNORE , this.item )  ) ; 
 			}
 			
 		]]> 

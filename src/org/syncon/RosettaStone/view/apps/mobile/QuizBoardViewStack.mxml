@@ -21,7 +21,7 @@
 			import mx.events.FlexEvent;
 			
 			import openplug.elips.device.Capabilities;
-			import openplug.elips.services.SystemAPI;
+
 			
 			import org.syncon.TalkingClock.model.NightStandConstants;
 			import org.syncon2.utils.mobile.ads.Smaato.SmaatoProvider;
@@ -62,8 +62,8 @@
 			public function loadAds() : void
 			{
 				this.myPhone = NightStandConstants.personalMachine
-				var bbbbb : Object =  openplug.elips.device.Capabilities.getDeviceCapabilities()
-				var bb : String = openplug.elips.device.Capabilities.getDeviceCapabilities().os.name
+				//var bbbbb : Object =  openplug.elips.device.Capabilities.getDeviceCapabilities()
+				//var bb : String = openplug.elips.device.Capabilities.getDeviceCapabilities().os.name
 				var onC : Boolean = NightStandConstants.PlatformGlobals.onComputer; 
 				if ( this.myPhone == false && onC == false ) 
 				{
@@ -85,8 +85,8 @@
 				if ( loadReal  ) 
 				{
 					ss  = new SmaatoProvider( 923846506, 65744800, 60*5, false, true )  
-					ss.ownid =  SystemAPI.getDeviceUID()
-					
+					//ss.ownid =  SystemAPI.getDeviceUID()
+					ss.ownid = GetDeviceId(); 
 					ss.addEventListener( Event.CHANGE, onSmaatoProviderChanged, false, 0, true);
 				}
 				else
@@ -168,6 +168,8 @@
 				
 			}
 			
+			
+			static public  var   GetDeviceId  : Function; 
 		]]>
 	</mx:Script>
 	

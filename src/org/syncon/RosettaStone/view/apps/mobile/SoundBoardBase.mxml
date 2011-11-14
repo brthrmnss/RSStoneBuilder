@@ -128,15 +128,20 @@
 			{
 				return this.holder.selectedChild
 			}
-			
+			public function getScreen( screen : String ) : Object
+			{
+				if ( screen == '' || screen == null ) 
+					 return  this.holder.getChildAt( 0  )//['id']
+				return   holderParent[screen]
+			}
 			
 			protected var currentScreen : String = ''; 
-			public function changeView(screen : String, data : Object = null ):void
+			public function changeView(screen : String, data : Object = null ): Object
 			{
 				var defaultScreen : String = 'holder'; //or top index ....
 				if ( currentScreen == screen ) 
-					return; 
-				if ( screen == '' ) 
+					return this.holder.selectedChild; 
+				if ( screen == '' || screen == null ) 
 					screen = this.holder.getChildAt( 0  )['id']
 				if ( this.holderParent != null ) 
 				{
@@ -156,6 +161,8 @@
 				o.dispatchEvent( new Event('showing')); 
 				
 				this.currentScreen = screen; 
+				
+				return o;
 			}
 			
 			protected function frontPage_addedHandler(event:Event):void
@@ -171,6 +178,8 @@
 			
 			private function importRsStuff():void
 			{
+				if ( rsMode == false ) 
+					return; 
 				import org.syncon.RosettaStone.model.NightStandConstants;
 				org.syncon.RosettaStone.model.NightStandConstants.ResourcesDir = 'assets/'
 				org.syncon.RosettaStone.model.NightStandConstants.FileLoader = org.syncon.TalkingClock.model.NightStandConstants.FileLoader
@@ -199,6 +208,11 @@
 			{
 				var arrOfMenuItems :Object = null 
 				var _holder : Object = this.holder; 
+				
+				//initially this is not set 
+				if ( this.currentScreen == '' && this.holder.selectedChild != null ) 
+					this.currentScreen = this.holder.selectedChild.id; 
+				
 				if ( this.holderParent != null ) 
 				{
 					_holder = holderParent;
@@ -236,16 +250,21 @@
 			 * */
 			public var holderParent:Object;
 			private var _quizMode:Boolean;
+			public var rsMode:Boolean=true;
+			public var soundMode:Boolean=false;
 			
 			public function set quizMode( b : Boolean  ) : void
 			{
 				this._quizMode = true ;
 			}
+			
+			
+			
 		]]>
 	</mx:Script>
  
 	<TalkingClock:ContextNightStand id="context" contextView="{this}" debugging="true"
-									soundMode="{false}" wait__="true"/> 
+									soundMode="{this.soundMode}" wait__="true"/> 
  
 	
 </mx:Canvas>

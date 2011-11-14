@@ -123,12 +123,8 @@ package org.syncon.RosettaStone.view.edit
 		{
 			/*this.model.currentDate = e.data as DateXMLVO;*/
 			this.model.currentPromptDefinition = e.data as PromptDefinitionVO;
-			for each ( var item : LessonItemVO in this.currentLesson.items ) 
-			{
-				item.setPromptDefinition( this.model.currentPromptDefinition, true, this.model.currentLesson.clonePrompts  )
-				item.currentPrompt 
-			}
 			
+
 			
 			//if ( this.model.currentLessonPlan.loaded == false )
 			/*var group : LessonGroupVO =this.model.currentLessonPlan

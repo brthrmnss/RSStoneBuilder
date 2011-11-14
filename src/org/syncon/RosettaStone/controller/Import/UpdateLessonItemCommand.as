@@ -1,21 +1,17 @@
 package org.syncon.RosettaStone.controller.Import
 {
 	
-	import mx.collections.ArrayList;
-	
 	import org.robotlegs.mvcs.Command;
+	import org.syncon.RosettaStone.controller.IO.SaveManyUrlsCommandTriggerEvent;
 	import org.syncon.RosettaStone.controller.Search.SearchDictionaryTriggerEvent;
 	import org.syncon.RosettaStone.controller.Search.SearchImagesTriggerEvent;
 	import org.syncon.RosettaStone.controller.Search.SearchYoutubeCommandTriggerEvent;
 	import org.syncon.RosettaStone.model.NightStandConstants;
 	import org.syncon.RosettaStone.model.RSModel;
 	import org.syncon.RosettaStone.vo.LessonItemVO;
-	import org.syncon.RosettaStone.vo.LessonSetVO;
 	import org.syncon.RosettaStone.vo.PromptVO;
 	import org.syncon.RosettaStone.vo.SearchResultVO;
 	import org.syncon.RosettaStone.vo.SearchVO;
-	import org.syncon2.utils.MakeVOs;
-	import org.syncon2.utils.data.GoThroughEach;
 	
 	
 	
@@ -24,6 +20,8 @@ package org.syncon.RosettaStone.controller.Import
 		[Inject] public var model:RSModel;
 		[Inject] public var event:UpdateLessonItemCommandTriggerEvent;
 		private var currentLessonItem: LessonItemVO;
+		private var count:int;
+		private var lastResults:SearchResultVO;
 		override public function execute():void
 		{
 			if ( event.type == UpdateLessonItemCommandTriggerEvent.UPDATE_ITEM ) 
@@ -145,8 +143,23 @@ package org.syncon.RosettaStone.controller.Import
 		
 		private function onImagesReturned(e:SearchResultVO):void
 		{
-			var s : SearchVO = e.results[0]
+			if ( e.results.length ==  0 )
+			{
+				
+				this.termiate('not enough images'); 
+				return
+			}
+			var s : SearchVO = e.results[this.event.resultSelection] //what happens if not enough ? ...
+			
 			this.downloadImage( s.url )  ;
+			
+		}
+		
+		private function termiate(param0:String):void
+		{
+			trace(param0, 'terminating early', this.event.item.name ) ; 
+			if ( this.event.fxResult != null ) 
+				this.event.fxResult( this.event.item ) ; 
 		}
 		
 		private function downloadImage(  url : String ) : void
@@ -168,10 +181,10 @@ package org.syncon.RosettaStone.controller.Import
 		public function getQuery ()  : String
 		{
 			var query : String  = this.event.item.name; 
-			if ( this.event.item.currentPrompt != null )
+			/*if ( this.event.item.currentPrompt != null ) //user query 
 			{
 				query = this.event.item.currentPrompt.name ; 
-			}
+			}*/
 			if ( this.event.query != null && this.event.query != '' ) 
 			{
 				query = event.query
@@ -202,14 +215,17 @@ package org.syncon.RosettaStone.controller.Import
 		{
 			this.currentLessonItem.pronunciation = searchDicResult.data;
 			var url : String = unescape(searchDicResult.url)
-			NightStandConstants.FileLoader.downloadFileTo(url, this.model.lessonDir(), 
-				this.currentLessonItem.name+'.***', this.onSavedSound, true )
+			this.dispatch( SaveManyUrlsCommandTriggerEvent.SaveFiles( this.model.lessonDir(), 
+				url, this.currentLessonItem.name , this.onSavedSound ))
+			/*NightStandConstants.FileLoader.downloadFileTo(url, this.model.lessonDir(), 
+			this.currentLessonItem.name+'.***', this.onSavedSound, true )*/
 		}
 		
 		public function onSavedSound(filename:String):void
 		{
-			this.currentLessonItem.sound = filename;
-			this.currentLessonItem.update()
+			//this.currentLessonItem.sound = filename;
+			//this.currentLessonItem.update()
+			this.updateItem( 'sound', filename ) 
 		}
 		
 		
@@ -220,19 +236,30 @@ package org.syncon.RosettaStone.controller.Import
 				this.getQuery() , this.onAudiosReturned ) ) 
 		}
 		
-		private function onAudiosReturned(e:SearchResultVO ):void
+		private function onAudiosReturned(e:SearchResultVO , offset : int = 0 ):void
 		{
-			var s : SearchVO = e.results[0]
+			this.lastResults = e; 
+			var s : SearchVO = e.results[this.event.resultSelection+offset]
 			var url  : String = s.data; //'y'+s.url 
 			this.downloadAudio( url ) 
 		}
 		public function downloadAudio( url : String ) : void
 		{
+			count = 0 ; 
 			NightStandConstants.Server2.downloadVideoFileTo( url, this.model.lessonDir(), 
-				this.getName(), this.onSavedAudio, true )
+				this.getName(), this.onSavedAudio, this.onSavedAudioFault, true )
 			return; 
 		}
-		
+		public function onSavedAudioFault(e:Object=null):void
+		{
+			count++
+			if ( count == 2 ) 
+			{
+				throw 'failed on 2nd time' 
+				return;
+			}
+			this.onAudiosReturned( this.lastResults,  count) ; 
+		}
 		public function onSavedAudio(e:Object):void
 		{
 			this.updateItem( 'other', e ) 
@@ -245,19 +272,30 @@ package org.syncon.RosettaStone.controller.Import
 				this.getQuery() , this.onVideosReturned ) ) 
 		}
 		
-		private function onVideosReturned(e:SearchResultVO ):void
+		private function onVideosReturned(e:SearchResultVO, offset : int = 0  ):void
 		{
-			var s : SearchVO = e.results[0]
+			this.lastResults = e; 
+			var s : SearchVO = e.results[this.event.resultSelection+offset]
 			var url  : String = s.data; //'y'+s.url 
 			this.downloadVideo( url ) 
 		}
 		public function downloadVideo( url : String ) : void
 		{
+			count = 0 ; 
 			NightStandConstants.Server2.downloadVideoFileTo( url, this.model.lessonDir(), 
-				this.getName(), this.onSavedVideo, false )
+				this.getName(), this.onSavedVideo, this.onSavedVideoFault, false )
 			return; 
 		}
-		
+		public function onSavedVideoFault(e:Object=null):void
+		{
+			count++
+			if ( count == 2 ) 
+			{
+				throw 'failed on 2nd time' 
+				return;
+			}
+			this.onVideosReturned( this.lastResults,  count) ; 
+		}
 		public function onSavedVideo(e:Object):void
 		{
 			this.updateItem( 'other', e ) 

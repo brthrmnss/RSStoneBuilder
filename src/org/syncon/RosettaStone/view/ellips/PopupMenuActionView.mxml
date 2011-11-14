@@ -79,7 +79,7 @@
 	
 	<mx:ArrayCollection id="dp" source="{[]}"/>
 	
-	<mx:VBox id="holderList" top="120" bottom="80" width="100%" paddingLeft="10" paddingRight="10"
+	<mx:VBox id="holderList" top="120" bottom="10" width="100%" paddingLeft="10" paddingRight="10"
 			 paddingTop="10">
 		<controls:Label fontSize="24" text="Options"/>
 		<mx:Canvas width="100%" height="100%">

@@ -3,7 +3,7 @@
 					  xmlns:s="library://ns.adobe.com/flex/spark"
 					  xmlns:popup1="org.syncon.NightStand.view.popup.*"
 					  width="100%" height="100%" backgroundAlpha="0.0" creationComplete="onInit()"
-					  implements="org.syncon.popups.view.IPopup" xmlns:popup="org.syncon.RosettaStone.view.popup.*" xmlns:mobile="org.syncon.RosettaStone.view.mobile.*" xmlns:search="org.syncon.RosettaStone.view.edit.search.*" xmlns:rs="org.syncon.RosettaStone.view.popup.rs.*" xmlns:edit="org.syncon.RosettaStone.view.edit.*" xmlns:mx="library://ns.adobe.com/flex/mx">
+					  implements="org.syncon.popups.view.IPopup" xmlns:popup="org.syncon.RosettaStone.view.popup.*" xmlns:mobile="org.syncon.RosettaStone.view.mobile.*" xmlns:search="org.syncon.RosettaStone.view.edit.search.*" xmlns:rs="org.syncon.RosettaStone.view.popup.rs.*" xmlns:edit="org.syncon.RosettaStone.view.edit.*">
 	
 	<fx:Metadata> 
 		[Event(name="cancel", type="flash.events.Event")] 		
@@ -29,9 +29,6 @@
 			static public const SETUP : String = 'setup'; 	
 			
 			static public const NEXT_ITEM : String = 'NEXT_LESSON'; 	
-			static public const ALL : String = 'ALL'; 	
-			static public const AUTOMATE : String = 'AUTOMATE'; 	
-			static public const CHANGE_PROMPT : String = 'CHANGE_PROMPT'; 	
 			static public const CHANGE_ITEM : String = 'CHANGE_ITEM_OF_VARS'; 	
 			
 			public var creationComplete : Boolean = false; 
@@ -107,46 +104,30 @@
 				}
 				
 				this.show()
-				this.popupCode.open(false, true ) ;//,false  ) ;  
 				this.fxDone = fxDone; 
 				this.dispatchEvent( new Event (SETUP   )) 
 			}
  		
-			protected function list_changeHandler(event: IndexChangeEvent, wait : Boolean = true):void
+			protected function list_changeHandler(event: IndexChangeEvent):void
 			{
-				if ( wait ) 
-				{
-					setTimeout( this.list_changeHandler, 100, event, false  ) 
-					return; 
-				}
+				
 				if ( event.newIndex == -1 ) return; 
-				this.dispatchEvent( new CustomEvent( CHANGE_ITEM,  
+				
+				  this.dispatchEvent( new CustomEvent( CHANGE_ITEM,  
 				this.list.dataProvider.getItemAt(event.newIndex)  ) )  
 			}
 			
 			protected function onNextItem(event:MouseEvent):void
 			{
+				// TODO Auto-generated method stub
+				
 				this.dispatchEvent( new Event( NEXT_ITEM ) )  
 			}
 			
 			protected function onChangeTxtQueryPre(event:Event):void
 			{
+				// TODO Auto-generated method stub
 				this.searchYoutube.txtPre = this.txtQueryPre.text; 
-			}
-			
-			protected function onChangeList(event:IndexChangeEvent):void
-			{
-				this.dispatchEvent( new Event( CHANGE_PROMPT ) )  
-			}
-			
-			protected function onAll(event:MouseEvent):void
-			{
-				this.dispatchEvent( new Event( ALL ) )  
-			}
-			
-			protected function onAutomate(event:MouseEvent):void
-			{
-				this.dispatchEvent( new Event( AUTOMATE ) )
 			}
 			
 		]]>
@@ -161,21 +142,13 @@
 	<popup:PopupBgWhite alpha="1"/>
 	<s:Group width="100%" height="100%" > 
 		<s:VGroup paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"  >
-			<s:HGroup verticalAlign="bottom">
-				<s:Label color="0xd2d2d2" fontSize="50" fontStyle="italic" rotation="0" text="Search"/>
-				<s:ComboBox id="boxCombo"  labelField="name"  change="onChangeList(event)"/>
-				<s:Button label="All" click="onAll(event)" toolTip="Select All" />
-			</s:HGroup>
+			<s:Label text="Search" />
 			<s:HGroup  >
 				<!--<rs:ListItemsSelectable  id="list"/>-->
 				<s:VGroup id="holderList">
-					<mx:HBox id="holderListControls">
-						<s:Button  label="Next" click="onNextItem(event)" />
-						<s:Button  label="Automate" click="onAutomate(event)" />
-						
-					</mx:HBox>
-
-					<s:List id="list" width="100%" borderVisible="false" height="400"
+					<s:Button  label="Next" click="onNextItem(event)" />
+					
+					<s:List id="list" width="100%" borderVisible="false"
 							change="list_changeHandler(event)" contentBackgroundAlpha="0"
 							itemRenderer="org.syncon.RosettaStone.view.popup.rs.PopupUpdateMultipleItemBulkRenderer">
 						<s:layout>
@@ -198,8 +171,6 @@
 				</s:VGroup>
 
 			</s:HGroup>
-			
-			<rs:ItemBulkRenderer id="viewer"   disableTransitions="false"/>
 		</s:VGroup>
 		
 	</s:Group>

@@ -5,6 +5,7 @@
 	<mx:Script>
 		<![CDATA[
 			import mvc.controller.SwitchScreensCommand;
+			import mvc.controller.SwitchScreensTriggerEvent;
 			
 			import mx.events.FlexEvent;
 			
@@ -40,6 +41,9 @@
 				NightStandConstants.debug = true
 				SwitchScreensCommand.fxSwitchScreens = this.goToScreen2; 
 				SwitchScreensCommand.forceFlex = true; 
+				SwitchScreensCommand.getScreenByName = getScreen; 
+				SwitchScreensCommand.getAppWidth = getAppWidth; 
+				SwitchScreensCommand.history.push(    SwitchScreensTriggerEvent.GoTo( ) ) ; 
 				ShowAlertMessageCommand2.fxAlert = Alert.show
 				if ( File.applicationDirectory.nativePath.indexOf('G:') == 0 )
 				{
@@ -79,7 +83,8 @@
 			
 			public var mediateUI  : Function; 
 			public var goToScreen2 : Function; 
-			
+			public var getScreen : Function; 
+			public var getAppWidth : Function; 
 			protected function onInit(event:FlexEvent):void
 			{
 				// TODO Auto-generated method stub

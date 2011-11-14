@@ -6,8 +6,8 @@ package org.syncon.RosettaStone.vo
 	
 	import spark.components.Button;
 	import flash.events.MouseEvent;
- 
- 
+	
+	
 	public class ItemRendererHelpers
 	{
 		public var _this:Object; 
@@ -56,7 +56,8 @@ package org.syncon.RosettaStone.vo
 		
 		public function setupParent( p : Object ) : void
 		{
-			this.arr.arr1 = p.dataProvider; 
+			if ( p.hasOwnProperty('dataProvider' ) ) 
+				this.arr.arr1 = p.dataProvider; 
 		}
 		
 		public var arr : ArrayListMoveableHelper = new ArrayListMoveableHelper(); 
@@ -71,14 +72,14 @@ package org.syncon.RosettaStone.vo
 			}
 			up.addEventListener( MouseEvent.CLICK, this.onUp, false, 0, true ) ;
 			this.oldUp = up
-				
+			
 			if ( down != oldDown && oldDown != null ) 
 			{
 				oldDown.removeEventListener( MouseEvent.CLICK, this.onDown ) ;
 			}
 			down.addEventListener( MouseEvent.CLICK, this.onDown, false, 0, true ) ; 
 			this.oldUp = down
-				
+			
 			if ( remove != oldRemove && oldRemove != null )  
 			{
 				oldRemove.removeEventListener( MouseEvent.CLICK, this.onRemove ) ;
@@ -101,9 +102,9 @@ package org.syncon.RosettaStone.vo
 			this.arr.trypToRemove( this._this.data ) ; 
 		}
 		
-		 
 		
-
+		
+		
 		
 	}
 }

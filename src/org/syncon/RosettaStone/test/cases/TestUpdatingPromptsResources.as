@@ -14,8 +14,16 @@ package org.syncon.RosettaStone.test.cases
 	import org.syncon.RosettaStone.model.RSModel;
 	import org.syncon2.utils.data.GoThroughEach;
 	import org.syncon2.utils.sound.PlaySound_Flex;
+	import org.syncon.RosettaStone.vo.PromptDefinitionVO;
 	
-	public class TestDeleteUnusedResources
+	/**
+	 * Create a lesson, create items, 
+	 * bulk update many of hte items prompts , 
+	 *  
+	 * @author user3
+	 * 
+	 */
+	public class TestUpdatingPromptsResources
 	{
 		
 		private var makeStuff : TestUpdateManyLessonItems = new TestUpdateManyLessonItems(); 
@@ -36,7 +44,7 @@ package org.syncon.RosettaStone.test.cases
 		public function setUp():void
 		{
 			
-			this.makeStuff.setUp ( 'deleteUnused');
+			this.makeStuff.setUp ( 'UpdateLessonFromPrompts');
 			this.makeStuff.itemsToMake = [ 'dog', 'cat']//, 'bird'] 
 			
 			
@@ -57,12 +65,13 @@ package org.syncon.RosettaStone.test.cases
 		[Test(async)]
 		public function testRetreiveImages():void
 		{
-			this.makeStuff.serviceDispatcher.addEventListener( 'done', this.onDone ) ; 
-			this.makeStuff.buildLesson()
-			
-			var asyncHandler:Function = Async.asyncHandler( this, handleTimerComplete, 50*1000, null, handleTimeout );
+			this.makeStuff.serviceDispatcher.addEventListener( TestUpdateManyLessonItems.LOADED_LESSON, this.onDone ) ; 
+			this.makeStuff.creationOptions = this.makeStuff.basics; 
+			//this.makeStuff.buildLesson()
+			this.makeStuff.loadLesson(); 
+			var asyncHandler:Function = Async.asyncHandler( this, handleTimerComplete, 10*50*1000, null, handleTimeout );
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, asyncHandler, false, 0, true );
-			timer.delay = 50*1000
+			timer.delay = 10*50*1000
 			timer.start();	
 			
 			
@@ -74,8 +83,9 @@ package org.syncon.RosettaStone.test.cases
 			lessonBuildCount++
 			if ( lessonBuildCount == 1   )
 			{
-				this.makeStuff.lesson.sets.removeAll(); 
-				this.makeStuff.buildLesson()
+				this.step1_addPrompts()
+				//this.makeStuff.lesson.sets.removeAll(); 
+				//this.makeStuff.buildLesson()
 			}
 			if ( lessonBuildCount == 2   )
 			{
@@ -83,18 +93,41 @@ package org.syncon.RosettaStone.test.cases
 				this.step2(); 
 			}
 		}		
+		public static var ALT_PIC2  : String =   'Alt2 Pic' 
+		private function step1_addPrompts():void
+		{
+			var def : PromptDefinitionVO = new PromptDefinitionVO()
+			def.name =ALT_PIC2 
+			def.makePic(); 
+			
+			this.makeStuff.lesson.addPrompt( def ) ; 
+			
+			//this.makeStuff.creationOptions = [this.makeStuff.lesson.findPromptByName( ALT_PIC2)  ] 
+			this.makeStuff.serviceDispatcher.addEventListener( TestUpdateManyLessonItems.DONE_UPDATE, this.onDoneUpdate ) ;
+			this.makeStuff.updateLesson(null, [this.makeStuff.lesson.findPromptByName( ALT_PIC2)  ] ,'dog',2); 
+			
+			
+			
+		}		
 		
+		protected function onDoneUpdate(event:Event):void
+		{
+			this.makeStuff.model.saveLesson()
+			trace('done'); 
+			this.terminateTest()
+			trace('post terminate' )  
+		}
 		
 		protected function handleTimerComplete( event:TimerEvent, passThroughData:Object ):void
 		{
 			trace('timer complete') 
-			 if ( this.beganProcessing == false ) 
-				 fail('Never Started processing, has webserver been started?');
+			if ( this.beganProcessing == false ) 
+				fail('Never Started processing, has webserver been started?');
 		}
 		
 		protected function handleTimeout( passThroughData:Object ):void
 		{
-			 assertEquals( true, false ) ; 
+			assertEquals( true, false ) ; 
 		}
 		
 		
@@ -147,7 +180,7 @@ package org.syncon.RosettaStone.test.cases
 			var folder : String = this.getFolder()
 			for each ( var  str : String in fileNames ) 
 			{
-				NightStandConstants.FileLoader.deleteFile(( this.getFolder(), str ) ; 
+			NightStandConstants.FileLoader.deleteFile(( this.getFolder(), str ) ; 
 			}
 			*/
 		}
@@ -173,10 +206,7 @@ package org.syncon.RosettaStone.test.cases
 		
 		private function onFileNames_Verify(names : Array ):void
 		{
-				assertEquals('all files werent deleted', names.length==4+1, true) ; 
-				this.timer.stop()
-					//this.timer.
-					this.timer.dispatchEvent( new TimerEvent(TimerEvent.TIMER_COMPLETE, false, false ) ) ; 
+			assertEquals('all files werent deleted', names.length==4+1, true) ; 
 		} 
 		
 		private function getFolder():String
@@ -207,6 +237,12 @@ package org.syncon.RosettaStone.test.cases
 		}
 		}
 		*/
+		
+		private function terminateTest():void
+		{
+			this.timer.stop()
+			this.timer.dispatchEvent( new TimerEvent(TimerEvent.TIMER_COMPLETE, false, false ) ) ; 
+		}
 		
 	}
 }

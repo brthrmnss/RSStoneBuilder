@@ -15,6 +15,12 @@ package  org.syncon.RosettaStone.controller.Search
 	
 	
 	
+	/**
+	 * changes process, only returns 1 search vo with a bunch ur urls seperated by space ... you  have to download these later ...
+	 * NO need to call this directly ... as ti will be invoved from search dictionary command  
+	 * @author user3
+	 * 
+	 */
 	public class SearchDictionaryMultipleCommand extends Command
 	{
 		[Inject] public var model:RSModel;

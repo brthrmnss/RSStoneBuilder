@@ -10,7 +10,6 @@ package org.syncon.RosettaStone.test.cases
 	
 	import org.flexunit.asserts.assertEquals;
 	import org.flexunit.async.Async;
-	import org.robotlegs.mvcs.Command;
 	import org.syncon.RosettaStone.controller.IO.*;
 	import org.syncon.RosettaStone.controller.Import.*;
 	import org.syncon.RosettaStone.controller.Search.*;
@@ -20,7 +19,6 @@ package org.syncon.RosettaStone.test.cases
 	import org.syncon.RosettaStone.vo.LessonSetVO;
 	import org.syncon.RosettaStone.vo.LessonVO;
 	import org.syncon.RosettaStone.vo.PromptDefinitionVO;
-	import org.syncon.RosettaStone.vo.PromptVO;
 	import org.syncon2.utils.MakeVOs;
 	import org.syncon2.utils.data.GoThroughEach;
 	import org.syncon2.utils.sound.PlaySound_Flex;
@@ -39,8 +37,8 @@ package org.syncon.RosettaStone.test.cases
 		private var timer:Timer= new Timer( 50*1000, 1 );	
 		private var prompts:Array;
 		
-		
-		
+		static public var DONE_UPDATE : String = 'UPDATE_DONE'; 
+		static public var LOADED_LESSON: String = 'LOADED_LESSON'; 
 		[Before]
 		public function setUp(  lessonBaseFolder : String = 'lesson' , planBaseFolder : String = 'test' ):void
 		{
@@ -69,6 +67,12 @@ package org.syncon.RosettaStone.test.cases
 			this.registerCommand( SearchImagesTriggerEvent.SEARCH_IMAGES, SearchImagesCommand )
 			this.registerCommand( SearchYoutubeCommandTriggerEvent.SEARCH_YOUTUBE, SearchYoutubeCommand )
 			this.registerCommand( SaveLessonTriggerEvent.SAVE_LESSON, SaveLessonCommand )
+			this.registerCommand( UpdateLessonItemBulkCommandTriggerEvent.UPDATE_ITEMS, UpdateLessonItemBulkCommand  )
+				
+			this.registerCommand( UpdateLessonItemCommandTriggerEvent.UPDATE_ITEM, UpdateLessonItemCommand  )
+			this.registerCommand( LoadLessonPlanCommandTriggerEvent.LOAD_LESSON_PLAN, LoadLessonPlanCommand );
+			this.registerCommand( LoadLessonTriggerEvent.LOAD_SOUNDS, LoadLessonCommand );
+			this.registerCommand( SaveManyUrlsCommandTriggerEvent.SAVE_MANY_URLS, SaveManyUrlsCommand );
 		}
 		
 		/**
@@ -103,6 +107,7 @@ package org.syncon.RosettaStone.test.cases
 			// TODO Auto Generated method stub
 			this.lesson = TestHelpers.createLesson()
 			this.lesson.folder_name = this.baseFolderLesson; 
+			this.lesson.baseFolder =  this.baseFolderPlan //+ '/' + this.baseFolderLesson; 
 			this.lessonPlan = new LessonGroupVO(); 
 			this.lessonPlan.name = 'wtf'; 
 			this.lessonPlan.baseFolder = this.baseFolderPlan; 
@@ -128,10 +133,39 @@ package org.syncon.RosettaStone.test.cases
 			this.buildLesson()
 		}
 		
+		public function updateLesson(selectedItemz : Array, updateOptions : Array, queryPost : String = '', 
+			searchResultNum : int = 0 ):void
+		{
+			if ( updateOptions == null ) 
+			 	 updateOptions = this.collectOptions() 
+			if ( selectedItemz == null ) 
+				selectedItemz = this.lesson.items;  
+			this.dispatch( new UpdateLessonItemBulkCommandTriggerEvent(
+				UpdateLessonItemBulkCommandTriggerEvent.UPDATE_ITEMS, this.lesson, selectedItemz, this.onDoneWithUpdate, 
+				updateOptions, true, queryPost, searchResultNum ) ) 
+		}		
+		
+		private function onDoneWithUpdate():void
+		{
+			this.serviceDispatcher.dispatchEvent( new Event(DONE_UPDATE) ) ; 
+		}
+		
 		public function buildLesson():void
 		{
 			this.goThroughAllSelectedItems.go( this.selectedItems, this.onNextLessonItem, this.lessonItemsDone ) 	
 		}		
+		public function loadLesson():void
+		{
+			this.dispatch( new LoadLessonTriggerEvent(LoadLessonTriggerEvent.LOAD_SOUNDS, this.lesson, '', this.onLoadedLesson ) ) ; 
+			//this.goThroughAllSelectedItems.go( this.selectedItems, this.onNextLessonItem, this.lessonItemsDone ) 	
+		}		
+		
+		private function onLoadedLesson(e: LessonVO):void
+		{
+			var d : Array = [e.sets.length]
+			this.dispatch( new Event(LOADED_LESSON ) ) 
+		}		
+		
 		
 		protected function handleTimerComplete( event:TimerEvent, passThroughData:Object ):void
 		{
@@ -171,9 +205,11 @@ package org.syncon.RosettaStone.test.cases
 			// TODO Auto Generated method stub
 			//this.active = false; 
 			this.model.saveLesson(); 
-			this.serviceDispatcher.dispatchEvent( new Event('done') ) ; 
+			this.serviceDispatcher.dispatchEvent( new Event(DONE) ) ; 
 		}
 		
+		
+		static public var DONE : String = 'done' 
 		
 		private function onProcessUpdate( actionOrPrompt : Object ):void
 		{
@@ -195,6 +231,10 @@ package org.syncon.RosettaStone.test.cases
 		}		
 		public function collectOptions () : Array
 		{
+			if ( creationOptions != null ) 
+			{
+				return creationOptions;
+			}
 			return [UpdateLessonItemCommandTriggerEvent.PIC, this.promptDefs(PIC) ];
 		}
 		
@@ -203,7 +243,11 @@ package org.syncon.RosettaStone.test.cases
 		public var itemsToMake:Array;
 		private var baseFolderPlan:String;
 		private var baseFolderLesson:String;
-		
+		/**
+		 * if set will overried the collect options default 
+		 * */
+		public var creationOptions:Array;
+		public var basics:Array= [UpdateLessonItemCommandTriggerEvent.PIC, UpdateLessonItemCommandTriggerEvent.DICTIONARY];
 		public function makePrompts() : void
 		{
 			this.prompts = []; 
@@ -227,14 +271,14 @@ package org.syncon.RosettaStone.test.cases
 		
 		private function dispatch( e : Event ) : void
 		{
-			if ( e is UpdateLessonItemCommandTriggerEvent ) 
+			/*if ( e is UpdateLessonItemCommandTriggerEvent ) 
 			{
 				var c : UpdateLessonItemCommand = new UpdateLessonItemCommand()
 				c.event =  e as UpdateLessonItemCommandTriggerEvent ; 
 				c.model = this.model; 
 				c.eventDispatcher = serviceDispatcher; 
 				c.execute(); 
-			}
+			}*/
 			var commandClass : Class = this.commands[e.type] as Class; 
 			if ( commandClass != null ) 
 			{
@@ -243,6 +287,10 @@ package org.syncon.RosettaStone.test.cases
 				command.model = this.model; 
 				command.eventDispatcher = serviceDispatcher; 
 				command.execute(); 
+			}
+			else
+			{
+				serviceDispatcher.dispatchEvent( e )
 			}
 		}
 		

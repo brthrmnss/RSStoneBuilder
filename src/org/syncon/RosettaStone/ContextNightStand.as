@@ -39,6 +39,9 @@ package org.syncon.RosettaStone
 			this.commandMap.mapEvent( SearchYoutubeCommandTriggerEvent.SEARCH_YOUTUBE, SearchYoutubeCommand );
 			
 			this.commandMap.mapEvent( UpdateLessonItemCommandTriggerEvent.UPDATE_ITEM, UpdateLessonItemCommand );
+			this.commandMap.mapEvent( UpdateLessonItemBulkCommandTriggerEvent.UPDATE_ITEMS, UpdateLessonItemBulkCommand );
+			
+			this.commandMap.mapEvent( SaveManyUrlsCommandTriggerEvent.SAVE_MANY_URLS, SaveManyUrlsCommand );
 			
 			this.commandMap.mapEvent( LoadUnitsCommandTriggerEvent.LOAD_UNITS, LoadUnitsCommand );
 			this.commandMap.mapEvent( LoadUnitCommandTriggerEvent.LOAD_UNIT, LoadUnitCommand );

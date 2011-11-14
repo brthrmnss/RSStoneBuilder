@@ -104,6 +104,13 @@
 				// TODO Auto-generated method stub
 				this.item.editSelected = this.chk_boxSelected.selected; 
 			}
+			public  function set disableTransitions(b:Boolean):void
+			{
+			//	if ( b == true ) 
+				this.targeter.targets = [] ; 
+			}
+			
+			
 			
 		]]> 
 	</fx:Script> 
@@ -124,7 +131,7 @@
 	<s:transitions>
 		
 		<s:Transition toState="*">
-			<s:Fade duration="350" easer="{sineIn}" targets="{[this.bgRect]}"/>
+			<s:Fade duration="350" easer="{sineIn}"  id="targeter"  targets="{[this.bgRect]}"/>
 		</s:Transition>
 		
 		

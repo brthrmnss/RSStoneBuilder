@@ -127,7 +127,7 @@ package  org.syncon.RosettaStone.view.ellips
 		{
 			trace('PopupMenuActionViewMediator', 'go back')
 			
-			this.dispatch(SwitchScreensTriggerEvent.GoBack(null, true ) ) 
+			this.dispatch(SwitchScreensTriggerEvent.GoBack(this.ui, true ) ) 
 		}
 		
 		private function onDataChanged(e:Object):void
@@ -165,8 +165,9 @@ package  org.syncon.RosettaStone.view.ellips
 			}
 			else  if ( o == SETTINGS ) 
 			{
-				this.onGoBack(); 
+				
 				this.dispatch( SwitchScreensTriggerEvent.GoTo(SwitchScreensTriggerEvent.settings)  ) 
+				this.onGoBack(); 
 				return
 			}
 			else
@@ -202,6 +203,7 @@ package  org.syncon.RosettaStone.view.ellips
 			{
 				var m : MobileMenuItemVO = event.data as MobileMenuItemVO
 				this.config.fx( m.label ) ; 
+				this.onGoBack(); 
 			}
 		
 			//this.model.playSound( sound ) ; 
